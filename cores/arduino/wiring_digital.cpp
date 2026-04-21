@@ -3,6 +3,8 @@
  * @brief Function definitions for setting pin mode, digital read and write.
  */
 #include "api/Common.h"
+#include "milandr/periph_definition.h"
+#include "MDR32FxQI_port.h"
 
 /**
  * Set a pin to a specific mode (input or output).

@@ -7,20 +7,25 @@ void initVariant() {}
 /**
  * Code to initialise the board goes here.
  */
-void init() {}
+void init()
+{
+}
 
-int main(void) {
-    init();
-    initVariant();
+int main(void)
+{
+	init();
+	initVariant();
 
-    setup();
+	setup();
 
-    for (;;) {
-        loop();
+	for (;;)
+	{
+		loop();
 
-        // User can defined this function in a sketch to run after every loop iteration
-        if (arduino::serialEventRun) arduino::serialEventRun();
-    }
+		// User can defined this function in a sketch to run after every loop iteration
+		if(arduino::serialEventRun)
+			arduino::serialEventRun();
+	}
 
-    return 0;
+	return 0;
 }
