@@ -345,7 +345,7 @@ extern "C" {
     #define __RAMFUNC __attribute__((section("EXECUTABLE_MEMORY_SECTION")))
 #endif
 #if defined (__GNUC__) /* GNU Compiler (GCC) */
-	#define __RAMFUNC __attribute__((section(".data")))
+	#define __RAMFUNC __attribute__((section(".ramfunc")))
 #endif
 
 

@@ -26,7 +26,7 @@ static int current_tone_pin = -1;
  *                 Optional argument with a default value of zero.
  */
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) {
-    if (!isPinPwm(_pin)) return;
+    //if (!isPinPwm(_pin)) return;
 
     if (current_tone_pin != -1 && current_tone_pin != _pin) return;
 

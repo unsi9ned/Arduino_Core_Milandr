@@ -33,7 +33,7 @@ SECTIONS
 		
 		*(.rodata*)
 		
-		KEEP(*(.eh_fram e*))
+		KEEP(*(.eh_frame*))
 	} > rom 
 	
 	.ARM.extab : 
@@ -47,12 +47,26 @@ SECTIONS
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
 	} > rom 
 	__exidx_end = .;
-	__etext = .;
 	
 	/* _sidata is used in coide startup code */
-	_sidata = __etext;
+	_sidata = .;
+
+	/* Секция для RAM-функций */
+	.ramfunc : 
+	{
+		. = ALIGN(4);
+		__ramfunc_start__ = .;          /* Начало секции в RAM */
+		KEEP(*(.ramfunc))               /* Сами функции */
+		KEEP(*(.ramfunc.*))             /* Подсекции, если есть */
+		. = ALIGN(4);
+		__ramfunc_end__ = .;            /* Конец секции в RAM */
+	} > ram AT> rom                     /* Разместить в RAM, хранить во Flash */
 	
-	.data : AT (__etext)
+	/* Указатели для копирования из Flash в RAM */
+	__ramfunc_loadaddr__ = LOADADDR(.ramfunc);               /* Адрес во Flash */
+	__ramfunc_size__ = __ramfunc_end__ - __ramfunc_start__;  /* Размер секции */
+	
+	.data : 
 	{
 		__data_start__ = .;
 		
@@ -89,7 +103,9 @@ SECTIONS
 		
 		/* _edata is used in coide startup code */
 		_edata = __data_end__;
-	} > ram 
+	} > ram AT> rom
+	
+	__etext = LOADADDR(.data) + SIZEOF(.data);
 	
 	.bss :
 	{

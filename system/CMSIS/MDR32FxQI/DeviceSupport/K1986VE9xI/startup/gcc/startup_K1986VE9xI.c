@@ -67,6 +67,11 @@ extern unsigned long _sbss;      /*!< Start address for the .bss section      */
 extern unsigned long _ebss;      /*!< End address for the .bss section        */      
 extern void _eram;               /*!< End address for ram                     */
 
+extern uint32_t __ramfunc_start__;
+extern uint32_t __ramfunc_end__;
+extern uint32_t __ramfunc_loadaddr__;
+extern uint32_t __ramfunc_size__;
+
 
 /*----------Function prototypes-----------------------------------------------*/  
 extern void SystemInit(void);
@@ -143,32 +148,39 @@ void (* const __Vectors[])(void) =
   */
 void Default_Reset_Handler(void)
 {
-    unsigned long *pulSrc, *pulDest;
+	unsigned long *pulSrc, *pulDest;
 
-    /* Copy the data segment initializers from flash to SRAM */
-    pulSrc = &_sidata;
-    for(pulDest = &_sdata; pulDest < &_edata; )
-    {
-        *(pulDest++) = *(pulSrc++);
-    }
+	/* Copy the ramfunc segment initializers from flash to SRAM */
+	pulSrc = &__ramfunc_loadaddr__;
+	for (pulDest = &__ramfunc_start__; pulDest < &__ramfunc_end__;)
+	{
+		*(pulDest++) = *(pulSrc++);
+	}
 
-    /* Zero fill the bss segment */
-    for(pulDest = &_sbss; pulDest < &_ebss; )
-    {
-        *(pulDest++) = 0;
-    }
+	/* Copy the data segment initializers from flash to SRAM */
+	pulSrc = &_sidata;
+	for (pulDest = &_sdata; pulDest < &_edata;)
+	{
+		*(pulDest++) = *(pulSrc++);
+	}
 
-    /* If the code is running from RAM, update VTOR */
-    if ((unsigned long)__Vectors >= 0x20000000)
-    {
-        SCB->VTOR = (uint32_t)__Vectors;
-    }
+	/* Zero fill the bss segment */
+	for (pulDest = &_sbss; pulDest < &_ebss;)
+	{
+		*(pulDest++) = 0;
+	}
 
-    /* Setup the microcontroller system */
-    SystemInit();
+	/* If the code is running from RAM, update VTOR */
+	if((unsigned long) __Vectors >= 0x20000000)
+	{
+		SCB->VTOR = (uint32_t) __Vectors;
+	}
 
-    /* Call the application's entry point */
-    main();
+	/* Setup the microcontroller system */
+	SystemInit();
+
+	/* Call the application's entry point */
+	main();
 }
 
 

@@ -71,4 +71,4 @@ Uart::operator bool() {
 }  // namespace arduino
 
 // Instantiate user accessible Serial instance
-arduino::UART Serial;
+arduino::Uart Serial;
