@@ -1,5 +1,16 @@
 #include <Arduino.h>
 
+#ifdef __cplusplus
+/* include outside of extern C block, this is basically a C++ library */
+extern "C" {
+#endif /* __cplusplus */
+
+#include "milandr/systick.h"
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
 // This function can be overwritten by the variant-specific code
 void initVariant() __attribute__((weak));
 void initVariant() {}
@@ -7,9 +18,18 @@ void initVariant() {}
 /**
  * Code to initialise the board goes here.
  */
-void init()
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void init(void)
 {
+	systick_config();
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 int main(void)
 {

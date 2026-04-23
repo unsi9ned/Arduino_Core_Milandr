@@ -53,16 +53,58 @@
 
 ------------------------------------------------------------------------------*/
 
-
 //------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
+// Примеры:
+//    1) Быстрый доступ к связке MDR_PORTx/PORT_Pin_y:
+//       pinTable[D0][PORT_FUNC_PORT].pinName + битовые операции
+//    2) Определение номера периферии пина MOSI = D5
+//       pinTable[D5][PORT_FUNC_ALTER].periphN или
+//       pinTable[D5][PORT_FUNC_OVERRID].periphN
+// Примечание:
+//    1) Eсли номер periphN = 0, то модуль в единственном эксземпляре и не нумеруется
+//    2) Если pinTable[D5][PORT_FUNC_ANALOG].periph = PERIPH_PORT, то пин не имеет аналоговой функции
 //------------------------------------------------------------------------------
-const tMilandrPin pinTable[DMAX][PERIPH_LINE_VARIANTS_NUM][1] =
+const tMilandrPin pinTable[DMAX][PORT_FUNC_ANALOG + 1][1] =
 {
 	[D0] =
 	{
-		[DIO_LINE] = {{.pinName = PE_3, .altFunc = PORT_FUNC_PORT, .pinMode = PORT_MODE_DIGITAL}},
-		[COMP_IN2_LINE] = {{.pinName = PE_3, .altFunc = PORT_FUNC_PORT, .pinMode = PORT_MODE_ANALOG}},
-		[TMR_CH_N_LINE] = {{.pinName = PE_3, .altFunc = PORT_FUNC_ALTER, .pinMode = PORT_MODE_DIGITAL, .altPeriph = MDR_TIMER2}},
-	}
+		[PORT_FUNC_PORT] = {{.pinName = PE_3, .pinFunc = PORT_FUNC_PORT, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_MAIN] = {{.pinName = PE_3, .pinFunc = PORT_FUNC_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_ALTER] = {{.pinName = PE_3, .pinFunc = PORT_FUNC_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH3_N_LINE}},
+		[PORT_FUNC_OVERRID] = {{.pinName = PE_3, .pinFunc = PORT_FUNC_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH1_N_LINE}},
+		[PORT_FUNC_ANALOG] = {{.pinName = PE_3, .pinFunc = PORT_FUNC_ANALOG, .periph = PERIPH_COMP, .periphN = 0, .periphLine = COMP_IN2_LINE}},
+	},
+
+	[D1] =
+	{
+		[PORT_FUNC_PORT] = {{.pinName = PE_2, .pinFunc = PORT_FUNC_PORT, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_MAIN] = {{.pinName = PE_2, .pinFunc = PORT_FUNC_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_ALTER] = {{.pinName = PE_2, .pinFunc = PORT_FUNC_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH3_LINE}},
+		[PORT_FUNC_OVERRID] = {{.pinName = PE_2, .pinFunc = PORT_FUNC_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH1_LINE}},
+		[PORT_FUNC_ANALOG] = {{.pinName = PE_2, .pinFunc = PORT_FUNC_ANALOG, .periph = PERIPH_COMP, .periphN = 0, .periphLine = COMP_IN1_LINE}},
+	},
+
+	//...
+
+	[D14] =
+	{
+		[PORT_FUNC_PORT] = {{.pinName = PB_6, .pinFunc = PORT_FUNC_PORT, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_MAIN] = {{.pinName = PB_6, .pinFunc = PORT_FUNC_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_ALTER] = {{.pinName = PB_6, .pinFunc = PORT_FUNC_ALTER, .periph = PERIPH_UART, .periphN = UART_1, .periphLine = UART_RXD_LINE}},
+		[PORT_FUNC_OVERRID] = {{.pinName = PB_6, .pinFunc = PORT_FUNC_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH3_N_LINE}},
+		[PORT_FUNC_ANALOG] = {{.pinName = PB_6, .pinFunc = PORT_FUNC_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
+
+	[D15] =
+	{
+		[PORT_FUNC_PORT] = {{.pinName = PB_7, .pinFunc = PORT_FUNC_PORT, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_MAIN] = {{.pinName = PB_7, .pinFunc = PORT_FUNC_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PORT_FUNC_ALTER] = {{.pinName = PB_7, .pinFunc = PORT_FUNC_ALTER, .periph = PERIPH_UART, .periphN = UART_1, .periphLine = UART_SIROUT_LINE}},
+		[PORT_FUNC_OVERRID] = {{.pinName = PB_7, .pinFunc = PORT_FUNC_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH4_LINE}},
+		[PORT_FUNC_ANALOG] = {{.pinName = PB_7, .pinFunc = PORT_FUNC_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
 };
+
+
+

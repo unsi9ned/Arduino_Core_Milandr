@@ -170,4 +170,39 @@ typedef enum
 }
 tPinName;
 
+//------------------------------------------------------------------------------
+// Нумерация портов
+//------------------------------------------------------------------------------
+typedef enum
+{
+#if defined(MDR_PORTA)
+	MDR_PORT_A = 0,
+#endif
+
+#if defined(MDR_PORTB)
+	MDR_PORT_B = 1,
+#endif
+
+#if defined(MDR_PORTC)
+	MDR_PORT_C = 2,
+#endif
+
+#if defined(MDR_PORTD)
+	MDR_PORT_D = 3,
+#endif
+
+#if defined(MDR_PORTE)
+	MDR_PORT_E = 4,
+#endif
+
+#if defined(MDR_PORTF)
+	MDR_PORT_F = 5,
+#endif
+
+#if defined(MDR_PORTG)
+	MDR_PORT_G = 6,
+#endif
+}
+tPortNumber;
+
 #endif //_PIN_MAMES_H_

@@ -77,13 +77,13 @@ tArduinoPinAlias;
 #define PC2   D5
 #define PC1   D6
 #define PC0   D7
-#define B0    D8
-#define B1    D9
-#define B2    D10
-#define B3    D11
-#define B4    D12
-#define B5    D13
-#define B6    D14
+#define PB0   D8
+#define PB1   D9
+#define PB2   D10
+#define PB3   D11
+#define PB4   D12
+#define PB5   D13
+#define PB6   D14
 
 //------------------------------------------------------------------------------
 // Верхний ряд пинов

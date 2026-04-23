@@ -31,117 +31,119 @@
 //------------------------------------------------------------------------------
 // Битовые маски для работы полями структуры tMilandrPin
 //------------------------------------------------------------------------------
-#define PIN_NUMBER_MASK 0xFUL
-#define PIN_PORT_MASK   0xF0UL
-#define PIN_FUNC_MASK   0x300UL
-#define PIN_MODE_MASK   0x400UL
-#define PIN_PERIPH_MASK 0xFF0000UL
+#define PIN_NUMBER_MASK   0xFUL
+#define PIN_PORTNUM_MASK  0xF0UL
+#define PIN_FUNC_MASK     0x700UL
+
+//------------------------------------------------------------------------------
+// Расширение набора значений MODE
+//------------------------------------------------------------------------------
+#define PORT_FUNC_ANALOG  0x4
+
+//------------------------------------------------------------------------------
+// Доступ к блоку регистров GPIO
+//------------------------------------------------------------------------------
+#define MDR_PORT(n)      (MDR_PORT_TypeDef    *)((uint32_t)MDR_PORTA + 0x8000UL * n)
 
 //------------------------------------------------------------------------------
 // Полное описание вывода с включением всей необходимой информации для его настройки
 //------------------------------------------------------------------------------
-typedef struct
+typedef union
 {
-	union
+	uint32_t raw;
+
+	struct
 	{
-		uint32_t raw;
-
-		struct
+		// Псевдоним вывода порта. Фактически одно из значений tPinName
+		union
 		{
-			// Псевдоним вывода порта. Фактически одно из значений tPinName
-			union
+			uint8_t pinName;
+
+			struct
 			{
-				uint8_t pinName;
+				// Номер пина
+				uint8_t pin  :4;
 
-				struct
-				{
-					// Номер пина
-					uint8_t pin  :4;
-
-					// Номер порта
-					uint8_t port :4;
-				};
+				// Номер порта
+				uint8_t port :4;
 			};
-
-			// Содержит функцию работы вывода. Фактически это поле MODE регистра FUNC
-			uint8_t altFunc   :2;
-			uint8_t remapFunc :2;
-
-			// Определяет является ли вывод аналоговым (1) или цифровым (0)
-			uint8_t pinMode   :1;
-			uint8_t           :3;
-
-			uint16_t reserved;
 		};
-	};
 
-	volatile void * altPeriph;
-	volatile void * remapPeriph;
+		// Содержит функцию работы вывода. Фактически это поле MODE регистра FUNC
+		// c добавленным битом 2, являющийся инвертированным ANALOG_EN
+		union
+		{
+			uint8_t pinFunc   :3;
+
+			struct
+			{
+				uint8_t mode  :2;
+				uint8_t analog:1;
+			};
+		};
+
+		// Номер, идентифицирующий тип периферии (tPeriphVariant)
+		uint8_t periph    :5;
+
+		// Номер, идентифицирующий номер периферийного модуля SPI1, SPI2, SPI3 и т.д.
+		uint8_t periphN   :4;
+		uint8_t           :4;
+
+		// Номер, идентифицирующий тип линии периферийного модуля (MOSI, MISO, TMR_CH и т.д.)
+		uint8_t periphLine;
+	};
 }
 tMilandrPin;
 
 //------------------------------------------------------------------------------
 // Нумерация всей имеющейся периферии
 //------------------------------------------------------------------------------
-#if defined(MDR_CAN1)
-#define CAN1_FUNC        0x0001
-#endif
+typedef enum
+{
+	CAN_1 = 1,
+	CAN_2
+}
+tAdcVariant;
 
-#if defined(MDR_CAN2)
-#define CAN2_FUNC        0x0002
-#endif
+typedef enum
+{
+	UART_1 = 1,
+	UART_2,
+}
+tUartVariant;
 
-#if defined(MDR_USB)
-#define USB_FUNC         0x0001
-#endif
+typedef enum
+{
+	SSP_1 = 1,
+	SSP_2,
+}
+tSspVariant;
 
-#if defined(MDR_UART1)
-#define UART1_FUNC       0x0001
-#endif
+typedef enum
+{
+	TIMER_1 = 1,
+	TIMER_2,
+	TIMER_3,
+}
+tTimerVariant;
 
-#if defined(MDR_UART2)
-#define UART2_FUNC       0x0002
-#endif
+typedef enum
+{
+	PERIPH_PORT,
+	PERIPH_CAN,
+	PERIPH_USB,
+	PERIPH_UART,
+	PERIPH_SSP,
+	PERIPH_I2C,
+	PERIPH_TIMER,
+	PERIPH_ADC,
+	PERIPH_DAC,
+	PERIPH_COMP,
 
-#if defined(MDR_UART3)
-#define UART3_FUNC       0x0004
-#endif
-
-#if defined(MDR_SSP1)
-#define SSP1_FUNC        0x0001
-#endif
-
-#if defined(MDR_SSP2)
-#define SSP2_FUNC        0x0002
-#endif
-
-#if defined(MDR_I2C)
-#define I2C_FUNC         0x0001
-#endif
-
-#if defined(MDR_TIMER1)
-#define TIMER1_FUNC      0x0001
-#endif
-
-#if defined(MDR_TIMER2)
-#define TIMER2_FUNC      0x0002
-#endif
-
-#if defined(MDR_TIMER3)
-#define TIMER3_FUNC      0x0004
-#endif
-
-#if defined(MDR_ADC)
-#define ADC_FUNC         0x0001
-#endif
-
-#if defined(MDR_DAC)
-#define DAC_FUNC         0x0001
-#endif
-
-#if defined(MDR_COMP)
-#define COMP_FUNC        0x0001
-#endif
+	PERIPH_VARIANTS_NUM,
+	PERIPH_UNKNOWN = 0x1F
+}
+tPeriphVariant;
 
 //------------------------------------------------------------------------------
 // Все возможные варианты линий периферии
@@ -158,14 +160,22 @@ typedef enum
 	CAN_TXD_LINE,
 	UART_RXD_LINE,
 	UART_TXD_LINE,
+	UART_SIROUT_LINE,
+	UART_SIRIN_LINE,
 	SSP_TXD_LINE,
 	SSP_RXD_LINE,
 	SSP_CLK_LINE,
 	SSP_FSS_LINE,
 	I2C_SCL_LINE,
 	I2C_SDA_LINE,
-	TMR_CH_LINE,
-	TMR_CH_N_LINE,
+	TMR_CH1_LINE,
+	TMR_CH2_LINE,
+	TMR_CH3_LINE,
+	TMR_CH4_LINE,
+	TMR_CH1_N_LINE,
+	TMR_CH2_N_LINE,
+	TMR_CH3_N_LINE,
+	TMR_CH4_N_LINE,
 	TMR_BLK_LINE,
 	TMR_ETR_LINE,
 	COMP_IN1_LINE,
@@ -182,6 +192,6 @@ tPeriphLineVariant;
 //------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
 //------------------------------------------------------------------------------
-extern const tMilandrPin pinTable[DMAX][PERIPH_LINE_VARIANTS_NUM][1];
+extern const tMilandrPin pinTable[][PORT_FUNC_ANALOG + 1][1];
 
 #endif //_PERIPH_DEFINITION_H

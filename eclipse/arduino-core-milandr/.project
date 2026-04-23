@@ -96,11 +96,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/random.cpp</locationURI>
 		</link>
 		<link>
-			<name>cores/arduino/time.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/time.cpp</locationURI>
-		</link>
-		<link>
 			<name>cores/arduino/tone.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/tone.cpp</locationURI>
@@ -119,6 +114,11 @@
 			<name>cores/arduino/wiring_digital.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_digital.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/wiring_time.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_time.c</locationURI>
 		</link>
 		<link>
 			<name>system/CMSIS/MDR32FxQI</name>
@@ -149,6 +149,16 @@
 			<name>cores/arduino/milandr/pin_names.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/pin_names.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/systick.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/systick.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/systick.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/systick.h</locationURI>
 		</link>
 		<link>
 			<name>system/CMSIS/MDR32FxQI/CoreSupport</name>

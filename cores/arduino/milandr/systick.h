@@ -21,25 +21,15 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#pragma once
+#ifndef SYSTICK_H
+#define SYSTICK_H
 
-// Common API from Arduino
-#include "api/ArduinoAPI.h"
+#include <stdint.h>
+#include "MDR32FxQI_config.h"
 
-// Описание платы
-#include "variant.h"
+/* configure systick */
+void systick_config(void);
+uint32_t getCurrentMillis(void);
+uint32_t getCurrentMicros(void);
 
-// This core drivers
-#include "Uart.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif  // __cplusplus
-
-// Sketch functions
-void setup(void);
-void loop(void);
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif
+#endif /* SYSTICK_H */
