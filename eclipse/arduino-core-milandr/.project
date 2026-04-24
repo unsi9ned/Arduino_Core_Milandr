@@ -141,6 +141,31 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/milandr_common.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_common.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_gpio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_gpio.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_gpio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_gpio.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_hal.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_hal.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.c</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/periph_definition.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/periph_definition.h</locationURI>
@@ -149,16 +174,6 @@
 			<name>cores/arduino/milandr/pin_names.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/pin_names.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/milandr/systick.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/systick.c</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/milandr/systick.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/systick.h</locationURI>
 		</link>
 		<link>
 			<name>system/CMSIS/MDR32FxQI/CoreSupport</name>

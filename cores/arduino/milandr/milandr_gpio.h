@@ -21,31 +21,22 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#pragma once
+#ifndef _MILANDR_GPIO_H
+#define _MILANDR_GPIO_H
 
-#ifndef EXTERN_C_BEGIN
-	#ifdef __cplusplus
-		#define EXTERN_C_BEGIN  extern "C" {
-		#define EXTERN_C_END    }
-	#else
-		#define EXTERN_C_BEGIN
-		#define EXTERN_C_END
-	#endif
-#endif
+#include "MDR32FxQI_config.h"
 
-// Common API from Arduino
-#include "api/ArduinoAPI.h"
+//------------------------------------------------------------------------------
+// Битовые маски для работы полями структуры tMilandrPin
+//------------------------------------------------------------------------------
+#define PIN_NUMBER_MASK   0xFUL
+#define PIN_PORTNUM_MASK  0xF0UL
+#define PIN_FUNC_MASK     0x700UL
 
-// Описание платы
-#include "variant.h"
+//------------------------------------------------------------------------------
+// Доступ к блоку регистров GPIO
+//------------------------------------------------------------------------------
+#define MDR_PORT(n)      (MDR_PORT_TypeDef    *)((uint32_t)MDR_PORTA + 0x8000UL * (n))
 
-// This core drivers
-#include "Uart.h"
 
-EXTERN_C_BEGIN
-
-// Sketch functions
-void setup(void);
-void loop(void);
-
-EXTERN_C_END
+#endif //_MILANDR_GPIO_H

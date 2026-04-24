@@ -26,8 +26,7 @@
  * @brief Function definitions for setting pin mode, digital read and write.
  */
 #include "api/Common.h"
-#include "milandr/periph_definition.h"
-#include "MDR32FxQI_rst_clk.h"
+#include "milandr/milandr_hal.h"
 
 /**
  * Set a pin to a specific mode (input or output).
@@ -39,67 +38,37 @@
  */
 void pinMode(pin_size_t pinNumber, PinMode pinMode)
 {
-	if(pinNumber >= DMAX) return;
+	if(pinNumber >= milandr_max_dio()) return;
 
-	const tMilandrPin * mdrPin = &pinTable[pinNumber][PORT_FUNC_PORT][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin->port);
-	uint16_t portPin = (1 << mdrPin->pin);
-
-	// Сначала включаем тактирование порта
-	MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTA << mdrPin->port;
-
-	// MODE = 0x0 (Digital Port)
-	port->FUNC &= ~(PORT_FUNC_MODE0_Msk << (mdrPin->pin * 2));
-	port->ANALOG |= ((uint32_t)PORT_MODE_DIGITAL << mdrPin->pin);
-
-	// Schmitt Trigger Disabled
-	port->PD &= ~(((uint32_t)PORT_PD_SHM_ON << mdrPin->pin) << PORT_PD_SHM_Pos);
-
-	// Fast port
-	port->PWR |= (PORT_PWR0_Msk << (mdrPin->pin * 2));
-
-	//Filter Disabled
-	port->GFEN &= ~((uint32_t)PORT_GFEN_ON << mdrPin->pin);
+	milandr_gpio_clock_enable(pinNumber);
 
 	switch(pinMode)
 	{
 		// Floating input
 		case INPUT:
-			port->OE &= ~portPin;
-			port->PULL &= ~(((uint32_t)PORT_PULL_UP_ON << mdrPin->pin) << PORT_PULL_UP_Pos);
-			port->PULL &= ~(((uint32_t)PORT_PULL_DOWN_ON << mdrPin->pin) << PORT_PULL_DOWN_Pos);
+			milandr_gpio_cfg_input(pinNumber);
 		break;
 
 		// Push-Pull output
 		case OUTPUT:
-			port->OE |= portPin;
-			port->PD &= ~(((uint32_t)PORT_PD_OPEN << mdrPin->pin) << PORT_PD_Pos);
+			milandr_gpio_cfg_output_pp(pinNumber);
 		break;
 
 		case INPUT_PULLUP:
-			port->OE &= ~portPin;
-			port->PULL |= (((uint32_t)PORT_PULL_UP_ON << mdrPin->pin) << PORT_PULL_UP_Pos);
-			port->PULL &= ~(((uint32_t)PORT_PULL_DOWN_ON << mdrPin->pin) << PORT_PULL_DOWN_Pos);
+			milandr_gpio_cfg_input_pu(pinNumber);
 		break;
 
 		case INPUT_PULLDOWN:
-			port->OE &= ~portPin;
-			port->PULL &= ~(((uint32_t)PORT_PULL_UP_ON << mdrPin->pin) << PORT_PULL_UP_Pos);
-			port->PULL |= (((uint32_t)PORT_PULL_DOWN_ON << mdrPin->pin) << PORT_PULL_DOWN_Pos);
+			milandr_gpio_cfg_input_pd(pinNumber);
 		break;
 
 		case OUTPUT_OPENDRAIN:
-			port->OE |= portPin;
-			port->PULL &= ~(((uint32_t)PORT_PULL_UP_ON << mdrPin->pin) << PORT_PULL_UP_Pos);
-			port->PULL &= ~(((uint32_t)PORT_PULL_DOWN_ON << mdrPin->pin) << PORT_PULL_DOWN_Pos);
-			port->PD |= (((uint32_t)PORT_PD_OPEN << mdrPin->pin) << PORT_PD_Pos);
+			milandr_gpio_cfg_output_od(pinNumber);
 		break;
 
 		// Configure as floating input
 		default:
-			port->OE &= ~portPin;
-			port->PULL &= ~(((uint32_t)PORT_PULL_UP_ON << mdrPin->pin) << PORT_PULL_UP_Pos);
-			port->PULL &= ~(((uint32_t)PORT_PULL_DOWN_ON << mdrPin->pin) << PORT_PULL_DOWN_Pos);
+			milandr_gpio_cfg_input(pinNumber);
 		break;
 	}
 }
@@ -115,16 +84,8 @@ void pinMode(pin_size_t pinNumber, PinMode pinMode)
  */
 void digitalWrite(pin_size_t pinNumber, PinStatus status)
 {
-	if(pinNumber >= DMAX) return;
-
-	const tMilandrPin * mdrPin = &pinTable[pinNumber][PORT_FUNC_PORT][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin->port);
-	uint16_t portPin = (1 << mdrPin->pin);
-
-	if(status == HIGH)
-		port->RXTX |= portPin;
-	else
-		port->RXTX &= ~portPin;
+	if(pinNumber >= milandr_max_dio()) return;
+	milandr_gpio_write(pinNumber, status);
 }
 
 /**
@@ -135,10 +96,6 @@ void digitalWrite(pin_size_t pinNumber, PinStatus status)
  */
 PinStatus digitalRead(pin_size_t pinNumber)
 {
-	if(pinNumber >= DMAX) return LOW;
-
-	const tMilandrPin * mdrPin = &pinTable[pinNumber][PORT_FUNC_PORT][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin->port);
-
-	return (PinStatus)((port->RXTX >> mdrPin->pin) & 1UL);
+	if(pinNumber >= milandr_max_dio()) return LOW;
+	return (PinStatus)milandr_gpio_read(pinNumber);
 }

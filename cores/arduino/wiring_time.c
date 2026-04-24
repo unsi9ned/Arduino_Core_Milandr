@@ -17,7 +17,7 @@
 */
 
 #include "api/Common.h"
-#include "milandr/systick.h"
+#include "milandr/milandr_hal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +34,7 @@ extern "C" {
 uint32_t millis(void)
 {
 	// ToDo: ensure no interrupts
-	return getCurrentMillis();
+	return milandr_current_millis();
 }
 
 /**
@@ -47,7 +47,7 @@ uint32_t millis(void)
  */
 uint32_t micros(void)
 {
-	return getCurrentMicros();
+	return milandr_current_micros();
 }
 
 /**
@@ -59,15 +59,7 @@ uint32_t micros(void)
  */
 void delay(uint32_t ms)
 {
-	if(ms != 0)
-	{
-		uint32_t start = getCurrentMillis();
-		do
-		{
-			__NOP();
-		}
-		while (getCurrentMillis() - start < ms);
-	}
+	milandr_delay(ms);
 }
 
 /**
@@ -77,23 +69,7 @@ void delay(uint32_t ms)
  */
 void delayMicroseconds(unsigned int us)
 {
-	__IO uint32_t currentTicks = SysTick->VAL;
-	/* Number of ticks per millisecond */
-	const uint32_t tickPerMs = SysTick->LOAD + 1;
-	/* Number of ticks to count */
-	const uint32_t nbTicks = ((us - ((us > 0) ? 1 : 0)) * tickPerMs) / 1000;
-	/* Number of elapsed ticks */
-	uint32_t elapsedTicks = 0;
-	__IO uint32_t oldTicks = currentTicks;
-	do
-	{
-		currentTicks = SysTick->VAL;
-		elapsedTicks += (oldTicks < currentTicks) ?
-		                tickPerMs + oldTicks - currentTicks :
-		                oldTicks - currentTicks;
-		oldTicks = currentTicks;
-	}
-	while (nbTicks > elapsedTicks);
+	milandr_delay_microseconds(us);
 }
 
 #ifdef __cplusplus
