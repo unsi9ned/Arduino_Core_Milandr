@@ -11,10 +11,23 @@
 
 #include <K1986VE9xI.h>
 
-/*----------Stack Configuration-----------------------------------------------*/  
-#define STACK_SIZE       0x00000400      /*!< Stack size (in Words)           */
-__attribute__ ((section(".co_stack")))
-unsigned long pulStack[STACK_SIZE];      
+/*----------Stack Configuration-----------------------------------------------*/
+extern uint32_t _estack;
+
+/*----------Symbols defined in linker script----------------------------------*/
+extern uint32_t __preinit_array_start;
+extern uint32_t __preinit_array_end;
+extern uint32_t __init_array_start;
+extern uint32_t __init_array_end;
+extern uint32_t __fini_array_start;
+extern uint32_t __fini_array_end;
+
+extern uint32_t _sidata;    /*!< Start address for the initialization
+                                      values of the .data section.            */
+extern uint32_t _sdata;     /*!< Start address for the .data section     */
+extern uint32_t _edata;     /*!< End address for the .data section       */
+extern uint32_t _sbss;      /*!< Start address for the .bss section      */
+extern uint32_t _ebss;      /*!< End address for the .bss section        */
 
 /*----------Macro definition--------------------------------------------------*/  
 #define WEAK __attribute__ ((weak))           
@@ -57,23 +70,8 @@ void WEAK  EXT_INT2_IRQHandler(void);
 void WEAK  EXT_INT3_IRQHandler(void);
 void WEAK  EXT_INT4_IRQHandler(void);
 
-
-/*----------Symbols defined in linker script----------------------------------*/  
-extern unsigned long _sidata;    /*!< Start address for the initialization 
-                                      values of the .data section.            */
-extern unsigned long _sdata;     /*!< Start address for the .data section     */    
-extern unsigned long _edata;     /*!< End address for the .data section       */    
-extern unsigned long _sbss;      /*!< Start address for the .bss section      */
-extern unsigned long _ebss;      /*!< End address for the .bss section        */      
-extern void _eram;               /*!< End address for ram                     */
-
-extern uint32_t __ramfunc_start__;
-extern uint32_t __ramfunc_end__;
-extern uint32_t __ramfunc_loadaddr__;
-extern uint32_t __ramfunc_size__;
-
-
-/*----------Function prototypes-----------------------------------------------*/  
+/*----------Function prototypes-----------------------------------------------*/
+extern void __libc_init_array(void);
 extern void SystemInit(void);
 extern int main(void);           /*!< The entry point for the application.    */
 void Default_Reset_Handler(void);   /*!< Default reset handler                */
@@ -89,7 +87,7 @@ __attribute__ ((used, section(".isr_vector")))
 void (* const __Vectors[])(void) =
 {	
   /*----------Core Exceptions------------------------------------------------ */
-  (void *)&pulStack[STACK_SIZE-1],     /*!< The initial stack pointer         */
+  (void*)&_estack,
   Reset_Handler,             /*!< Reset Handler                               */
   NMI_Handler,               /*!< NMI Handler                                 */
   HardFault_Handler,         /*!< Hard Fault Handler                          */
@@ -148,14 +146,7 @@ void (* const __Vectors[])(void) =
   */
 void Default_Reset_Handler(void)
 {
-	unsigned long *pulSrc, *pulDest;
-
-	/* Copy the ramfunc segment initializers from flash to SRAM */
-	pulSrc = &__ramfunc_loadaddr__;
-	for (pulDest = &__ramfunc_start__; pulDest < &__ramfunc_end__;)
-	{
-		*(pulDest++) = *(pulSrc++);
-	}
+	uint32_t *pulSrc, *pulDest;
 
 	/* Copy the data segment initializers from flash to SRAM */
 	pulSrc = &_sidata;
@@ -169,6 +160,9 @@ void Default_Reset_Handler(void)
 	{
 		*(pulDest++) = 0;
 	}
+
+	/* Call static constructors */
+	__libc_init_array();
 
 	/* If the code is running from RAM, update VTOR */
 	if((unsigned long) __Vectors >= 0x20000000)

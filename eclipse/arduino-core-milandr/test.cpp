@@ -10,23 +10,25 @@ void setup(void)
 
 void loop(void)
 {
-#if 0
+#if 1
 	digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
-	delay(500);                       // wait for a second
+	Serial.print("LED is ON\n");
+	delay(1000);                       // wait for a second
 	digitalWrite(LED_BUILTIN, LOW); // turn the LED off by making the voltage LOW
-	delay(500);                       // wait for a second
+	Serial.print("LED is OFF\n");
+	delay(1000);                       // wait for a second
 #else
 	PinStatus status = digitalRead(USER_BUTTON);
 
 	if(status == LOW)
 	{
 		digitalWrite(LED_BUILTIN, HIGH);
-		Serial.print("Button is ON");
+		Serial.print("Button is ON\n");
 	}
 	else
 	{
 		digitalWrite(LED_BUILTIN, LOW);
-		Serial.print("Button is OFF");
+		Serial.print("Button is OFF\n");
 	}
 #endif
 }

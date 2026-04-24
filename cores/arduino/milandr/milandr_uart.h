@@ -25,6 +25,7 @@
 #define _MILANDR_UART_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include "periph_definition.h"
 
 //------------------------------------------------------------------------------
@@ -49,12 +50,23 @@ extern "C" {
 // Экспортируемые функции
 //------------------------------------------------------------------------------
 extern uint8_t milandr_uart_pin(tUartVariant uart, tPeriphLineVariant line);
-extern void milandr_uart_init(uint8_t  rxPin,
-                              uint8_t  txPin,
-                              uint32_t baudRate,
-                              uint8_t  wordLen,
-                              uint8_t  stopBits,
-                              tMilandrParity  parity);
+extern tUartVariant milandr_uart_init(uint8_t  rxPin,
+                                      uint8_t  txPin,
+                                      uint32_t baudRate,
+                                      uint8_t  wordLen,
+                                      uint8_t  stopBits,
+                                      tMilandrParity  parity);
+
+extern void milandr_uart_deinit(uint8_t  rxPin,
+                                uint8_t  txPin,
+                                tUartVariant uartN);
+
+extern int milandr_uart_available(tUartVariant uartN);
+extern int milandr_uart_peak(tUartVariant uartN);
+extern int milandr_uart_read(tUartVariant uartN);
+extern void milandr_uart_flush(tUartVariant uartN);
+extern size_t milandr_uart_write(tUartVariant uartN, const uint8_t c);
+extern size_t milandr_uart_send(tUartVariant uartN, const uint8_t* buf, const size_t size);
 
 
 #ifdef __cplusplus

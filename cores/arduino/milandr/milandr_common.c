@@ -22,9 +22,74 @@
  */
 
 #include <stdint.h>
+#include <stddef.h>
+#include "periph_definition.h"
 #include "MDR32FxQI_config.h"
 
 static volatile uint32_t mdr_ticks;
+
+//------------------------------------------------------------------------------
+// Функции предварительной инициализации
+//------------------------------------------------------------------------------
+void milandr_gpio_preinit() __attribute__((weak));
+void milandr_uart_preinit() __attribute__((weak));
+
+void milandr_hal_init(void)
+{
+	milandr_gpio_preinit();
+	milandr_uart_preinit();
+}
+
+//------------------------------------------------------------------------------
+// Поиск пина в наборе, удовлетворяющего заданым условиям:
+//------------------------------------------------------------------------------
+uint8_t milandr_find_pin(tPeriphVariant periph,
+                         tPeriphLineVariant line,
+                         uint8_t periphN,
+                         const tMilandrPin ** set,
+                         const tMilandrPin ** sorted,
+                         int8_t variantNum)
+{
+	if(!set || !sorted) return 0;
+
+	uint8_t n = 0;
+	uint32_t mask = PIN_PERIPH_MASK |
+					PIN_PERIPH_L_MASK |
+					PIN_PERIPH_N_MASK;
+
+	tMilandrPin target = {.raw = 0, .periph = periph, .periphLine = line, .periphN = periphN};
+
+	for(int8_t i = 0; i < variantNum; i++)
+	{
+		sorted[i] = set[i];
+	}
+
+	for(int8_t i = 0; i <= variantNum - 1; i++)
+	{
+		if(sorted[i] && (sorted[i]->raw & mask) == target.raw)
+		{
+			n++;
+			continue;
+		}
+		else
+		{
+			sorted[i] = NULL;
+		}
+
+		for(int8_t j = i + 1; j <= variantNum - 1; j++)
+		{
+			if(sorted[j] && (sorted[j]->raw & mask) == target.raw)
+			{
+				sorted[i] = sorted[j];
+				i++;
+				n++;
+			}
+			sorted[j] = NULL;
+		}
+	}
+
+	return n;
+}
 
 /*!
     \brief      configure systick

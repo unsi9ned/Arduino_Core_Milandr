@@ -58,13 +58,20 @@ const static tMilandrParity parityTable[] =
 
 namespace arduino {
 
+//
+// Конструктор
+//
 Uart::Uart(uint8_t rxPin, uint8_t txPin) :
 	_rxPin(rxPin),
-	_txPin(txPin)
+	_txPin(txPin),
+	_uartN(UART_UNKNOWN)
 {
 
 }
 
+//
+// Инициализация
+//
 void Uart::begin(const unsigned long baudrate)
 {
 	begin(baudrate, SERIAL_8N1);
@@ -76,41 +83,73 @@ void Uart::begin(const unsigned long baudrate, const uint16_t config)
 	uint8_t stop_bits = (config & SERIAL_STOP_BIT_1_5) ? 2 : 1;
 	tMilandrParity parity = parityTable[config & SERIAL_PARITY_MASK];
 
-	milandr_uart_init(0, 0, baudrate, word_size, stop_bits, parity);
+	_uartN = milandr_uart_init(_rxPin, _txPin, baudrate, word_size, stop_bits, parity);
 }
 
-void Uart::end(void) {}
-
-int Uart::available() {
-    return 0;
-}
-
-int Uart::peek() {
-    return 0;
-}
-
-int Uart::read() {
-    return 0;
-}
-
-void Uart::flush() {}
-
-size_t Uart::write(const uint8_t c) {
-    return 0;
-}
-
-size_t Uart::write(const uint8_t* buf, const size_t size) {
-    return 0;
-}
-
-Uart::operator bool() {
-    // If there is no initialisation delay this can just return true
-    return true;
-}
-
-bool Uart::is_valid() const
+//
+// Деинициализация
+//
+void Uart::end(void)
 {
-	return _txPin != 0xFF && _rxPin != 0xFF;
+	if(_uartN == UART_UNKNOWN) return;
+	milandr_uart_deinit(_rxPin, _txPin, _uartN);
+	_uartN = UART_UNKNOWN;
+}
+
+//
+// Количество доступных данных в приемном буфере
+//
+int Uart::available()
+{
+	return milandr_uart_available(_uartN);
+}
+
+//
+// Чтение текущего байта в FIFO без удаления
+//
+int Uart::peek()
+{
+	return milandr_uart_peak(_uartN);
+}
+
+//
+// Чтение текущего байта в FIFO с последующим удалением
+//
+int Uart::read()
+{
+	return milandr_uart_read(_uartN);
+}
+
+//
+// Передача всех данных из буфера с ожиданием завершения
+//
+void Uart::flush()
+{
+	milandr_uart_flush(_uartN);
+}
+
+//
+// Передача байта по UART
+//
+size_t Uart::write(const uint8_t c)
+{
+	return milandr_uart_write(_uartN, c);
+}
+
+//
+// Передача массива по UART
+//
+size_t Uart::write(const uint8_t* buf, const size_t size)
+{
+	return milandr_uart_send(_uartN, buf, size);
+}
+
+//
+// Проверка готовности модуля к работе
+//
+Uart::operator bool()
+{
+	return _uartN != UART_UNKNOWN;
 }
 
 }  // namespace arduino
@@ -121,6 +160,9 @@ arduino::UartWrapper Uart1 (milandr_uart_pin(UART_1, UART_RXD_LINE),
 
 arduino::UartWrapper Uart2 (milandr_uart_pin(UART_2, UART_RXD_LINE),
                             milandr_uart_pin(UART_2, UART_TXD_LINE));
+
+arduino::UartWrapper Uart3 (milandr_uart_pin(UART_3, UART_RXD_LINE),
+                            milandr_uart_pin(UART_3, UART_TXD_LINE));
 
 arduino::HardwareSerial& Serial = *Uart1;
 

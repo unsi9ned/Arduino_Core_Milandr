@@ -41,6 +41,22 @@ typedef enum
 tPinMode;
 
 //------------------------------------------------------------------------------
+// Битовые маски для работы полями структуры tMilandrPin
+//------------------------------------------------------------------------------
+#define PIN_NUMBER_MASK    0xFUL
+#define PIN_NUMBER_POS     0xFUL
+#define PIN_PORTNUM_MASK   0xF0UL
+#define PIN_PORTNUM_POS    0x4UL
+#define PIN_FUNC_MASK      0x700UL
+#define PIN_FUNC_POS       0x8UL
+#define PIN_PERIPH_MASK    0xF800UL
+#define PIN_PERIPH_POS     0xBUL
+#define PIN_PERIPH_N_MASK  0xF0000UL
+#define PIN_PERIPH_N_POS   0x10UL
+#define PIN_PERIPH_L_MASK  0xFF000000UL
+#define PIN_PERIPH_L_POS   0x18UL
+
+//------------------------------------------------------------------------------
 // Полное описание вывода с включением всей необходимой информации для его настройки
 //------------------------------------------------------------------------------
 typedef union
@@ -68,17 +84,21 @@ typedef union
 		// c добавленным битом 2, являющийся инвертированным ANALOG_EN
 		union
 		{
-			uint8_t pinFunc   :3;
+			struct
+			{
+				uint8_t pinFunc   :3;
+
+				// Номер, идентифицирующий тип периферии (tPeriphVariant)
+				uint8_t periph    :5;
+			};
 
 			struct
 			{
-				uint8_t func  :2;
-				uint8_t analog:1;
+				uint8_t mode      :2;
+				uint8_t analog    :1;
+				uint8_t           :5;
 			};
 		};
-
-		// Номер, идентифицирующий тип периферии (tPeriphVariant)
-		uint8_t periph    :5;
 
 		// Номер, идентифицирующий номер периферийного модуля SPI1, SPI2, SPI3 и т.д.
 		uint8_t periphN   :4;
@@ -95,28 +115,31 @@ tMilandrPin;
 //------------------------------------------------------------------------------
 typedef enum
 {
-	CAN_1 = 1,
+	CAN_1,
 	CAN_2
 }
 tAdcVariant;
 
 typedef enum
 {
-	UART_1 = 1,
+	UART_1,
 	UART_2,
+	UART_3,
+	UART_COUNT,
+	UART_UNKNOWN = 0xFF
 }
 tUartVariant;
 
 typedef enum
 {
-	SSP_1 = 1,
+	SSP_1,
 	SSP_2,
 }
 tSspVariant;
 
 typedef enum
 {
-	TIMER_1 = 1,
+	TIMER_1,
 	TIMER_2,
 	TIMER_3,
 }

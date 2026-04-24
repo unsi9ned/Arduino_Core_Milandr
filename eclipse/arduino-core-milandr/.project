@@ -181,6 +181,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/pin_names.h</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/syscalls.c</locationURI>
+		</link>
+		<link>
 			<name>system/CMSIS/MDR32FxQI/CoreSupport</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

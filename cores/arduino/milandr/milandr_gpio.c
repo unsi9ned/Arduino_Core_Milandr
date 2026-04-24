@@ -22,19 +22,13 @@
  */
 
 #include <stddef.h>
+#include "pin_names.h"
 #include "periph_definition.h"
 #include "variant.h"
 #include "milandr_hal.h"
 #include "MDR32FxQI_config.h"
 #include "MDR32FxQI_port.h"
 #include "MDR32FxQI_rst_clk.h"
-
-//------------------------------------------------------------------------------
-// Битовые маски для работы полями структуры tMilandrPin
-//------------------------------------------------------------------------------
-#define PIN_NUMBER_MASK   0xFUL
-#define PIN_PORTNUM_MASK  0xF0UL
-#define PIN_FUNC_MASK     0x700UL
 
 //------------------------------------------------------------------------------
 // Доступ к блоку регистров GPIO
@@ -47,12 +41,33 @@
 extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 
 //------------------------------------------------------------------------------
+// Таблица масок регистра PER_CLOCK
+//------------------------------------------------------------------------------
+static uint32_t perClockTable[MDR_PORT_NUM];
+
+//------------------------------------------------------------------------------
+// Предварительная инициализация
+//------------------------------------------------------------------------------
+void milandr_gpio_preinit()
+{
+	for(int i = 0; i < MDR_PORT_F; i++)
+	{
+		perClockTable[i] = RST_CLK_PCLK_PORTA << i;
+	}
+	perClockTable[MDR_PORT_F] = RST_CLK_PCLK_PORTF;
+}
+
+//------------------------------------------------------------------------------
 // Включить тактирование порта
 //------------------------------------------------------------------------------
-void milandr_gpio_clock_enable(uint8_t arduinoPin)
+void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state)
 {
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_PORTA << mdrPin.port;
+
+	if(state)
+		MDR_RST_CLK->PER_CLOCK |= perClockTable[mdrPin.port];
+	else
+		MDR_RST_CLK->PER_CLOCK &= ~perClockTable[mdrPin.port];
 }
 
 //------------------------------------------------------------------------------
@@ -181,9 +196,41 @@ uint8_t milandr_gpio_read(uint8_t arduinoPin)
 }
 
 //------------------------------------------------------------------------------
+// Настройка функии порта
+//------------------------------------------------------------------------------
+void milandr_gpio_sel_port_func(uint8_t arduinoPin)
+{
+	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
+	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile uint32_t reg = port->FUNC;
+	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
+	port->FUNC = reg;
+}
+
+void milandr_gpio_sel_alter_func(uint8_t arduinoPin)
+{
+	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
+	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile uint32_t reg = port->FUNC;
+	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
+	reg |= ((uint32_t)PORT_FUNC_ALTER << (mdrPin.pin * 2));
+	port->FUNC = reg;
+}
+
+void milandr_gpio_sel_override_func(uint8_t arduinoPin)
+{
+	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
+	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile uint32_t reg = port->FUNC;
+	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
+	reg |= ((uint32_t)PORT_FUNC_OVERRID << (mdrPin.pin * 2));
+	port->FUNC = reg;
+}
+
+//------------------------------------------------------------------------------
 // Возвращает количество объявленых пинов
 //------------------------------------------------------------------------------
 uint8_t milandr_gpio_count(void)
 {
-	return variant_max_gpio;
+	return DMAX;
 }

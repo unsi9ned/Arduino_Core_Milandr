@@ -8,23 +8,21 @@ EXTERN_C_END
 
 // This function can be overwritten by the variant-specific code
 void initVariant() __attribute__((weak));
-void initVariant() {}
 
 /**
  * Code to initialise the board goes here.
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
+EXTERN_C_BEGIN
 
 void init(void)
 {
+	milandr_hal_init();
 	milandr_systick_config();
 }
 
-#ifdef __cplusplus
-}
-#endif
+//void *__dso_handle = (void*)0;
+
+EXTERN_C_END
 
 int main(void)
 {

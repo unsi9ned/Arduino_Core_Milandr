@@ -27,8 +27,9 @@ public:
 class Uart : public HardwareSerial {
 
 private:
-	uint8_t _rxPin;
-	uint8_t _txPin;
+	uint8_t      _rxPin;
+	uint8_t      _txPin;
+	tUartVariant _uartN;
 public:
 	Uart(uint8_t rxPin = 0xFF, uint8_t txPin = 0xFF);
 	virtual ~Uart() = default;
@@ -112,9 +113,6 @@ public:
 	 * @endcode
 	 */
 	operator bool();
-
-private:
-	bool is_valid() const;
 };
 
 class UartWrapper
@@ -153,4 +151,7 @@ public:
 }  // namespace arduino
 
 // Declare user accessible Serial instance
+extern arduino::UartWrapper Uart1;
+extern arduino::UartWrapper Uart2;
+extern arduino::UartWrapper Uart3;
 extern arduino::HardwareSerial& Serial;

@@ -57,7 +57,7 @@
 //------------------------------------------------------------------------------
 // Глобальные переменные, которые должны быть заданы в variant.h
 //------------------------------------------------------------------------------
-uint8_t variant_max_gpio = DMAX;
+
 
 //------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
@@ -132,5 +132,28 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 	},
 
 	// ...
+
+	[D27] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PF_0, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PF_0, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PF_0, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_1, .periphLine = SSP_TXD_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PF_0, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_UART, .periphN = UART_2, .periphLine = UART_RXD_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PF_0, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
+
+	[D28] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PF_1, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PF_1, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PF_1, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_1, .periphLine = SSP_CLK_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PF_1, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_UART, .periphN = UART_2, .periphLine = UART_TXD_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PF_1, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
 };
+
+void initVariant()
+{
+
+}
 

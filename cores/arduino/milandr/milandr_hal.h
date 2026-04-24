@@ -38,16 +38,23 @@ extern "C" {
 //------------------------------------------------------------------------------
 // Глобальные переменные, которые должны быть заданы в variant.h
 //------------------------------------------------------------------------------
-extern uint8_t variant_max_gpio;
+
 
 //------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
+extern void milandr_hal_init(void);
 extern void milandr_systick_config(void);
 extern uint32_t milandr_current_millis(void);
 extern uint32_t milandr_current_micros(void);
 extern void milandr_delay_microseconds(uint32_t us);
 extern void milandr_delay(uint32_t ms);
+extern uint8_t milandr_find_pin(tPeriphVariant periph,
+                                tPeriphLineVariant line,
+                                uint8_t periphN,
+                                const tMilandrPin ** set,
+                                const tMilandrPin ** sorted,
+                                int8_t variantNum);
 
 #ifdef __cplusplus
 }
