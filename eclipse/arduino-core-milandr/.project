@@ -166,6 +166,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.c</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/milandr_uart.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.h</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/periph_definition.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/periph_definition.h</locationURI>

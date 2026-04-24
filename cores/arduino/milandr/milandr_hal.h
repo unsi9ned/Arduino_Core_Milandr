@@ -21,15 +21,24 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _MILANDR_GPIO_H
-#define _MILANDR_GPIO_H
+#ifndef _MILANDR_HAL_H_
+#define _MILANDR_HAL_H_
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#include "periph_definition.h"
+#include "milandr_gpio.h"
+#include "milandr_uart.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+//------------------------------------------------------------------------------
+// Глобальные переменные, которые должны быть заданы в variant.h
+//------------------------------------------------------------------------------
+extern uint8_t variant_max_gpio;
 
 //------------------------------------------------------------------------------
 // Экспортируемые функции
@@ -40,20 +49,8 @@ extern uint32_t milandr_current_micros(void);
 extern void milandr_delay_microseconds(uint32_t us);
 extern void milandr_delay(uint32_t ms);
 
-extern uint8_t milandr_max_dio(void);
-
-extern void milandr_gpio_clock_enable(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pu(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pd(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_pp(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_od(uint8_t arduinoPin);
-extern void milandr_gpio_write(uint8_t arduinoPin, uint8_t level);
-extern uint8_t milandr_gpio_read(uint8_t arduinoPin);
-
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif //_MILANDR_GPIO_H
+#endif //_MILANDR_HAL_H_

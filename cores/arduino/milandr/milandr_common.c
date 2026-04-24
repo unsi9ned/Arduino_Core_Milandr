@@ -22,7 +22,6 @@
  */
 
 #include <stdint.h>
-#include "variant.h"
 #include "MDR32FxQI_config.h"
 
 static volatile uint32_t mdr_ticks;
@@ -122,7 +121,4 @@ void milandr_delay(uint32_t ms)
 	}
 }
 
-uint8_t milandr_max_dio(void)
-{
-	return DMAX;
-}
+

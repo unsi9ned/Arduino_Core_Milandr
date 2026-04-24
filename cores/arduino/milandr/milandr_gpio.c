@@ -23,9 +23,28 @@
 
 #include <stddef.h>
 #include "periph_definition.h"
-#include "milandr_gpio.h"
+#include "variant.h"
+#include "milandr_hal.h"
+#include "MDR32FxQI_config.h"
 #include "MDR32FxQI_port.h"
 #include "MDR32FxQI_rst_clk.h"
+
+//------------------------------------------------------------------------------
+// Битовые маски для работы полями структуры tMilandrPin
+//------------------------------------------------------------------------------
+#define PIN_NUMBER_MASK   0xFUL
+#define PIN_PORTNUM_MASK  0xF0UL
+#define PIN_FUNC_MASK     0x700UL
+
+//------------------------------------------------------------------------------
+// Доступ к блоку регистров GPIO
+//------------------------------------------------------------------------------
+#define MDR_PORT(n)      (MDR_PORT_TypeDef    *)((uint32_t)MDR_PORTA + 0x8000UL * (n))
+
+//------------------------------------------------------------------------------
+// Полная таблица пинов с их функциональным назначением
+//------------------------------------------------------------------------------
+extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 
 //------------------------------------------------------------------------------
 // Включить тактирование порта
@@ -159,4 +178,12 @@ uint8_t milandr_gpio_read(uint8_t arduinoPin)
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
 	return (uint8_t)((port->RXTX >> mdrPin.pin) & 1UL);
+}
+
+//------------------------------------------------------------------------------
+// Возвращает количество объявленых пинов
+//------------------------------------------------------------------------------
+uint8_t milandr_gpio_count(void)
+{
+	return variant_max_gpio;
 }

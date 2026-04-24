@@ -21,10 +21,24 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _MILANDR_GPIO_H_
-#define _MILANDR_GPIO_H_
+#ifndef _MILANDR_UART_H_
+#define _MILANDR_UART_H_
 
 #include <stdint.h>
+#include "periph_definition.h"
+
+//------------------------------------------------------------------------------
+// Конфигурация битов четности для UART
+//------------------------------------------------------------------------------
+typedef enum
+{
+	MILANDR_PARITY_NONE = 0x00,
+	MILANDR_PARITY_EVEN = 0x06,
+	MILANDR_PARITY_ODD = 0x02,
+	MILANDR_PARITY_MARK = 0x82,
+	MILANDR_PARITY_SPACE = 0x86
+}
+tMilandrParity;
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,19 +48,17 @@ extern "C" {
 //------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
-extern void milandr_gpio_clock_enable(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pu(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pd(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_pp(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_od(uint8_t arduinoPin);
-extern void milandr_gpio_write(uint8_t arduinoPin, uint8_t level);
-extern uint8_t milandr_gpio_read(uint8_t arduinoPin);
-extern uint8_t milandr_gpio_count(void);
+extern uint8_t milandr_uart_pin(tUartVariant uart, tPeriphLineVariant line);
+extern void milandr_uart_init(uint8_t  rxPin,
+                              uint8_t  txPin,
+                              uint32_t baudRate,
+                              uint8_t  wordLen,
+                              uint8_t  stopBits,
+                              tMilandrParity  parity);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //_MILANDR_GPIO_H_
+#endif //_MILANDR_UART_H_

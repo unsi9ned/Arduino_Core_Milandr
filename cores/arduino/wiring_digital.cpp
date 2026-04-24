@@ -38,7 +38,7 @@
  */
 void pinMode(pin_size_t pinNumber, PinMode pinMode)
 {
-	if(pinNumber >= milandr_max_dio()) return;
+	if(pinNumber >= milandr_gpio_count()) return;
 
 	milandr_gpio_clock_enable(pinNumber);
 
@@ -84,7 +84,7 @@ void pinMode(pin_size_t pinNumber, PinMode pinMode)
  */
 void digitalWrite(pin_size_t pinNumber, PinStatus status)
 {
-	if(pinNumber >= milandr_max_dio()) return;
+	if(pinNumber >= milandr_gpio_count()) return;
 	milandr_gpio_write(pinNumber, status);
 }
 
@@ -96,6 +96,6 @@ void digitalWrite(pin_size_t pinNumber, PinStatus status)
  */
 PinStatus digitalRead(pin_size_t pinNumber)
 {
-	if(pinNumber >= milandr_max_dio()) return LOW;
+	if(pinNumber >= milandr_gpio_count()) return LOW;
 	return (PinStatus)milandr_gpio_read(pinNumber);
 }

@@ -62,7 +62,7 @@ typedef enum
     D10,    D11,  D12,  D13,  D14,  D15,  D16,  D17,  D18,  D19,
     D20,    D21,  D22,  D23,  D24,  D25,  D26,  D27,  D28,  D29,
     D30,    D31,  D32,  D33,  D34,  D35,
-    DMAX
+    DMAX,
 }
 tArduinoPinAlias;
 
@@ -123,6 +123,28 @@ tArduinoPinAlias;
 // User BUTTON
 //------------------------------------------------------------------------------
 #define USER_BUTTON                 PB6
+
+//------------------------------------------------------------------------------
+// UART modules
+//------------------------------------------------------------------------------
+
+/* UART1 */
+#ifndef SERIAL1_RX
+#define SERIAL1_RX                  PA6
+#endif
+
+#ifndef SERIAL1_TX
+#define SERIAL1_TX                  PA7
+#endif
+
+/* UART2 */
+#ifndef SERIAL2_RX
+#define SERIAL2_RX                  PF0
+#endif
+
+#ifndef SERIAL2_TX
+#define SERIAL2_TX                  PF1
+#endif
 
 
 #endif //_VARIANT_K1986BE92FI_MINI
