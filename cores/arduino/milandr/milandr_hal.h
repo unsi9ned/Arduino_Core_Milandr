@@ -44,6 +44,8 @@ extern "C" {
 // Экспортируемые функции
 //------------------------------------------------------------------------------
 extern void milandr_hal_init(void);
+extern void milandr_enter_critical(void);
+extern void milandr_exit_critical(void);
 extern void milandr_systick_config(void);
 extern uint32_t milandr_current_millis(void);
 extern uint32_t milandr_current_micros(void);

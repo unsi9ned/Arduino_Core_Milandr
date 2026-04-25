@@ -146,5 +146,20 @@ tArduinoPinAlias;
 #define SERIAL2_TX                  PF1
 #endif
 
+#ifndef SERIAL1_RX_BUFFER_SIZE
+#define SERIAL1_RX_BUFFER_SIZE      64
+#endif
+
+#ifndef SERIAL1_TX_BUFFER_SIZE
+#define SERIAL1_TX_BUFFER_SIZE      64
+#endif
+
+#ifndef SERIAL2_RX_BUFFER_SIZE
+#define SERIAL2_RX_BUFFER_SIZE      64
+#endif
+
+#ifndef SERIAL2_TX_BUFFER_SIZE
+#define SERIAL2_TX_BUFFER_SIZE      64
+#endif
 
 #endif //_VARIANT_K1986BE92FI_MINI

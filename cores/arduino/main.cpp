@@ -20,8 +20,6 @@ void init(void)
 	milandr_systick_config();
 }
 
-//void *__dso_handle = (void*)0;
-
 EXTERN_C_END
 
 int main(void)

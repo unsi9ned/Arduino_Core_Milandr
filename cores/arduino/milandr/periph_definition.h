@@ -132,6 +132,14 @@ tUartVariant;
 
 typedef enum
 {
+	UART_MODE_POLLING,
+	UART_MODE_RING,
+	UART_MODE_DMA
+}
+tUartDriverMode;
+
+typedef enum
+{
 	SSP_1,
 	SSP_2,
 }

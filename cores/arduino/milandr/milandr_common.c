@@ -29,10 +29,36 @@
 static volatile uint32_t mdr_ticks;
 
 //------------------------------------------------------------------------------
+// Функции синхронизации
+//------------------------------------------------------------------------------
+void milandr_enter_critical(void) __attribute__((weak));
+void milandr_exit_critical(void) __attribute__((weak));
+
+__attribute__((weak)) void milandr_enter_critical(void)
+{
+
+}
+
+__attribute__((weak)) void milandr_exit_critical(void)
+{
+
+}
+
+//------------------------------------------------------------------------------
 // Функции предварительной инициализации
 //------------------------------------------------------------------------------
-void milandr_gpio_preinit() __attribute__((weak));
-void milandr_uart_preinit() __attribute__((weak));
+void milandr_gpio_preinit(void) __attribute__((weak));
+void milandr_uart_preinit(void) __attribute__((weak));
+
+__attribute__((weak)) void milandr_gpio_preinit(void)
+{
+
+}
+
+__attribute__((weak)) void milandr_uart_preinit(void)
+{
+
+}
 
 void milandr_hal_init(void)
 {

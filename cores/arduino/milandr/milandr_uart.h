@@ -68,6 +68,11 @@ extern void milandr_uart_flush(tUartVariant uartN);
 extern size_t milandr_uart_write(tUartVariant uartN, const uint8_t c);
 extern size_t milandr_uart_send(tUartVariant uartN, const uint8_t* buf, const size_t size);
 
+extern bool milandr_uart_rxfifo_is_empty(tUartVariant n);
+extern int milandr_uart_read_blocking(tUartVariant n);
+extern void milandr_uart_write_blocking(tUartVariant n, const uint8_t c);
+extern size_t milandr_uart_send_blocking(tUartVariant n, const uint8_t* buf, const size_t size);
+
 
 #ifdef __cplusplus
 }

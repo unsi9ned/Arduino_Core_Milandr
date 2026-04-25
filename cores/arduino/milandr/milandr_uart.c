@@ -23,6 +23,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include "pin_names.h"
 #include "periph_definition.h"
 #include "variant.h"
@@ -92,6 +93,9 @@ static const uint8_t uartDefaultPins[UART_COUNT][UART_LINE_NUM] =
 	},
 };
 
+//------------------------------------------------------------------------------
+// Таблица длин символа
+//------------------------------------------------------------------------------
 enum UartWlen
 {
 	WLEN5 = 0,
@@ -110,9 +114,118 @@ static const uint8_t uartWlenTable[WLEN_SIZE] =
 };
 
 //------------------------------------------------------------------------------
+// Блок переменных кольцевого буфера
+//------------------------------------------------------------------------------
+#ifndef SERIAL1_RX_BUFFER_SIZE
+#define SERIAL1_RX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL2_RX_BUFFER_SIZE
+#define SERIAL2_RX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL3_RX_BUFFER_SIZE
+#define SERIAL3_RX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL1_TX_BUFFER_SIZE
+#define SERIAL1_TX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL2_TX_BUFFER_SIZE
+#define SERIAL2_TX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL3_TX_BUFFER_SIZE
+#define SERIAL3_TX_BUFFER_SIZE       64
+#endif
+
+typedef struct
+{
+	uint32_t buf_tail;           // Хвост приемного буффера
+	uint32_t buf_head;           // Голова приемного буффера
+	uint32_t buf_size;           // Общий объем буфера
+	uint8_t* buf;                // Память, выделяемая под приемный буфер
+
+}
+tUartRingBuf;
+
+//------------------------------------------------------------------------------
 // Статические переменные
 //------------------------------------------------------------------------------
 static UART_InitTypeDef UART_InitStructure;
+static tUartRingBuf rxRingBuffer[UART_COUNT];
+static tUartRingBuf txRingBuffer[UART_COUNT];
+
+#define rxb_tail(n)       rxRingBuffer[n].buf_tail
+#define rxb_head(n)       rxRingBuffer[n].buf_head
+#define rxb_size(n)       rxRingBuffer[n].buf_size
+#define rxb_buf(n)        rxRingBuffer[n].buf
+
+#define txb_tail(n)       txRingBuffer[n].buf_tail
+#define txb_head(n)       txRingBuffer[n].buf_head
+#define txb_size(n)       txRingBuffer[n].buf_size
+#define txb_buf(n)        txRingBuffer[n].buf
+#define txb_empty(n)      (txb_tail(n) == txb_head(n))
+#define txb_full(n)       (((txb_head(n) + 1) % txb_size(n)) == txb_tail(n))
+#define txb_available(n)  ((txb_size(n) + txb_head(n) - txb_tail(n)) % txb_size(n))
+#define txb_free_space(n) (txb_size(n) - 1 - txb_available(n))
+
+// Размеры приемных буферов
+static uint16_t rxBufSize[UART_COUNT] =
+{
+	[UART_1] = SERIAL1_RX_BUFFER_SIZE,
+	[UART_2] = SERIAL2_RX_BUFFER_SIZE,
+	[UART_3] = SERIAL3_RX_BUFFER_SIZE,
+};
+
+// Размеры приемных буферов
+static uint16_t txBufSize[UART_COUNT] =
+{
+	[UART_1] = SERIAL1_TX_BUFFER_SIZE,
+	[UART_2] = SERIAL2_TX_BUFFER_SIZE,
+	[UART_3] = SERIAL3_TX_BUFFER_SIZE,
+};
+
+// Таблица номеров прерываний
+static IRQn_Type irqTable[UART_COUNT] =
+{
+#if defined(MDR_UART1)
+	[UART_1] = UART1_IRQn,
+#endif
+
+#if defined(MDR_UART2)
+	[UART_2] = UART2_IRQn,
+#endif
+
+#if defined(MDR_UART3)
+	[UART_3] = UART3_IRQn,
+#endif
+};
+
+//------------------------------------------------------------------------------
+// Прототипы
+//------------------------------------------------------------------------------
+static void ring_buffer_send(volatile uint32_t * DR, tUartVariant n);
+
+//------------------------------------------------------------------------------
+// Предварительная инициализация драйвера
+//------------------------------------------------------------------------------
+void milandr_uart_preinit()
+{
+	for (int i = 0; i < UART_COUNT; i++)
+	{
+		rxRingBuffer[i].buf_tail = 0;
+		rxRingBuffer[i].buf_head = 0;
+		rxRingBuffer[i].buf_size = rxBufSize[i];
+		rxRingBuffer[i].buf = NULL;
+
+		txRingBuffer[i].buf_tail = 0;
+		txRingBuffer[i].buf_head = 0;
+		txRingBuffer[i].buf_size = txBufSize[i];
+		txRingBuffer[i].buf = NULL;
+	}
+}
 
 //------------------------------------------------------------------------------
 // Возвращает номера пинов RX/TX в соответствии с variant платы
@@ -125,6 +238,54 @@ uint8_t milandr_uart_pin(tUartVariant uart, tPeriphLineVariant line)
 		return 0xFF;
 	else
 		return uartDefaultPins[uart][index];
+}
+
+//------------------------------------------------------------------------------
+// Инициализация кольцевого буфера
+//------------------------------------------------------------------------------
+static bool rx_buffer_init(tUartVariant uartN)
+{
+	if(uartN >= UART_COUNT) return false;
+
+	rxRingBuffer[uartN].buf_tail = 0;
+	rxRingBuffer[uartN].buf_head = 0;
+	rxRingBuffer[uartN].buf = malloc(rxRingBuffer[uartN].buf_size);
+
+	return rxRingBuffer[uartN].buf != NULL;
+}
+
+static bool tx_buffer_init(tUartVariant uartN)
+{
+	if(uartN >= UART_COUNT) return false;
+
+	txRingBuffer[uartN].buf_tail = 0;
+	txRingBuffer[uartN].buf_head = 0;
+	txRingBuffer[uartN].buf = malloc(txRingBuffer[uartN].buf_size);
+
+	return txRingBuffer[uartN].buf != NULL;
+}
+
+//------------------------------------------------------------------------------
+// Деинициализация кольцевого буфера
+//------------------------------------------------------------------------------
+static void rx_buffer_deinit(tUartVariant uartN)
+{
+	if(uartN >= UART_COUNT) return;
+
+	free(rxRingBuffer[uartN].buf);
+	rxRingBuffer[uartN].buf_tail = 0;
+	rxRingBuffer[uartN].buf_head = 0;
+	rxRingBuffer[uartN].buf = NULL;
+}
+
+static void tx_buffer_deinit(tUartVariant uartN)
+{
+	if(uartN >= UART_COUNT) return;
+
+	free(txRingBuffer[uartN].buf);
+	txRingBuffer[uartN].buf_tail = 0;
+	txRingBuffer[uartN].buf_head = 0;
+	txRingBuffer[uartN].buf = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -182,6 +343,20 @@ tUartVariant milandr_uart_init(uint8_t  rxPin,
 	if(uartN == UART_UNKNOWN) return uartN;
 
 	//
+	// Инициализация кольцевого буфера
+	//
+	if(!rx_buffer_init(uartN))
+	{
+		return UART_UNKNOWN;
+	}
+
+	if(!tx_buffer_init(uartN))
+	{
+		rx_buffer_deinit(uartN);
+		return UART_UNKNOWN;
+	}
+
+	//
 	// Производим настройку GPIO
 	//
 	const tMilandrPin * rx = lines[UART_RX_LINE];
@@ -214,6 +389,9 @@ tUartVariant milandr_uart_init(uint8_t  rxPin,
 	/* Set the HCLK division factor = 1 for UART1,UART2*/
 	UART_BRGInit((MDR_UART_TypeDef*)UARTx, UART_HCLKdiv1);
 
+	/* Interrupts Enable */
+	NVIC_EnableIRQ(irqTable[uartN]);
+
 	/* Initialize UART_InitStructure */
 	UART_InitStructure.UART_BaudRate = baudRate;
 	UART_InitStructure.UART_WordLength = uartWlenTable[(wordLen - 5) & 0x3];
@@ -227,6 +405,10 @@ tUartVariant milandr_uart_init(uint8_t  rxPin,
 
 	/* Configure UART1 parameters */
 	UART_Init((MDR_UART_TypeDef*)UARTx, &UART_InitStructure);
+
+	/* Enable Receiver & Transmitter interrupt*/
+	//UART_ITConfig((MDR_UART_TypeDef*)UARTx, UART_IT_RX | UART_IT_TX, ENABLE);
+	UART_ITConfig((MDR_UART_TypeDef*)UARTx, UART_IT_RX | UART_IT_TX | UART_IT_OE, ENABLE);
 
 	/* Enables UART1 peripheral */
 	UART_Cmd((MDR_UART_TypeDef*)UARTx, ENABLE);
@@ -253,83 +435,182 @@ void milandr_uart_deinit(uint8_t  rxPin,
 	milandr_gpio_cfg_input(txPin);
 	milandr_gpio_clock_enable(rxPin, false);
 	milandr_gpio_clock_enable(txPin, false);
+
+	rx_buffer_deinit(uartN);
+	tx_buffer_deinit(uartN);
 }
 
 //------------------------------------------------------------------------------
 // Возвращает количество принятых данных
 //------------------------------------------------------------------------------
-int milandr_uart_available(tUartVariant uartN)
+int milandr_uart_available(tUartVariant n)
 {
-	if(uartN == UART_UNKNOWN) return 0;
+	if(n == UART_UNKNOWN) return 0;
 
-	volatile MDR_UART_TypeDef * UARTx = MDR_UART(uartN);
-	return (UARTx->FR & UART_FLAG_RXFF) ? 1 : 0;
+	return (rxb_size(n) + rxb_head(n) - rxb_tail(n)) % rxb_size(n);
+}
+
+//------------------------------------------------------------------------------
+// Проверка приемного FIFO на занятость
+// (Возможно, пригодится для синхронных операций)
+//------------------------------------------------------------------------------
+bool milandr_uart_rxfifo_is_empty(tUartVariant n)
+{
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+	return ((UARTx->FR & UART_FLAG_RXFF) == RESET);
 }
 
 //------------------------------------------------------------------------------
 // Чтение байта из буфера без удаления
 //------------------------------------------------------------------------------
-int milandr_uart_peak(tUartVariant uartN)
+int milandr_uart_peak(tUartVariant n)
 {
-	if(uartN == UART_UNKNOWN) return -1;
+	if(n == UART_UNKNOWN) return -1;
 
-	return -1;
+	uint8_t ch;
+	ch = rxb_buf(n)[rxb_tail(n)];
+	return (int)ch;
 }
 
 //------------------------------------------------------------------------------
 // Чтение байта из буфера с удалением
 //------------------------------------------------------------------------------
-int milandr_uart_read(tUartVariant uartN)
+int milandr_uart_read(tUartVariant n)
 {
-	if(uartN == UART_UNKNOWN) return -1;
+	if(n == UART_UNKNOWN) return -1;
 
-	volatile MDR_UART_TypeDef * UARTx = MDR_UART(uartN);
+	int ch = -1;
 
-	if((UARTx->FR & UART_FLAG_RXFF))
-		return UARTx->DR;
-	else
-		return -1;
+	if(rxb_tail(n) != rxb_head(n))
+	{
+		ch = rxb_buf(n)[rxb_tail(n)];
+		rxb_tail(n) = (rxb_tail(n) + 1) % rxb_size(n);
+	}
+
+	return (int)ch;
+}
+
+//------------------------------------------------------------------------------
+// Синхронное чтение байта из буфера FIFO
+//------------------------------------------------------------------------------
+int milandr_uart_read_blocking(tUartVariant n)
+{
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+	while((UARTx->FR & UART_FLAG_RXFF) == RESET);
+	return (int)UARTx->DR;
 }
 
 //------------------------------------------------------------------------------
 // Передача всех данных из буфера с ожиданием завершения
 //------------------------------------------------------------------------------
-void milandr_uart_flush(tUartVariant uartN)
+void milandr_uart_flush(tUartVariant n)
 {
-	if(uartN == UART_UNKNOWN) return;
+	if(n == UART_UNKNOWN) return;
 
-	volatile MDR_UART_TypeDef * UARTx = MDR_UART(uartN);
-	while (UARTx->FR & UART_FLAG_TXFF);
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+
+	// Ждём, пока кольцевой буфер передачи опустеет
+	while (!txb_empty(n))
+	{
+		// Пинаем передатчик, если он простаивает
+		if(UARTx->FR & UART_FR_TXFE)
+		{
+			ring_buffer_send(&UARTx->DR, n);
+		}
+	}
+
+	// Ждём, пока аппаратный TX FIFO опустеет
+	while (!(UARTx->FR & UART_FR_TXFE))
+	{
+
+	}
+
+	// Ждём, пока сдвиговый регистр закончит передачу
+	while (UARTx->FR & UART_FR_BUSY)
+	{
+
+	}
 }
 
 //------------------------------------------------------------------------------
 // Передача байта по uart
 //------------------------------------------------------------------------------
-size_t milandr_uart_write(tUartVariant uartN, const uint8_t c)
+size_t milandr_uart_write(tUartVariant n, const uint8_t c)
 {
-	// Все равно сообщаем, что отправили байт, чтобы программа не зависала
-	if(uartN == UART_UNKNOWN) return 1;
+	if(n == UART_UNKNOWN) return 0;
 
-	volatile MDR_UART_TypeDef * UARTx = MDR_UART(uartN);
-	while ((UARTx->FR & UART_FLAG_TXFE) == RESET);
-	UARTx->DR = c;
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+
+	//Если данные пока не попадали в буфер и передатчик готов к отправке
+	if(txb_empty(n) && (UARTx->FR & UART_FR_TXFE))
+	{
+		UARTx->DR = c;
+	}
+	// Буфер полностью заполнен. Сообщаем вызвавшему уровню, что не отправили
+	// ни одного байта
+	else if(txb_full(n))
+	{
+		return 0;
+	}
+	// Помещаем один символ в буфер
+	else
+	{
+		uint8_t next_head = (txb_head(n) + 1) % txb_size(n);
+		txb_buf(n)[txb_head(n)] = c;
+		txb_head(n) = next_head;
+
+		// Если конвеер отправки поломался, пинаем его вручную
+		if(UARTx->FR & UART_FR_TXFE) ring_buffer_send(&UARTx->DR, n);
+	}
 
 	return 1;
 }
 
 //------------------------------------------------------------------------------
+// Синхронная запись байта в FIFO
+//------------------------------------------------------------------------------
+void milandr_uart_write_blocking(tUartVariant n, const uint8_t c)
+{
+	if(n == UART_UNKNOWN) return;
+
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+	while ((UARTx->FR & UART_FLAG_TXFE) == RESET);
+	UARTx->DR = c;
+}
+
+//------------------------------------------------------------------------------
 // Передача массива по uart
 //------------------------------------------------------------------------------
-size_t milandr_uart_send(tUartVariant uartN, const uint8_t* buf, const size_t size)
+size_t milandr_uart_send(tUartVariant n, const uint8_t* buf, const size_t size)
 {
-	// Все равно сообщаем, что отправили байт, чтобы программа не зависала
-	if(uartN == UART_UNKNOWN || !buf || size <= 0) return 0;
+	if(n == UART_UNKNOWN || !buf || size <= 0) return 0;
 
-	uint8_t n = size;
+	uint8_t sz = size;
 	const uint8_t * ptr = buf;
-	volatile MDR_UART_TypeDef * UARTx = MDR_UART(uartN);
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
 
-	while(n--)
+	uint32_t free_space = txb_free_space(n);
+
+	for(uint32_t i = 0; i < free_space && i < size; i++)
+	{
+		milandr_uart_write(n, *ptr++);
+	}
+
+	return (size < free_space) ? size : free_space;
+}
+
+//------------------------------------------------------------------------------
+// Передача данных по UART в синхронном режиме
+//------------------------------------------------------------------------------
+size_t milandr_uart_send_blocking(tUartVariant n, const uint8_t* buf, const size_t size)
+{
+	if(n == UART_UNKNOWN || !buf || size <= 0) return 0;
+
+	uint8_t sz = size;
+	const uint8_t * ptr = buf;
+	volatile MDR_UART_TypeDef * UARTx = MDR_UART(n);
+
+	while(sz--)
 	{
 		while ((UARTx->FR & UART_FLAG_TXFE) == RESET);
 		UARTx->DR = *ptr++;
@@ -337,3 +618,126 @@ size_t milandr_uart_send(tUartVariant uartN, const uint8_t* buf, const size_t si
 
 	return size;
 }
+
+//------------------------------------------------------------------------------
+// Прием данных в кольцевой буфер
+//------------------------------------------------------------------------------
+static void ring_buffer_receive(tUartVariant n, uint8_t chr)
+{
+	uint32_t next_head = (rxb_head(n) + 1) % rxb_size(n);
+
+	if(next_head == rxb_tail(n))
+	{
+		// Буфер полон — сдвигаем tail (теряем старый байт)
+		// Здесь возможна гонка, но это безопасно:
+		// - Если основной код читал tail в этот момент, он прочитает либо
+		//   старое, либо новое значение — оба валидны
+		rxb_tail(n) = (rxb_tail(n) + 1) % rxb_size(n);
+	}
+
+	rxb_buf(n)[rxb_head(n)] = chr;
+	rxb_head(n) = next_head;
+}
+
+//------------------------------------------------------------------------------
+// Отправка данных из кольцевого буфера
+//------------------------------------------------------------------------------
+static void ring_buffer_send(volatile uint32_t * DR, tUartVariant n)
+{
+	if(!txb_empty(n))
+	{
+		uint8_t c = txb_buf(n)[txb_tail(n)];
+		txb_tail(n) = (txb_tail(n) + 1) % txb_size(n);
+		*DR = c;
+	}
+}
+
+//------------------------------------------------------------------------------
+// Обработчики прерываний UART1
+//------------------------------------------------------------------------------
+#ifdef MDR_UART1
+void UART1_IRQHandler(void)
+{
+	volatile uint32_t status = MDR_UART1->RIS;
+
+	if(MDR_UART1->MIS & UART_MIS_OEMIS)
+	{
+		//TODO RX Overflow
+		MDR_UART1->ICR = UART_MIS_OEMIS;
+	}
+
+	if(MDR_UART1->MIS & UART_MIS_RXMIS)
+	{
+		uint8_t chr = MDR_UART1->DR;
+		ring_buffer_receive(UART_1, chr);
+	}
+
+	//Прерывание по передаче
+	if(MDR_UART1->MIS & UART_MIS_TXMIS)
+	{
+		ring_buffer_send(&MDR_UART1->DR, UART_1);
+	}
+
+	MDR_UART1->ICR = status;
+}
+#endif
+
+//------------------------------------------------------------------------------
+// Обработчики прерываний UART2
+//------------------------------------------------------------------------------
+#ifdef MDR_UART2
+void UART2_IRQHandler(void)
+{
+	volatile uint32_t status = MDR_UART2->RIS;
+
+	if(MDR_UART2->MIS & UART_MIS_OEMIS)
+	{
+		//TODO RX Overflow
+		MDR_UART2->ICR = UART_MIS_OEMIS;
+	}
+
+	if(MDR_UART2->MIS & UART_MIS_RXMIS)
+	{
+		uint8_t chr = MDR_UART2->DR;
+		ring_buffer_receive(UART_2, chr);
+	}
+
+	//Прерывание по передаче
+	if(MDR_UART2->MIS & UART_MIS_TXMIS)
+	{
+		ring_buffer_send(&MDR_UART2->DR, UART_2);
+	}
+
+	MDR_UART2->ICR = status;
+}
+#endif
+
+//------------------------------------------------------------------------------
+// Обработчики прерываний UART3
+//------------------------------------------------------------------------------
+#ifdef MDR_UART3
+void UART3_IRQHandler(void)
+{
+	volatile uint32_t status = MDR_UART3->RIS;
+
+	if(MDR_UART3->MIS & UART_MIS_OEMIS)
+	{
+		//TODO RX Overflow
+		MDR_UART3->ICR = UART_MIS_OEMIS;
+	}
+
+	if(MDR_UART3->MIS & UART_MIS_RXMIS)
+	{
+		uint8_t chr = MDR_UART3->DR;
+		ring_buffer_receive(UART_3, chr);
+	}
+
+	//Прерывание по передаче
+	if(MDR_UART3->MIS & UART_MIS_TXMIS)
+	{
+		ring_buffer_send(&MDR_UART3->DR, UART_3);
+	}
+
+	MDR_UART3->ICR = status;
+}
+#endif
