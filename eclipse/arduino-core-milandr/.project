@@ -31,6 +31,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>libraries</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>system</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -42,6 +47,11 @@
 		</link>
 		<link>
 			<name>cores/arduino</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>libraries/SPI</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -121,6 +131,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_time.c</locationURI>
 		</link>
 		<link>
+			<name>libraries/SPI/Spi.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/Spi.cpp</locationURI>
+		</link>
+		<link>
+			<name>libraries/SPI/Spi.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/Spi.h</locationURI>
+		</link>
+		<link>
 			<name>system/CMSIS/MDR32FxQI</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -159,6 +179,16 @@
 			<name>cores/arduino/milandr/milandr_hal.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_hal.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_spi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_spi.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_spi.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_spi.h</locationURI>
 		</link>
 		<link>
 			<name>cores/arduino/milandr/milandr_uart.c</name>

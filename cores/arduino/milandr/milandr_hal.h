@@ -30,6 +30,7 @@
 #include "periph_definition.h"
 #include "milandr_gpio.h"
 #include "milandr_uart.h"
+#include "milandr_spi.h"
 
 #ifdef __cplusplus
 extern "C" {

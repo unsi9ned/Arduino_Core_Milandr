@@ -92,8 +92,44 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 	},
 
 	//...
+	[D6] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PD_2, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PD_2, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PD_2, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_2, .periphLine = SSP_RXD_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PD_2, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH2_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PD_2, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_ADC, .periphN = ADC_2, .periphLine = ADC_IN_LINE}},
+	},
 
-	[D14] =
+	[D7] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PD_3, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PD_3, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PD_3, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_2, .periphLine = SSP_FSS_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PD_3, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH2_N_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PD_3, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_ADC, .periphN = ADC_3, .periphLine = ADC_IN_LINE}},
+	},
+
+	[D8] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PD_5, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PD_5, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PD_5, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_2, .periphLine = SSP_CLK_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PD_5, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_ETR_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PD_5, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_ADC, .periphN = ADC_5, .periphLine = ADC_IN_LINE}},
+	},
+
+	[D9] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PD_6, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PD_6, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PD_6, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_2, .periphLine = SSP_TXD_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PD_6, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_BLK_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PD_6, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_ADC, .periphN = ADC_6, .periphLine = ADC_IN_LINE}},
+	},
+	//...
+
+	[D19] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PB_6, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PB_6, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
@@ -102,7 +138,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_ANALOG] = {{.pinName = PB_6, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 
-	[D15] =
+	[D20] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PB_7, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PB_7, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
@@ -113,7 +149,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 
 	//...
 
-	[D19] =
+	[D24] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PA_7, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PA_7, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
@@ -122,7 +158,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_ANALOG] = {{.pinName = PA_7, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 
-	[D20] =
+	[D25] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PA_6, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PA_6, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
@@ -133,7 +169,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 
 	// ...
 
-	[D27] =
+	[D32] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PF_0, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PF_0, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
@@ -142,13 +178,31 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_ANALOG] = {{.pinName = PF_0, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 
-	[D28] =
+	[D33] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PF_1, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PF_1, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_ALTER] = {{.pinName = PF_1, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_1, .periphLine = SSP_CLK_LINE}},
 		[PIN_MUX_OVERRID] = {{.pinName = PF_1, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_UART, .periphN = UART_2, .periphLine = UART_TXD_LINE}},
 		[PIN_MUX_ANALOG] = {{.pinName = PF_1, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
+
+	[D34] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PF_2, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PF_2, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PF_2, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_1, .periphLine = SSP_FSS_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PF_2, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_CAN, .periphN = CAN_2, .periphLine = CAN_RXD_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PF_2, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
+
+	[D35] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PF_3, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PF_3, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PF_3, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_SSP, .periphN = SSP_1, .periphLine = SSP_RXD_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PF_3, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_CAN, .periphN = CAN_2, .periphLine = CAN_TXD_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PF_3, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 };
 

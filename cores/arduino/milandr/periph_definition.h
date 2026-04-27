@@ -118,7 +118,7 @@ typedef enum
 	CAN_1,
 	CAN_2
 }
-tAdcVariant;
+tCanVariant;
 
 typedef enum
 {
@@ -142,6 +142,8 @@ typedef enum
 {
 	SSP_1,
 	SSP_2,
+	SSP_COUNT,
+	SSP_UNKNOWN = 0xFF
 }
 tSspVariant;
 
@@ -152,6 +154,20 @@ typedef enum
 	TIMER_3,
 }
 tTimerVariant;
+
+typedef enum
+{
+	ADC_1,
+	ADC_2,
+	ADC_3,
+	ADC_4,
+	ADC_5,
+	ADC_6,
+	ADC_7,
+	ADC_COUNT,
+	ADC_UNKNOWN
+}
+tAdcVariant;
 
 typedef enum
 {
@@ -194,6 +210,8 @@ typedef enum
 	SSP_FSS_LINE,
 	I2C_SCL_LINE,
 	I2C_SDA_LINE,
+	TMR_ETR_LINE,
+	TMR_BLK_LINE,
 	TMR_CH1_LINE,
 	TMR_CH2_LINE,
 	TMR_CH3_LINE,
@@ -202,8 +220,6 @@ typedef enum
 	TMR_CH2_N_LINE,
 	TMR_CH3_N_LINE,
 	TMR_CH4_N_LINE,
-	TMR_BLK_LINE,
-	TMR_ETR_LINE,
 	COMP_IN1_LINE,
 	COMP_IN2_LINE,
 	COMP_REF_P_LINE,

@@ -1,5 +1,28 @@
+/*
+ * Arduino Core for Milandr MCUs
+ * Copyright (c) 2026 Andrey Osipov
+ *
+ * This file is part of Arduino_Core_Milandr.
+ * Project home: https://github.com/unsi9ned/Arduino_Core_Milandr
+ * Author's website: https://hamlab.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 /**
- * SPI library.
+ * SPI Master library
  *
  * Only Controller mode is supported with this SPI class.
  *
@@ -20,130 +43,208 @@
 
 namespace arduino {
 
-class SpiClass : public HardwareSPI {
-  public:
-    /**
-     * Constructor for this SPI class.
-     *
-     * Don't initialise the SPI hardware or pins here, that should be done in
-     * begin(). The constructor can be used to prepare the instance before
-     * it is used, like storing the pins, peripheral selections, etc.
-     *
-     * The Chip select pins are not controlled by this class and the user is
-     * expected to manage those.
-     *
-     * The main "SPI" instance accessed by the users is declared in this
-     * header file and instantiated in Spi.cpp. So, the user is not expected
-     * to use the class constructor directly and its signature is not
-     * standarised. So you can adapt it to requirements of your Arduino core.
-     */
-    SpiClass();
+class FakeSpi : public HardwareSPI
+{
+public:
+	FakeSpi() = default;
+	virtual ~FakeSpi() = default;
 
-    /**
-     * Initialise the SPI peripheral and pins.
-     */
-    void begin();
+	uint8_t transfer(uint8_t data) {return 0;}
+	uint16_t transfer16(uint16_t data) { return 0; }
+	void transfer(void *buf, size_t count) {}
 
-    /**
-     * Disable the SPI peripheral and disconnect the pins, undoing all the
-     * effects of begin().
-     */
-    void end();
+	// Transaction Functions
+	void usingInterrupt(int interruptNumber) {}
+	void notUsingInterrupt(int interruptNumber) {}
+	void beginTransaction(SPISettings settings) {}
+	void endTransaction(void) {}
 
-    /**
-     * Register an Interrupt Number where SPI transaction are used, so that
-     * beginTransaction() can disable those interrupts and/or other resources
-     * to prevent clashes using the SPI bus.
-     */
-    void usingInterrupt(int interruptNumber);
+	// SPI Configuration methods
+	void attachInterrupt() {}
+	void detachInterrupt() {}
 
-    /**
-     * Remove from the register interrupts if they are no longer using SPI.
-     */
-    void notUsingInterrupt(int interruptNumber);
+	void begin() {}
+	void end() {}
 
-    /**
-     * Prepare the SPI peripheral and bus for a transaction with the provided
-     * settings.
-     *
-     * To be followed by calls to the transfer methods and finished by a call
-     * to endTransaction().
-     *
-     * If interrupts using SPI have been register with the usingInterrupt()
-     * this methods will have to deal with configuring those interrupts to
-     * avoid usage conflicts, as required by your Arduino Core.
-     *
-     * As this class does not control the Chip Select pin the user needs to
-     * assert the pin after calling this function.
-     *
-     * @param settings An SPISettings instance configuring the bus clock, bit
-     *                 order, and SPI mode.
-     */
-    void beginTransaction(SPISettings settings);
+	operator bool() {return false;}
+};
 
-    /**
-     * Ends usage of the SPI bus.
-     *
-     * Any resource or interrupt configuration done by beginTransaction()
-     * should be freed up here.
-     *
-     * As this class does not control the Chip Select pin the user needs to
-     * release the pin before calling this function.
-     */
-    void endTransaction(void);
+class SpiClass : public HardwareSPI
+{
+private:
+	uint8_t         _mosiPin;
+	uint8_t         _misoPin;
+	uint8_t         _clkPin;
+	uint8_t         _csPin;
+public:
+	/**
+	 * Constructor for this SPI class.
+	 *
+	 * Don't initialise the SPI hardware or pins here, that should be done in
+	 * begin(). The constructor can be used to prepare the instance before
+	 * it is used, like storing the pins, peripheral selections, etc.
+	 *
+	 * The Chip select pins are not controlled by this class and the user is
+	 * expected to manage those.
+	 *
+	 * The main "SPI" instance accessed by the users is declared in this
+	 * header file and instantiated in Spi.cpp. So, the user is not expected
+	 * to use the class constructor directly and its signature is not
+	 * standarised. So you can adapt it to requirements of your Arduino core.
+	 */
+	SpiClass();
+	SpiClass(uint8_t mosiPin, uint8_t misoPin, uint8_t clkPin, uint8_t csPin);
 
-    /**
-     * Send data to the SPI peripheral and read data back.
-     *
-     * @param data A single byte to send.
-     *
-     * @return A byte read back.
-     */
-    uint8_t transfer(uint8_t data);
+	/**
+	 * Initialise the SPI peripheral and pins.
+	 */
+	void begin();
 
-    /**
-     * Send data to the SPI peripheral and read data back.
-     *
-     * The byte order will depend on the default SPISettings or the
-     * configuration set with beginTransaction(SPISettings).
-     *
-     * @param data Two bytes to send.
-     *
-     * @return Two bytes read back.
-     */
-    uint16_t transfer16(uint16_t data);
+	/**
+	 * Disable the SPI peripheral and disconnect the pins, undoing all the
+	 * effects of begin().
+	 */
+	void end();
 
-    /**
-     * Send data to the SPI peripheral and read data back.
-     *
-     * The byte order will depend on the default SPISettings or the
-     * configuration set with beginTransaction(SPISettings).
-     *
-     * @param buf A byte array to send via SPI.
-     * @param count The size of the array in bytes.
-     */
-    void transfer(void *buf, size_t count);
+	/**
+	 * Register an Interrupt Number where SPI transaction are used, so that
+	 * beginTransaction() can disable those interrupts and/or other resources
+	 * to prevent clashes using the SPI bus.
+	 */
+	void usingInterrupt(int interruptNumber);
 
-    /**
-     * These methods are undocumented and should not be used any more by users,
-     * but need to be declared and defined as HardwareSPI has configure them
-     * as pure virtual.
-     */
-    void attachInterrupt();
-    void detachInterrupt();
+	/**
+	 * Remove from the register interrupts if they are no longer using SPI.
+	 */
+	void notUsingInterrupt(int interruptNumber);
 
-    /**
-     * These methods are deprecated and should not be used in new Arduino
-     * Skectches, instead an instance of SPISettings should be used with the
-     * beginTransaction() method.
-     * However, they have been included here commented out, in case you might
-     * choose to implement them for compatibility reasons.
-     */
-    // void setClockDivider(uint8_t divider);
-    // void setBitOrder(BitOrder order);
-    // void setDataMode(SPIMode mode);
+	/**
+	 * Prepare the SPI peripheral and bus for a transaction with the provided
+	 * settings.
+	 *
+	 * To be followed by calls to the transfer methods and finished by a call
+	 * to endTransaction().
+	 *
+	 * If interrupts using SPI have been register with the usingInterrupt()
+	 * this methods will have to deal with configuring those interrupts to
+	 * avoid usage conflicts, as required by your Arduino Core.
+	 *
+	 * As this class does not control the Chip Select pin the user needs to
+	 * assert the pin after calling this function.
+	 *
+	 * @param settings An SPISettings instance configuring the bus clock, bit
+	 *                 order, and SPI mode.
+	 */
+	void beginTransaction(SPISettings settings);
+
+	/**
+	 * Ends usage of the SPI bus.
+	 *
+	 * Any resource or interrupt configuration done by beginTransaction()
+	 * should be freed up here.
+	 *
+	 * As this class does not control the Chip Select pin the user needs to
+	 * release the pin before calling this function.
+	 */
+	void endTransaction(void);
+
+	/**
+	 * Send data to the SPI peripheral and read data back.
+	 *
+	 * @param data A single byte to send.
+	 *
+	 * @return A byte read back.
+	 */
+	uint8_t transfer(uint8_t data);
+
+	/**
+	 * Send data to the SPI peripheral and read data back.
+	 *
+	 * The byte order will depend on the default SPISettings or the
+	 * configuration set with beginTransaction(SPISettings).
+	 *
+	 * @param data Two bytes to send.
+	 *
+	 * @return Two bytes read back.
+	 */
+	uint16_t transfer16(uint16_t data);
+
+	/**
+	 * Send data to the SPI peripheral and read data back.
+	 *
+	 * The byte order will depend on the default SPISettings or the
+	 * configuration set with beginTransaction(SPISettings).
+	 *
+	 * @param buf A byte array to send via SPI.
+	 * @param count The size of the array in bytes.
+	 */
+	void transfer(void *buf, size_t count);
+
+	/**
+	 * These methods are undocumented and should not be used any more by users,
+	 * but need to be declared and defined as HardwareSPI has configure them
+	 * as pure virtual.
+	 */
+	void attachInterrupt();
+	void detachInterrupt();
+
+	/**
+	 * These methods are deprecated and should not be used in new Arduino
+	 * Skectches, instead an instance of SPISettings should be used with the
+	 * beginTransaction() method.
+	 * However, they have been included here commented out, in case you might
+	 * choose to implement them for compatibility reasons.
+	 */
+	// void setClockDivider(uint8_t divider);
+	// void setBitOrder(BitOrder order);
+	// void setDataMode(SPIMode mode);
+};
+
+class SpiWrapper
+{
+private:
+	uint8_t         _mosiPin;
+	uint8_t         _misoPin;
+	uint8_t         _clkPin;
+	uint8_t         _csPin;
+	SpiClass        _realSpi;    // Настоящий SPI
+	FakeSpi         _fakeSpi;    // Заглушка
+	HardwareSPI*    _spiPtr;     // Указатель на активный объект
+public:
+	SpiWrapper(uint8_t mosiPin = 0xFF,
+	           uint8_t misoPin = 0xFF,
+	           uint8_t clkPin = 0xFF,
+	           uint8_t csPin = 0xFF)
+	: _mosiPin(mosiPin),
+	  _misoPin(misoPin),
+	  _clkPin(clkPin),
+	  _csPin(csPin),
+	  _spiPtr(nullptr)
+	{
+		if(mosiPin != 0xFF &&
+		   misoPin != 0xFF &&
+		   clkPin != 0xFF &&
+		   csPin != 0xFF)
+		{
+			// Настоящий SPI
+			_realSpi = SpiClass(mosiPin, misoPin, clkPin, csPin);
+			_spiPtr = &_realSpi;
+		}
+		else
+		{
+			// Заглушка
+			_fakeSpi = FakeSpi();
+			_spiPtr = &_fakeSpi;
+		}
+	}
+
+	// Доступ к внутреннему объекту через оператор ->
+	HardwareSPI* operator->() { return _spiPtr; }
+	HardwareSPI& operator*()  { return *_spiPtr; }
 };
 
 }  // namespace arduino
 
-extern arduino::SpiClass SPI;
+extern arduino::SpiWrapper SPI1;
+extern arduino::SpiWrapper SPI2;
+extern arduino::HardwareSPI& SPI;
