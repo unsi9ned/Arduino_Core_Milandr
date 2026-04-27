@@ -32,6 +32,8 @@
 #include "MDR32FxQI_port.h"
 #include "MDR32FxQI_uart.h"
 
+#define UART_BUF_STATIC_ALLOC 1
+
 //------------------------------------------------------------------------------
 // Доступ к блоку регистров UART
 //------------------------------------------------------------------------------
@@ -120,24 +122,34 @@ static const uint8_t uartWlenTable[WLEN_SIZE] =
 #define SERIAL1_RX_BUFFER_SIZE       64
 #endif
 
-#ifndef SERIAL2_RX_BUFFER_SIZE
-#define SERIAL2_RX_BUFFER_SIZE       64
-#endif
-
-#ifndef SERIAL3_RX_BUFFER_SIZE
-#define SERIAL3_RX_BUFFER_SIZE       64
-#endif
-
 #ifndef SERIAL1_TX_BUFFER_SIZE
 #define SERIAL1_TX_BUFFER_SIZE       64
+#endif
+
+#ifndef SERIAL2_RX_BUFFER_SIZE
+#define SERIAL2_RX_BUFFER_SIZE       64
 #endif
 
 #ifndef SERIAL2_TX_BUFFER_SIZE
 #define SERIAL2_TX_BUFFER_SIZE       64
 #endif
 
+#if UART_BUF_STATIC_ALLOC
+#ifndef SERIAL3_RX_BUFFER_SIZE
+#define SERIAL3_RX_BUFFER_SIZE       8
+#endif
+
+#ifndef SERIAL3_TX_BUFFER_SIZE
+#define SERIAL3_TX_BUFFER_SIZE       8
+#endif
+#else
+#ifndef SERIAL3_RX_BUFFER_SIZE
+#define SERIAL3_RX_BUFFER_SIZE       64
+#endif
+
 #ifndef SERIAL3_TX_BUFFER_SIZE
 #define SERIAL3_TX_BUFFER_SIZE       64
+#endif
 #endif
 
 typedef struct
@@ -156,6 +168,38 @@ tUartRingBuf;
 static UART_InitTypeDef UART_InitStructure;
 static tUartRingBuf rxRingBuffer[UART_COUNT];
 static tUartRingBuf txRingBuffer[UART_COUNT];
+
+#if UART_BUF_STATIC_ALLOC
+
+static uint8_t rx_memory_1[SERIAL1_RX_BUFFER_SIZE];
+static uint8_t tx_memory_1[SERIAL1_TX_BUFFER_SIZE];
+
+static uint8_t rx_memory_2[SERIAL2_RX_BUFFER_SIZE];
+static uint8_t tx_memory_2[SERIAL2_TX_BUFFER_SIZE];
+
+static uint8_t rx_memory_3[SERIAL3_RX_BUFFER_SIZE];
+static uint8_t tx_memory_3[SERIAL3_TX_BUFFER_SIZE];
+
+static uint8_t * uartAllocTable[UART_COUNT][UART_LINE_NUM] =
+{
+	[UART_1] =
+	{
+		[UART_RX_LINE] = rx_memory_1,
+		[UART_TX_LINE] = tx_memory_1,
+	},
+	[UART_2] =
+	{
+		[UART_RX_LINE] = rx_memory_2,
+		[UART_TX_LINE] = tx_memory_2,
+	},
+	[UART_3] =
+	{
+		[UART_RX_LINE] = rx_memory_3,
+		[UART_TX_LINE] = tx_memory_3,
+	},
+};
+
+#endif
 
 #define rxb_tail(n)       rxRingBuffer[n].buf_tail
 #define rxb_head(n)       rxRingBuffer[n].buf_head
@@ -249,7 +293,12 @@ static bool rx_buffer_init(tUartVariant uartN)
 
 	rxRingBuffer[uartN].buf_tail = 0;
 	rxRingBuffer[uartN].buf_head = 0;
+
+#if UART_BUF_STATIC_ALLOC
+	rxRingBuffer[uartN].buf = uartAllocTable[uartN][UART_RX_LINE];
+#else
 	rxRingBuffer[uartN].buf = malloc(rxRingBuffer[uartN].buf_size);
+#endif
 
 	return rxRingBuffer[uartN].buf != NULL;
 }
@@ -260,7 +309,12 @@ static bool tx_buffer_init(tUartVariant uartN)
 
 	txRingBuffer[uartN].buf_tail = 0;
 	txRingBuffer[uartN].buf_head = 0;
+
+#if UART_BUF_STATIC_ALLOC
+	txRingBuffer[uartN].buf = uartAllocTable[uartN][UART_TX_LINE];
+#else
 	txRingBuffer[uartN].buf = malloc(txRingBuffer[uartN].buf_size);
+#endif
 
 	return txRingBuffer[uartN].buf != NULL;
 }
@@ -272,7 +326,9 @@ static void rx_buffer_deinit(tUartVariant uartN)
 {
 	if(uartN >= UART_COUNT) return;
 
+#if !UART_BUF_STATIC_ALLOC
 	free(rxRingBuffer[uartN].buf);
+#endif
 	rxRingBuffer[uartN].buf_tail = 0;
 	rxRingBuffer[uartN].buf_head = 0;
 	rxRingBuffer[uartN].buf = NULL;
@@ -282,7 +338,9 @@ static void tx_buffer_deinit(tUartVariant uartN)
 {
 	if(uartN >= UART_COUNT) return;
 
+#if !UART_BUF_STATIC_ALLOC
 	free(txRingBuffer[uartN].buf);
+#endif
 	txRingBuffer[uartN].buf_tail = 0;
 	txRingBuffer[uartN].buf_head = 0;
 	txRingBuffer[uartN].buf = NULL;
