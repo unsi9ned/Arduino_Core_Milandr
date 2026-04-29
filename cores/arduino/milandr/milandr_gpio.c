@@ -31,11 +31,6 @@
 #include "MDR32FxQI_rst_clk.h"
 
 //------------------------------------------------------------------------------
-// Доступ к блоку регистров GPIO
-//------------------------------------------------------------------------------
-#define MDR_PORT(n)      (MDR_PORT_TypeDef    *)((uint32_t)MDR_PORTA + 0x8000UL * (n))
-
-//------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
 //------------------------------------------------------------------------------
 extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
@@ -44,6 +39,19 @@ extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 // Таблица масок регистра PER_CLOCK
 //------------------------------------------------------------------------------
 static uint32_t perClockTable[MDR_PORT_NUM];
+
+//------------------------------------------------------------------------------
+// Доступ к блоку регистров GPIO
+//------------------------------------------------------------------------------
+static volatile MDR_PORT_TypeDef * MDR_PORT[MDR_PORT_NUM] =
+{
+	[MDR_PORT_A] = MDR_PORTA,
+	[MDR_PORT_B] = MDR_PORTB,
+	[MDR_PORT_C] = MDR_PORTC,
+	[MDR_PORT_D] = MDR_PORTD,
+	[MDR_PORT_E] = MDR_PORTE,
+	[MDR_PORT_F] = MDR_PORTF,
+};
 
 //------------------------------------------------------------------------------
 // Предварительная инициализация
@@ -80,7 +88,7 @@ static void milandr_gpio_cfg_common(uint8_t arduinoPin, volatile MDR_PORT_TypeDe
 	if(!mdrPin || arduinoPin > DMAX) return;
 
 	*mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef *port = MDR_PORT(mdrPin->port & 0xFul);
+	volatile MDR_PORT_TypeDef *port = MDR_PORT[mdrPin->port & 0xFul];
 	*portN = port;
 
 	// MODE = 0x0 (Digital Port)
@@ -190,7 +198,7 @@ void milandr_gpio_write(uint8_t arduinoPin, uint8_t level)
 	if(arduinoPin > DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
 	uint16_t portMask = (1 << mdrPin.pin);
 
 	if(level & 1)
@@ -207,7 +215,7 @@ uint8_t milandr_gpio_read(uint8_t arduinoPin)
 	if(arduinoPin > DMAX) return 0;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
 	return (uint8_t)((port->RXTX >> mdrPin.pin) & 1UL);
 }
 
@@ -219,7 +227,7 @@ void milandr_gpio_sel_port_func(uint8_t arduinoPin)
 	if(arduinoPin > DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
 	volatile uint32_t reg = port->FUNC;
 	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
 	port->FUNC = reg;
@@ -230,7 +238,7 @@ void milandr_gpio_sel_alter_func(uint8_t arduinoPin)
 	if(arduinoPin > DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
 	volatile uint32_t reg = port->FUNC;
 	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
 	reg |= ((uint32_t)PORT_FUNC_ALTER << (mdrPin.pin * 2));
@@ -242,7 +250,7 @@ void milandr_gpio_sel_override_func(uint8_t arduinoPin)
 	if(arduinoPin > DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
-	volatile MDR_PORT_TypeDef * port = MDR_PORT(mdrPin.port);
+	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
 	volatile uint32_t reg = port->FUNC;
 	reg &= ~(PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2));
 	reg |= ((uint32_t)PORT_FUNC_OVERRID << (mdrPin.pin * 2));

@@ -70,44 +70,6 @@ public:
 	operator bool() {return false;}
 };
 
-#if 0
-class SPISettingsEx : public SPISettings
-{
-private:
-	static constexpr tMilandrSspMode _mdr_modes[SPI_MODE3 + 1] =
-	{
-		[SPI_MODE0] = MILANDR_SSP_MODE0,
-		[SPI_MODE1] = MILANDR_SSP_MODE1,
-		[SPI_MODE2] = MILANDR_SSP_MODE2,
-		[SPI_MODE3] = MILANDR_SSP_MODE3,
-	};
-	tMilandrSspMode  _sspDataMode;
-
-public:
-	SPISettingsEx() : SPISettings(), _sspDataMode(_mdr_modes[SPI_MODE0]){}
-
-	SPISettingsEx(uint32_t clock, BitOrder bitOrder, SPIMode dataMode, SPIBusMode busMode = SPI_CONTROLLER)
-		: SPISettings(clock, bitOrder, dataMode, busMode),
-		  _sspDataMode(_mdr_modes[dataMode])
-	{
-
-	}
-
-	tMilandrSspMode getDataMode() const
-	{
-		return _sspDataMode;
-	}
-
-	SPISettingsEx& operator=(const SPISettings& s)
-	{
-		SPISettings * baseThis = static_cast<SPISettings*>(this);
-		*baseThis = s;
-		_sspDataMode = _mdr_modes[s.getDataMode()];
-		return *this;
-	}
-};
-#endif
-
 class SpiClass : public HardwareSPI
 {
 	static const tMilandrSspMode _mdr_modes[];

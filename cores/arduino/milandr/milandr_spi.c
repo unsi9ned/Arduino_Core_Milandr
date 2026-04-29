@@ -138,9 +138,11 @@ static void spi_set_speed(MDR_SSP_TypeDef * SPIx, uint32_t speedMax)
 	cpsr = 2;
 	cr0 &= ~SSP_CR0_SCR_Msk;
 
-	for(int32_t CPSDVR = 254; CPSDVR > 0; CPSDVR -= 2)
+	bool stop = false;
+
+	for(int32_t CPSDVR = 254; CPSDVR > 0 && !stop; CPSDVR -= 2)
 	{
-		for(int32_t SCR = 255; SCR >= 0; SCR--)
+		for(int32_t SCR = 255; SCR >= 0 && !stop; SCR--)
 		{
 			uint32_t clkout = RST_CLK_Clocks.CPU_CLK_Frequency / (CPSDVR * (1 + SCR));
 
@@ -149,6 +151,7 @@ static void spi_set_speed(MDR_SSP_TypeDef * SPIx, uint32_t speedMax)
 				cpsr = CPSDVR & 0xFF;
 				cr0 &= ~SSP_CR0_SCR_Msk;
 				cr0 |= ((uint32_t)(SCR & 0xFF) << SSP_CR0_SCR_Pos);
+				stop = true;
 			}
 		}
 	}
@@ -244,6 +247,7 @@ tSspVariant milandr_spi_master_init(uint8_t  mosiPin,
 	milandr_gpio_cfg_output_pp(mosiPin);
 	milandr_gpio_cfg_output_pp(clkPin);
 	milandr_gpio_cfg_output_pp(csPin);
+	milandr_gpio_write(csPin, 1);
 
 	if(mosi->mode == PORT_FUNC_ALTER)
 		milandr_gpio_sel_alter_func(mosiPin);
@@ -267,6 +271,7 @@ tSspVariant milandr_spi_master_init(uint8_t  mosiPin,
 	MDR_RST_CLK->PER_CLOCK |= perClockTable[sspN];
 
 	SSP_DeInit((MDR_SSP_TypeDef*)SPIx);
+	SSP_BRGInit((MDR_SSP_TypeDef*)SPIx, SSP_HCLKdiv1);
 
 	/* Set Max Speed */
 	spi_set_speed((MDR_SSP_TypeDef*)SPIx, speedMax);
@@ -373,6 +378,13 @@ uint16_t milandr_spi_master_write(tSspVariant sspN,
 
 	/* Send SPI1 data */
 	SPIx->DR = data;
+
+	/* Wait for SPI1 Rx buffer not empty */
+	timeout = 0;
+	while (!(SPIx->SR & SSP_SR_RNE) && timeout++ < 1000) {}
+
+	if(timeout >= 1000) return 0xFFFF;
+
 	/* Receive Data */
 	return ((uint16_t)(SPIx->DR));
 }
@@ -404,8 +416,20 @@ void milandr_spi_master_block_write(tSspVariant sspN,
 		{
 			/* Send SPI1 data */
 			SPIx->DR = *data;
-			/* Receive Data */
-			*data++ = ((uint8_t)SPIx->DR);
+
+			/* Wait for SPI1 Rx buffer not empty */
+			timeout = 0;
+			while (!(SPIx->SR & SSP_SR_RNE) && timeout++ < 1000) {}
+
+			if(timeout >= 1000)
+			{
+				*data++ = 0xFF;
+			}
+			else
+			{
+				/* Receive Data */
+				*data++ = ((uint8_t)SPIx->DR);
+			}
 		}
 	}
 }

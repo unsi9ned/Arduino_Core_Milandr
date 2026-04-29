@@ -1,67 +1,55 @@
 #include <Arduino.h>
-#include <SPI.h>
 
-using namespace arduino;
-#define UART_N UART_1
-extern int milandr_uart_available(tUartVariant uartN);
-extern int milandr_uart_read(tUartVariant uartN);
-extern size_t milandr_uart_write(tUartVariant uartN, const uint8_t c);
-extern size_t milandr_uart_send(tUartVariant n, const uint8_t* buf, const size_t size);
+typedef struct
+{
+	void (*setup)();
+	void (*loop)();
+}
+tTest;
 
+typedef enum
+{
+	TEST_BLINK,
+	HELLOWORLD,
+	BUTTON,
+	UART_ECHO,
+	SPI_EEPROM
+}
+tTestId;
+
+extern void example_blink_init();
+extern void example_blink_process();
+extern void example_helloworld_init();
+extern void example_helloworld_process();
+extern void example_button_init();
+extern void example_button_process();
+extern void example_uartecho_init();
+extern void example_uartecho_process();
+extern void example_spi_eeprom_init();
+extern void example_spi_eeprom_process();
+
+
+tTest testVariant[] =
+{
+	[TEST_BLINK] = {.setup = example_blink_init, .loop = example_blink_process},
+	[HELLOWORLD] = {.setup = example_helloworld_init, .loop = example_helloworld_process},
+	[BUTTON] = {.setup = example_button_init, .loop = example_button_process},
+	[UART_ECHO] = {.setup = example_uartecho_init, .loop = example_uartecho_process},
+	[SPI_EEPROM] = {.setup = example_spi_eeprom_init, .loop = example_spi_eeprom_process},
+};
+
+static tTestId currentTest = SPI_EEPROM;
+
+//------------------------------------------------------------------------------
+// Инициализация
+//------------------------------------------------------------------------------
 void setup(void)
 {
-	pinMode(LED_BUILTIN, OUTPUT);
-	pinMode(USER_BUTTON, INPUT);
-
-	Serial.begin(115200ul);
-	Serial.setTimeout(100);
-
-	SPI.begin();
+	testVariant[currentTest].setup();
 }
 
 void loop(void)
 {
-#if 0
-	digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
-	Serial.print("LED is ON\n");
-	delay(1000);                       // wait for a second
-	digitalWrite(LED_BUILTIN, LOW); // turn the LED off by making the voltage LOW
-	Serial.print("LED is OFF\n");
-	delay(1000);                       // wait for a second
-#elif 0
-	while (Serial.available())
-	{
-		char c = Serial.read();
-		Serial.print(c);
-	}
-#elif 1
-	if (Serial.available())
-	{
-		String str = Serial.readString();
-		Serial.println(str);
-	}
-#elif 1
-	if(milandr_uart_available(UART_N))
-	{
-		int c = milandr_uart_read(UART_N);
-		milandr_uart_write(UART_N, c);
-	}
-#elif 1
-	char * str = "abcdefghijklmnopqrstuvwxyz\n";
-	milandr_uart_send(UART_N, (const uint8_t*)str, 27);
-	delay(1000);
-#else
-	PinStatus status = digitalRead(USER_BUTTON);
-
-	if(status == LOW)
-	{
-		digitalWrite(LED_BUILTIN, HIGH);
-		Serial.print("Button is ON\n");
-	}
-	else
-	{
-		digitalWrite(LED_BUILTIN, LOW);
-		Serial.print("Button is OFF\n");
-	}
-#endif
+	testVariant[currentTest].loop();
 }
+
