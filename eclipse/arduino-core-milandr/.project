@@ -131,14 +131,14 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_time.c</locationURI>
 		</link>
 		<link>
-			<name>libraries/SPI/Spi.cpp</name>
+			<name>libraries/SPI/SPI.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/Spi.cpp</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/SPI.cpp</locationURI>
 		</link>
 		<link>
-			<name>libraries/SPI/Spi.h</name>
+			<name>libraries/SPI/SPI.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/Spi.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/SPI.h</locationURI>
 		</link>
 		<link>
 			<name>system/CMSIS/MDR32FxQI</name>

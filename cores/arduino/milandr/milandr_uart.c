@@ -491,8 +491,6 @@ void milandr_uart_deinit(uint8_t  rxPin,
 	milandr_gpio_sel_port_func(txPin);
 	milandr_gpio_cfg_input(rxPin);
 	milandr_gpio_cfg_input(txPin);
-	milandr_gpio_clock_enable(rxPin, false);
-	milandr_gpio_clock_enable(txPin, false);
 
 	rx_buffer_deinit(uartN);
 	tx_buffer_deinit(uartN);

@@ -28,6 +28,32 @@
 #include <stddef.h>
 #include "periph_definition.h"
 
+//------------------------------------------------------------------------------
+// Конфигурация режимов работы SPI
+//------------------------------------------------------------------------------
+typedef enum
+{
+	/* Захват данных по переднему фронту. CLK в 0 в холостом режиме  */
+	MILANDR_SSP_MODE0 = 0x00,
+	/* Захват данных по заднему фронту. CLK в 0 в холостом режиме  */
+	MILANDR_SSP_MODE1 = 0x80,
+	/* Захват данных по переднему фронту. CLK в 1 в холостом режиме  */
+	MILANDR_SSP_MODE2 = 0x40,
+	/* Захват данных по заднему фронту. CLK в 1 в холостом режиме  */
+	MILANDR_SSP_MODE3 = 0xC0,
+}
+tMilandrSspMode;
+
+//------------------------------------------------------------------------------
+// Порядок бит
+//------------------------------------------------------------------------------
+typedef enum
+{
+	MILANDR_LSBFIRST = 0,
+	MILANDR_MSBFIRST = 1,
+}
+tMilandrBitOrder;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,6 +63,34 @@ extern "C" {
 // Экспортируемые функции
 //------------------------------------------------------------------------------
 extern uint8_t milandr_spi_pin(tSspVariant spi, tPeriphLineVariant line);
+
+extern tSspVariant milandr_spi_master_init(uint8_t  mosiPin,
+                                           uint8_t  misoPin,
+                                           uint8_t  clkPin,
+                                           uint8_t  csPin,
+                                           uint32_t speedMax,
+                                           tMilandrBitOrder bitOrder,
+                                           tMilandrSspMode mode);
+
+extern void milandr_spi_master_deinit(uint8_t  mosiPin,
+                                      uint8_t  misoPin,
+                                      uint8_t  clkPin,
+                                      uint8_t  csPin,
+                                      tSspVariant sspN);
+
+extern void milandr_spi_master_set_cfg(tSspVariant sspN,
+                                       uint32_t speedMax,
+                                       tMilandrBitOrder bitOrder,
+                                       tMilandrSspMode mode);
+
+extern uint16_t milandr_spi_master_write(tSspVariant sspN,
+                                         uint16_t data,
+                                         uint8_t wordLen);
+
+extern void milandr_spi_master_block_write(tSspVariant sspN,
+                                           uint8_t * data,
+                                           uint32_t dataLen);
+
 
 #ifdef __cplusplus
 }

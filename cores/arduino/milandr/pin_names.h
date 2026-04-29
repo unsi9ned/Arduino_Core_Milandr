@@ -166,7 +166,7 @@ typedef enum
 	PG_15 = 0x6F,
 #endif
 	PIN_NAMES_NUM,
-	NC = 0xFF
+	//NC = 0xFF
 }
 tPinName;
 

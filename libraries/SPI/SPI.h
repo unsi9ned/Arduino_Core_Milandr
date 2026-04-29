@@ -37,6 +37,7 @@
 #pragma once
 
 #include "api/HardwareSPI.h"
+#include "milandr/milandr_hal.h"
 
 // Indicates SPI.notUsingInterrupt() is available
 #define SPI_HAS_NOTUSINGINTERRUPT 1
@@ -69,13 +70,55 @@ public:
 	operator bool() {return false;}
 };
 
+#if 0
+class SPISettingsEx : public SPISettings
+{
+private:
+	static constexpr tMilandrSspMode _mdr_modes[SPI_MODE3 + 1] =
+	{
+		[SPI_MODE0] = MILANDR_SSP_MODE0,
+		[SPI_MODE1] = MILANDR_SSP_MODE1,
+		[SPI_MODE2] = MILANDR_SSP_MODE2,
+		[SPI_MODE3] = MILANDR_SSP_MODE3,
+	};
+	tMilandrSspMode  _sspDataMode;
+
+public:
+	SPISettingsEx() : SPISettings(), _sspDataMode(_mdr_modes[SPI_MODE0]){}
+
+	SPISettingsEx(uint32_t clock, BitOrder bitOrder, SPIMode dataMode, SPIBusMode busMode = SPI_CONTROLLER)
+		: SPISettings(clock, bitOrder, dataMode, busMode),
+		  _sspDataMode(_mdr_modes[dataMode])
+	{
+
+	}
+
+	tMilandrSspMode getDataMode() const
+	{
+		return _sspDataMode;
+	}
+
+	SPISettingsEx& operator=(const SPISettings& s)
+	{
+		SPISettings * baseThis = static_cast<SPISettings*>(this);
+		*baseThis = s;
+		_sspDataMode = _mdr_modes[s.getDataMode()];
+		return *this;
+	}
+};
+#endif
+
 class SpiClass : public HardwareSPI
 {
+	static const tMilandrSspMode _mdr_modes[];
+
 private:
 	uint8_t         _mosiPin;
 	uint8_t         _misoPin;
 	uint8_t         _clkPin;
 	uint8_t         _csPin;
+	tSspVariant     _sspN;
+	SPISettings     _spisettings;
 public:
 	/**
 	 * Constructor for this SPI class.
@@ -93,7 +136,7 @@ public:
 	 * standarised. So you can adapt it to requirements of your Arduino core.
 	 */
 	SpiClass();
-	SpiClass(uint8_t mosiPin, uint8_t misoPin, uint8_t clkPin, uint8_t csPin);
+	SpiClass(uint8_t mosiPin, uint8_t misoPin, uint8_t clkPin, uint8_t csPin = PIN_NC);
 
 	/**
 	 * Initialise the SPI peripheral and pins.
@@ -198,6 +241,11 @@ public:
 	// void setClockDivider(uint8_t divider);
 	// void setBitOrder(BitOrder order);
 	// void setDataMode(SPIMode mode);
+
+private:
+	tMilandrSspMode  getMdrDateMode(const SPISettings& settings);
+	tMilandrBitOrder getMdrBitOrder(const SPISettings& settings);
+	inline bool isInit() {return _sspN != SSP_UNKNOWN;}
 };
 
 class SpiWrapper
@@ -211,20 +259,20 @@ private:
 	FakeSpi         _fakeSpi;    // Заглушка
 	HardwareSPI*    _spiPtr;     // Указатель на активный объект
 public:
-	SpiWrapper(uint8_t mosiPin = 0xFF,
-	           uint8_t misoPin = 0xFF,
-	           uint8_t clkPin = 0xFF,
-	           uint8_t csPin = 0xFF)
+	SpiWrapper(uint8_t mosiPin = PIN_NC,
+	           uint8_t misoPin = PIN_NC,
+	           uint8_t clkPin = PIN_NC,
+	           uint8_t csPin = PIN_NC)
 	: _mosiPin(mosiPin),
 	  _misoPin(misoPin),
 	  _clkPin(clkPin),
 	  _csPin(csPin),
 	  _spiPtr(nullptr)
 	{
-		if(mosiPin != 0xFF &&
-		   misoPin != 0xFF &&
-		   clkPin != 0xFF &&
-		   csPin != 0xFF)
+		if(mosiPin != PIN_NC &&
+		   misoPin != PIN_NC &&
+		   clkPin != PIN_NC &&
+		   csPin != PIN_NC)
 		{
 			// Настоящий SPI
 			_realSpi = SpiClass(mosiPin, misoPin, clkPin, csPin);

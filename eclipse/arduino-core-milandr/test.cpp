@@ -1,5 +1,7 @@
 #include <Arduino.h>
+#include <SPI.h>
 
+using namespace arduino;
 #define UART_N UART_1
 extern int milandr_uart_available(tUartVariant uartN);
 extern int milandr_uart_read(tUartVariant uartN);
@@ -13,6 +15,8 @@ void setup(void)
 
 	Serial.begin(115200ul);
 	Serial.setTimeout(100);
+
+	SPI.begin();
 }
 
 void loop(void)
