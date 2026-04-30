@@ -184,4 +184,11 @@ tArduinoPinAlias;
 #define PIN_SPI2_MISO               PD2
 #define PIN_SPI2_SCK                PD5
 
+//------------------------------------------------------------------------------
+// I2C modules
+//------------------------------------------------------------------------------
+
+#define PIN_I2C1_SCL                PC0
+#define PIN_I2C1_SDA                PC1
+
 #endif //_VARIANT_K1986BE92FI_MINI

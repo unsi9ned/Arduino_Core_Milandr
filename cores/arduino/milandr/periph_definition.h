@@ -149,6 +149,14 @@ tSspVariant;
 
 typedef enum
 {
+	I2C_1,
+	I2C_COUNT,
+	I2C_UNKNOWN = 0xFF
+}
+tI2cVariant;
+
+typedef enum
+{
 	TIMER_1,
 	TIMER_2,
 	TIMER_3,

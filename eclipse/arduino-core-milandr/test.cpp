@@ -13,7 +13,8 @@ typedef enum
 	HELLOWORLD,
 	BUTTON,
 	UART_ECHO,
-	SPI_EEPROM
+	SPI_EEPROM,
+	I2C_EEPROM
 }
 tTestId;
 
@@ -27,6 +28,8 @@ extern void example_uartecho_init();
 extern void example_uartecho_process();
 extern void example_spi_eeprom_init();
 extern void example_spi_eeprom_process();
+extern void example_i2c_eeprom_init();
+extern void example_i2c_eeprom_process();
 
 
 tTest testVariant[] =
@@ -36,9 +39,10 @@ tTest testVariant[] =
 	[BUTTON] = {.setup = example_button_init, .loop = example_button_process},
 	[UART_ECHO] = {.setup = example_uartecho_init, .loop = example_uartecho_process},
 	[SPI_EEPROM] = {.setup = example_spi_eeprom_init, .loop = example_spi_eeprom_process},
+	[I2C_EEPROM] = {.setup = example_i2c_eeprom_init, .loop = example_i2c_eeprom_process},
 };
 
-static tTestId currentTest = SPI_EEPROM;
+static tTestId currentTest = I2C_EEPROM;
 
 //------------------------------------------------------------------------------
 // Инициализация

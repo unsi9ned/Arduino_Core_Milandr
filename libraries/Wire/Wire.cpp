@@ -1,23 +1,85 @@
+/*
+ * Arduino Core for Milandr MCUs
+ * Copyright (c) 2026 Andrey Osipov
+ *
+ * This file is part of Arduino_Core_Milandr.
+ * Project home: https://github.com/unsi9ned/Arduino_Core_Milandr
+ * Author's website: https://hamlab.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #include "Wire.h"
 
-using namespace arduino;
+namespace arduino
+{
 
-TwoWire::TwoWire() {}
+//------------------------------------------------------------------------------
+// Конструкторы
+//------------------------------------------------------------------------------
+TwoWire::TwoWire()
+	: _sdaPin(PIN_NC),
+	  _sclPin(PIN_NC),
+	  _ownAddress(WIRE_MASTER_ADDRESS << 1),
+	  _i2cN(I2C_UNKNOWN)
+{
 
-void TwoWire::begin() {
-    begin(0);
 }
 
-void TwoWire::begin(uint8_t address) {
-    peripheral_address = address;
-    if (peripheral_address == 0) {
-        // Implement: Configure I2C as a controller here.
-    } else {
-        // Implement: Configure I2C as a peripheral here.
-    }
+TwoWire::TwoWire(uint8_t sdaPin, uint8_t sclPin)
+	: _sdaPin(sdaPin),
+	  _sclPin(sclPin),
+	  _ownAddress(WIRE_MASTER_ADDRESS << 1),
+	  _i2cN(I2C_UNKNOWN)
+{
 }
 
-void TwoWire::end() {}
+//------------------------------------------------------------------------------
+// Инициализация
+//------------------------------------------------------------------------------
+void TwoWire::begin()
+{
+	_ownAddress = WIRE_MASTER_ADDRESS << 1;
+	_i2cN = milandr_i2c_init(_sdaPin, _sclPin, _ownAddress);
+}
+
+void TwoWire::begin(uint8_t address)
+
+{
+	peripheral_address = address;
+	if(peripheral_address == 0)
+	{
+		// Implement: Configure I2C as a controller here.
+	}
+	else
+	{
+		// Implement: Configure I2C as a peripheral here.
+	}
+}
+
+//------------------------------------------------------------------------------
+// Деинициализация
+//------------------------------------------------------------------------------
+void TwoWire::end()
+{
+	if(isInit())
+	{
+		milandr_i2c_deinit(_sdaPin, _sclPin, _i2cN);
+		_i2cN = I2C_UNKNOWN;
+	}
+}
 
 size_t TwoWire::requestFrom(uint8_t address, size_t len) {
     return requestFrom(address, len, true);
@@ -105,4 +167,8 @@ bool TwoWire::getWireTimeoutFlag(void) {
     return timeout_flag;
 }
 
-TwoWire Wire;
+}; //namespace arduino
+
+arduino::I2CWrapper I2C1(milandr_i2c_pin(I2C_1, I2C_SDA_LINE),
+                         milandr_i2c_pin(I2C_1, I2C_SCL_LINE));
+arduino::HardwareI2C& Wire = *I2C1;

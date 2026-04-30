@@ -191,6 +191,24 @@ void milandr_gpio_cfg_output_od(uint8_t arduinoPin)
 }
 
 //------------------------------------------------------------------------------
+// Конфигурации пина как выход c открытым коллектором c подтяжкой к питанию
+//------------------------------------------------------------------------------
+void milandr_gpio_cfg_output_od_pu(uint8_t arduinoPin)
+{
+	if(arduinoPin > DMAX) return;
+
+	volatile MDR_PORT_TypeDef * port = NULL;
+	tMilandrPin mdrPin;
+	milandr_gpio_cfg_common(arduinoPin, &port, &mdrPin);
+	uint16_t pinMask = (1 << mdrPin.pin);
+
+	port->OE |= pinMask;
+	port->PULL |= (((uint32_t)PORT_PULL_UP_ON << mdrPin.pin) << PORT_PULL_UP_Pos);
+	port->PULL &= ~(((uint32_t)PORT_PULL_DOWN_ON << mdrPin.pin) << PORT_PULL_DOWN_Pos);
+	port->PD |= (((uint32_t)PORT_PD_OPEN << mdrPin.pin) << PORT_PD_Pos);
+}
+
+//------------------------------------------------------------------------------
 // Установка пина в 0/1
 //------------------------------------------------------------------------------
 void milandr_gpio_write(uint8_t arduinoPin, uint8_t level)
