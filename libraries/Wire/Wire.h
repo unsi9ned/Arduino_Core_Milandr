@@ -136,8 +136,6 @@ private:
 	uint32_t timeout_us = 0;
 	bool timeout_reset = false;
 	bool timeout_flag = false;
-	// Peripheral mode address and callbacks
-	uint8_t peripheral_address = 0;
 	void (*onReceiveHandler)(int);
 	void (*onRequestHandler)(void);
 	// Receive and transmit buffers
@@ -145,9 +143,10 @@ private:
 	uint8_t tx_buffer[WIRE_BUFFER_SIZE] = {0};
 	uint8_t tx_buffer_i = 0;
 
-	uint8_t _sdaPin;
-	uint8_t _sclPin;
-	uint8_t _ownAddress;
+	uint8_t     _sdaPin;
+	uint8_t     _sclPin;
+	uint8_t     _ownAddress;
+	uint8_t     _targetAddress;
 	tI2cVariant _i2cN;
 
 public:

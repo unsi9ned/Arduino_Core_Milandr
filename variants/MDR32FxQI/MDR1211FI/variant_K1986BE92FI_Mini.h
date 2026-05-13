@@ -191,4 +191,12 @@ tArduinoPinAlias;
 #define PIN_I2C1_SCL                PC0
 #define PIN_I2C1_SDA                PC1
 
+#ifndef I2C1_RX_BUFFER_SIZE
+#define I2C1_RX_BUFFER_SIZE         32
+#endif
+
+#ifndef I2C1_TX_BUFFER_SIZE
+#define I2C1_TX_BUFFER_SIZE         32
+#endif
+
 #endif //_VARIANT_K1986BE92FI_MINI

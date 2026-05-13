@@ -47,7 +47,7 @@ TwoWire::TwoWire(uint8_t sdaPin, uint8_t sclPin)
 }
 
 //------------------------------------------------------------------------------
-// Инициализация
+// Инициализация в режиме Master
 //------------------------------------------------------------------------------
 void TwoWire::begin()
 {
@@ -55,11 +55,15 @@ void TwoWire::begin()
 	_i2cN = milandr_i2c_init(_sdaPin, _sclPin, _ownAddress);
 }
 
+//------------------------------------------------------------------------------
+// Инициализация в режиме Slave
+//------------------------------------------------------------------------------
 void TwoWire::begin(uint8_t address)
 
 {
-	peripheral_address = address;
-	if(peripheral_address == 0)
+	_ownAddress = address;
+
+	if(_ownAddress == 0)
 	{
 		// Implement: Configure I2C as a controller here.
 	}
@@ -70,7 +74,7 @@ void TwoWire::begin(uint8_t address)
 }
 
 //------------------------------------------------------------------------------
-// Деинициализация
+// Завершение начатых транзакций и деинициализация
 //------------------------------------------------------------------------------
 void TwoWire::end()
 {
@@ -81,29 +85,35 @@ void TwoWire::end()
 	}
 }
 
-size_t TwoWire::requestFrom(uint8_t address, size_t len) {
-    return requestFrom(address, len, true);
+size_t TwoWire::requestFrom(uint8_t address, size_t len)
+{
+	return requestFrom(address, len, true);
 }
 
-size_t TwoWire::requestFrom(uint8_t address, size_t len, bool stopBit = true) {
-    uint8_t read_buffer[WIRE_BUFFER_SIZE] = {0};
+size_t TwoWire::requestFrom(uint8_t address, size_t len, bool stopBit = true)
+{
+	uint8_t read_buffer[WIRE_BUFFER_SIZE] = {0};
 
-    // Implement: Fill read_buffer[] with I2C read data here, and capture into
-    // number_of_bytes_received how many bytes were read in total
-    uint8_t number_of_bytes_received = len;
+	// Implement: Fill read_buffer[] with I2C read data here, and capture into
+	// number_of_bytes_received how many bytes were read in total
+	uint8_t number_of_bytes_received = len;
 
-    // Move the data from read_buffer into the RX ring buffer
-    rx_buffer.clear();
-    for (int i = 0; i < number_of_bytes_received; i++) {
-        rx_buffer.store_char(read_buffer[i]);
-    }
+	// Move the data from read_buffer into the RX ring buffer
+	rx_buffer.clear();
+	for (int i = 0; i < number_of_bytes_received; i++) {
+		rx_buffer.store_char(read_buffer[i]);
+	}
 
-    return number_of_bytes_received;
+	return number_of_bytes_received;
 }
 
-void TwoWire::beginTransmission(uint8_t address) {
-    memset(tx_buffer, 0, WIRE_BUFFER_SIZE);
-    tx_buffer_i = 0;
+//------------------------------------------------------------------------------
+// Инициирование транзакции
+//------------------------------------------------------------------------------
+void TwoWire::beginTransmission(uint8_t address)
+{
+	memset(tx_buffer, 0, WIRE_BUFFER_SIZE);
+	tx_buffer_i = 0;
 }
 
 uint8_t TwoWire::endTransmission() {
@@ -141,7 +151,14 @@ int TwoWire::read() {
     return rx_buffer.read_char();
 }
 
-void TwoWire::setClock(uint32_t freq) {}
+//------------------------------------------------------------------------------
+// Настройка скорости обмена данными
+//------------------------------------------------------------------------------
+void TwoWire::setClock(uint32_t freq)
+{
+	if(!isInit()) return;
+	milandr_i2c_set_freq(_i2cN, freq);
+}
 
 void TwoWire::onReceive(void (*handler)(int)) {
     // Implement: Configure the interrupts to run the onReceive handler

@@ -28,6 +28,18 @@
 #include <stddef.h>
 #include "periph_definition.h"
 
+typedef enum
+{
+	MILANDR_I2C_OK            = 0,
+	MILANDR_I2C_DATA_TOO_LONG = 1,
+	MILANDR_I2C_NACK_ADDR     = 2,
+	MILANDR_I2C_NACK_DATA     = 3,
+	MILANDR_I2C_ERROR         = 4,
+	MILANDR_I2C_TIMEOUT       = 5,
+	MILANDR_I2C_BUSY          = 6
+}
+tMilandrI2cStatus;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,7 +49,10 @@ extern "C" {
 //------------------------------------------------------------------------------
 extern uint8_t milandr_i2c_pin(tI2cVariant i2c, tPeriphLineVariant line);
 extern tI2cVariant milandr_i2c_init(uint8_t sdaPin, uint8_t sclPin, uint8_t ownAddress);
-extern tI2cVariant milandr_i2c_deinit(uint8_t sdaPin, uint8_t sclPin, tI2cVariant i2cN);
+extern void milandr_i2c_deinit(uint8_t sdaPin, uint8_t sclPin, tI2cVariant i2cN);
+extern void milandr_i2c_set_freq(tI2cVariant i2c, uint32_t freq);
+extern void milandr_i2c_start_transaction(tI2cVariant i2cN, uint8_t address);
+extern tMilandrI2cStatus milandr_i2c_end_transaction(tI2cVariant i2cN, bool stopBit);
 
 
 #ifdef __cplusplus
