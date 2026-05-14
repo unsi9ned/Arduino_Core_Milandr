@@ -56,21 +56,13 @@ void TwoWire::begin()
 }
 
 //------------------------------------------------------------------------------
-// Инициализация в режиме Slave
+// Инициализация в режиме Slave (не поддерживается MDR32F92QI)
 //------------------------------------------------------------------------------
 void TwoWire::begin(uint8_t address)
 
 {
 	_ownAddress = address;
-
-	if(_ownAddress == 0)
-	{
-		// Implement: Configure I2C as a controller here.
-	}
-	else
-	{
-		// Implement: Configure I2C as a peripheral here.
-	}
+	_i2cN = I2C_UNKNOWN;
 }
 
 //------------------------------------------------------------------------------
@@ -85,6 +77,9 @@ void TwoWire::end()
 	}
 }
 
+//------------------------------------------------------------------------------
+// Чтение данных из Slave-устройства
+//------------------------------------------------------------------------------
 size_t TwoWire::requestFrom(uint8_t address, size_t len)
 {
 	return requestFrom(address, len, true);
@@ -92,19 +87,9 @@ size_t TwoWire::requestFrom(uint8_t address, size_t len)
 
 size_t TwoWire::requestFrom(uint8_t address, size_t len, bool stopBit = true)
 {
-	uint8_t read_buffer[WIRE_BUFFER_SIZE] = {0};
-
-	// Implement: Fill read_buffer[] with I2C read data here, and capture into
-	// number_of_bytes_received how many bytes were read in total
-	uint8_t number_of_bytes_received = len;
-
-	// Move the data from read_buffer into the RX ring buffer
-	rx_buffer.clear();
-	for (int i = 0; i < number_of_bytes_received; i++) {
-		rx_buffer.store_char(read_buffer[i]);
-	}
-
-	return number_of_bytes_received;
+	if(!isInit()) return 0;
+	milandr_i2c_master_receive(_i2cN, len, stopBit);
+	return milandr_i2c_available(_i2cN);
 }
 
 //------------------------------------------------------------------------------
@@ -112,43 +97,70 @@ size_t TwoWire::requestFrom(uint8_t address, size_t len, bool stopBit = true)
 //------------------------------------------------------------------------------
 void TwoWire::beginTransmission(uint8_t address)
 {
-	memset(tx_buffer, 0, WIRE_BUFFER_SIZE);
-	tx_buffer_i = 0;
+	if(isInit())
+	{
+		milandr_i2c_start_transaction(_i2cN, address);
+	}
 }
 
-uint8_t TwoWire::endTransmission() {
-    return endTransmission(true);
+//------------------------------------------------------------------------------
+// Завершение транзакции и передача данных из буфера на шину I2C
+//------------------------------------------------------------------------------
+uint8_t TwoWire::endTransmission()
+{
+	return endTransmission(true);
 }
 
-uint8_t TwoWire::endTransmission(bool stopBit) {
-    // Implement: Send the tx_buffer via I2C with or without the stop bit
-    return 0;
+uint8_t TwoWire::endTransmission(bool stopBit)
+{
+	return milandr_i2c_end_transaction(_i2cN, stopBit);
 }
 
-size_t TwoWire::write(uint8_t value) {
-    if (tx_buffer_i >= WIRE_BUFFER_SIZE) return 0;
-    tx_buffer[tx_buffer_i++] = value;
-    return 1;
+//------------------------------------------------------------------------------
+// Запись байта в кольцевой буфер для дальнейшей отправки
+//------------------------------------------------------------------------------
+size_t TwoWire::write(uint8_t value)
+{
+	return milandr_i2c_write_byte(_i2cN, value);
 }
 
-size_t TwoWire::write(const uint8_t *buffer, size_t size) {
-    if (tx_buffer_i + size >= WIRE_BUFFER_SIZE) {
-        size = WIRE_BUFFER_SIZE - tx_buffer_i;
-    }
-    memcpy(tx_buffer + tx_buffer_i, buffer, size);
-    return size;
+//------------------------------------------------------------------------------
+// Запись массива байт в кольцевой буфер для дальнейшей отправки
+//------------------------------------------------------------------------------
+size_t TwoWire::write(const uint8_t *buffer, size_t size)
+{
+	size_t sent = 0;
+
+	while(size > 0 && milandr_i2c_write_byte(_i2cN, *buffer++))
+	{
+		sent++;
+		size--;
+	}
+	return sent;
 }
 
-int TwoWire::available() {
-    return rx_buffer.available();
+//------------------------------------------------------------------------------
+// Количество принятых в буфер байт
+//------------------------------------------------------------------------------
+int TwoWire::available()
+{
+	return milandr_i2c_available(_i2cN);
 }
 
-int TwoWire::peek() {
-    return rx_buffer.peek();
+//------------------------------------------------------------------------------
+// Чтение байта из буфера без удаления
+//------------------------------------------------------------------------------
+int TwoWire::peek()
+{
+	return milandr_i2c_peak(_i2cN);
 }
 
-int TwoWire::read() {
-    return rx_buffer.read_char();
+//------------------------------------------------------------------------------
+// Чтение байта из буфера с удалением
+//------------------------------------------------------------------------------
+int TwoWire::read()
+{
+	return milandr_i2c_read_byte(_i2cN);
 }
 
 //------------------------------------------------------------------------------
@@ -160,28 +172,37 @@ void TwoWire::setClock(uint32_t freq)
 	milandr_i2c_set_freq(_i2cN, freq);
 }
 
-void TwoWire::onReceive(void (*handler)(int)) {
-    // Implement: Configure the interrupts to run the onReceive handler
-    onReceiveHandler = handler;
+//------------------------------------------------------------------------------
+// Колбэк: вызывается, когда ведомый принял данные от мастера
+// Чип не поддерживает режим Slave
+//------------------------------------------------------------------------------
+void TwoWire::onReceive(void (*handler)(int))
+{
 }
 
-void TwoWire::onRequest(void (*handler)(void)) {
-    // Implement: Configure the interrupts to run the onRequest handler
-    onRequestHandler = handler;
+//------------------------------------------------------------------------------
+// Колбэк: вызывается, когда ведомый должен отправить данные мастеру
+// Чип не поддерживает режим Slave
+//------------------------------------------------------------------------------
+void TwoWire::onRequest(void (*handler)(void))
+{
 }
 
-void TwoWire::setWireTimeout(uint32_t timeout, bool reset_on_timeout) {
-    timeout_us = timeout;
-    timeout_reset = reset_on_timeout;
-    // Implement: Configure the timer or I2C peripheral to timeout
+//------------------------------------------------------------------------------
+// Неиспользуемые методы (были зачем-то добавлены автором шаблона, но не требуются
+// API ядра. Защита от зависания есть в драйвере i2c
+//------------------------------------------------------------------------------
+void TwoWire::setWireTimeout(uint32_t timeout, bool reset_on_timeout)
+{
 }
 
-void TwoWire::clearWireTimeoutFlag(void) {
-    timeout_flag = false;
+void TwoWire::clearWireTimeoutFlag(void)
+{
 }
 
-bool TwoWire::getWireTimeoutFlag(void) {
-    return timeout_flag;
+bool TwoWire::getWireTimeoutFlag(void)
+{
+	return false;
 }
 
 }; //namespace arduino

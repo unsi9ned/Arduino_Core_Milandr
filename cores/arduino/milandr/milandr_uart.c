@@ -616,7 +616,10 @@ size_t milandr_uart_write(tUartVariant n, const uint8_t c)
 		txb_head(n) = next_head;
 
 		// Если конвеер отправки поломался, пинаем его вручную
-		if(UARTx->FR & UART_FR_TXFE) ring_buffer_send(&UARTx->DR, n);
+		if(UARTx->FR & UART_FR_TXFE)
+		{
+			ring_buffer_send(&UARTx->DR, n);
+		}
 	}
 
 	return 1;
@@ -715,6 +718,7 @@ static void ring_buffer_send(volatile uint32_t * DR, tUartVariant n)
 void UART1_IRQHandler(void)
 {
 	volatile uint32_t status = MDR_UART1->RIS;
+	status &= ~UART_MIS_TXMIS;
 
 	if(MDR_UART1->MIS & UART_MIS_OEMIS)
 	{
@@ -731,6 +735,7 @@ void UART1_IRQHandler(void)
 	//Прерывание по передаче
 	if(MDR_UART1->MIS & UART_MIS_TXMIS)
 	{
+		MDR_UART1->ICR = UART_ICR_TXIC;
 		ring_buffer_send(&MDR_UART1->DR, UART_1);
 	}
 
@@ -745,6 +750,7 @@ void UART1_IRQHandler(void)
 void UART2_IRQHandler(void)
 {
 	volatile uint32_t status = MDR_UART2->RIS;
+	status &= ~UART_MIS_TXMIS;
 
 	if(MDR_UART2->MIS & UART_MIS_OEMIS)
 	{
@@ -761,6 +767,7 @@ void UART2_IRQHandler(void)
 	//Прерывание по передаче
 	if(MDR_UART2->MIS & UART_MIS_TXMIS)
 	{
+		MDR_UART2->ICR = UART_ICR_TXIC;
 		ring_buffer_send(&MDR_UART2->DR, UART_2);
 	}
 
@@ -775,6 +782,7 @@ void UART2_IRQHandler(void)
 void UART3_IRQHandler(void)
 {
 	volatile uint32_t status = MDR_UART3->RIS;
+	status &= ~UART_MIS_TXMIS;
 
 	if(MDR_UART3->MIS & UART_MIS_OEMIS)
 	{
@@ -791,6 +799,7 @@ void UART3_IRQHandler(void)
 	//Прерывание по передаче
 	if(MDR_UART3->MIS & UART_MIS_TXMIS)
 	{
+		MDR_UART3->ICR = UART_ICR_TXIC;
 		ring_buffer_send(&MDR_UART3->DR, UART_3);
 	}
 

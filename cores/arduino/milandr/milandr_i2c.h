@@ -53,6 +53,11 @@ extern void milandr_i2c_deinit(uint8_t sdaPin, uint8_t sclPin, tI2cVariant i2cN)
 extern void milandr_i2c_set_freq(tI2cVariant i2c, uint32_t freq);
 extern void milandr_i2c_start_transaction(tI2cVariant i2cN, uint8_t address);
 extern tMilandrI2cStatus milandr_i2c_end_transaction(tI2cVariant i2cN, bool stopBit);
+extern size_t milandr_i2c_write_byte(tI2cVariant n, uint8_t data);
+extern tMilandrI2cStatus milandr_i2c_master_receive(tI2cVariant n, size_t len, bool stopBit);
+extern int milandr_i2c_available(tI2cVariant n);
+extern int milandr_i2c_peak(tI2cVariant n);
+extern int milandr_i2c_read_byte(tI2cVariant n);
 
 
 #ifdef __cplusplus

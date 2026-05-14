@@ -199,4 +199,9 @@ tArduinoPinAlias;
 #define I2C1_TX_BUFFER_SIZE         32
 #endif
 
+/* Таймаут операции на шине I2C. Задает количество циклов while */
+#ifndef TWI_TIMEOUT
+#define TWI_TIMEOUT                 0xFFFFUL
+#endif
+
 #endif //_VARIANT_K1986BE92FI_MINI
