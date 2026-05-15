@@ -24,8 +24,8 @@ EXTERN_C_END
 
 int main(void)
 {
-	init();
 	initVariant();
+	init();
 
 	setup();
 

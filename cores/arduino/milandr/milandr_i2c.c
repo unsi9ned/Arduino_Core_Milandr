@@ -495,7 +495,7 @@ static tMilandrI2cStatus milandr_i2c_master_transmit(tI2cVariant n, bool stopBit
 	volatile MDR_I2C_TypeDef * I2Cx = i2cTable[n].regs;
 
 	/* Checking if the I2C bus is free */
-	if((I2Cx->STA & I2C_STA_BUSY)) return MILANDR_I2C_BUSY;
+	milandr_i2c_wait_or_return(I2Cx->STA & I2C_STA_BUSY, MILANDR_I2C_BUSY);
 
 	/* Generate a START condition and send address */
 	send_address(n, TWI_WRITE);
@@ -583,7 +583,7 @@ tMilandrI2cStatus milandr_i2c_master_receive(tI2cVariant n, size_t len, bool sto
 	buffer_reset(n);
 
 	/* Checking if the I2C bus is free */
-	if((I2Cx->STA & I2C_STA_BUSY)) return MILANDR_I2C_BUSY;
+	milandr_i2c_wait_or_return(I2Cx->STA & I2C_STA_BUSY, MILANDR_I2C_BUSY);
 
 	/* Generate a START condition and send address */
 	send_address(n, TWI_READ);

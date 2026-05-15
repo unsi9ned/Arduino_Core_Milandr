@@ -88,8 +88,12 @@ size_t TwoWire::requestFrom(uint8_t address, size_t len)
 size_t TwoWire::requestFrom(uint8_t address, size_t len, bool stopBit = true)
 {
 	if(!isInit()) return 0;
-	milandr_i2c_master_receive(_i2cN, len, stopBit);
-	return milandr_i2c_available(_i2cN);
+	tMilandrI2cStatus status = milandr_i2c_master_receive(_i2cN, len, stopBit);
+
+	if(status != MILANDR_I2C_OK)
+		return 0;
+	else
+		return milandr_i2c_available(_i2cN);
 }
 
 //------------------------------------------------------------------------------

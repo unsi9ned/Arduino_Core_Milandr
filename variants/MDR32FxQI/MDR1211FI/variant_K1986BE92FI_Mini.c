@@ -21,6 +21,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "system_K1986VE9xI.h"
+#include "MDR32FxQI_rst_clk.h"
+#include "MDR32FxQI_bkp.h"
+#include "MDR32FxQI_eeprom.h"
 #include "variant_K1986BE92FI_Mini.h"
 #include "milandr/pin_names.h"
 #include "milandr/periph_definition.h"
@@ -53,6 +57,14 @@
 
 
 ------------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+// Константы
+//------------------------------------------------------------------------------
+#define HSI_FREQ_HZ       8000000UL
+#define HSE_FREQ_HZ       8000000UL
+#define LSE_FREQ_HZ       32768UL
+#define LSI_FREQ_HZ       40000UL
 
 //------------------------------------------------------------------------------
 // Глобальные переменные, которые должны быть заданы в variant.h
@@ -227,8 +239,79 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 	},
 };
 
+//------------------------------------------------------------------------------
+// Повышение частоты шины HCLK до максимальной 80 МГц (по умолчанию 8 МГц)
+//------------------------------------------------------------------------------
 void initVariant()
 {
+	/* Set RST_CLK to default */
+	/* Also resets DUcc voltage regulator work mode */
+	RST_CLK_DeInit();
+	SystemCoreClockUpdate();
 
+	/* Включаем внешний источник тактирования - кварц 8 МГц */
+	RST_CLK_HSEconfig(RST_CLK_HSE_ON);
+
+	/* Good HSE clock */
+	if (RST_CLK_HSEstatus() == SUCCESS)
+	{
+		RST_CLK_CPUclkSelectionC1(RST_CLK_CPU_C1srcHSEdiv1);
+
+		/* Select HSE clock as CPU_PLL input clock source */
+		/* Set PLL multiplier to 10                       */
+		/* Увеличиваем частоту CPU_C1 до 80 МГц           */
+		RST_CLK_CPU_PLLconfig(RST_CLK_CPU_PLLsrcHSEdiv1, RST_CLK_CPU_PLLmul10);
+	}
+	else
+	{
+		/* Работаем от внутреннего источника тактирования - HSI 8 МГц */
+		RST_CLK_HSEconfig(RST_CLK_HSE_OFF);
+
+		/* Select HSI clock as CPU_C1 input clock source */
+		RST_CLK_CPUclkSelectionC1(RST_CLK_CPU_C1srcHSIdiv1);
+
+		/* Select HSI clock as CPU_PLL input clock source */
+		/* Set PLL multiplier to 10                       */
+		/* Увеличиваем частоту CPU_C1 до 80 МГц           */
+		RST_CLK_CPU_PLLconfig(RST_CLK_CPU_PLLsrcHSIdiv1, RST_CLK_CPU_PLLmul10);
+	}
+
+	/* Enable CPU_PLL */
+	RST_CLK_CPU_PLLcmd(ENABLE);
+
+	/* Good CPU PLL */
+	if (RST_CLK_CPU_PLLstatus() == SUCCESS)
+	{
+		/* Set CPU_C3_prescaler to 2 */
+		RST_CLK_CPUclkPrescaler(RST_CLK_CPUclkDIV1);
+		/* Set CPU_C2_SEL to CPU_PLL output instead of CPU_C1 clock */
+		RST_CLK_CPU_PLLuse(ENABLE);
+
+		/* Setup internal DUcc voltage regulator work mode based on clock frequency */
+		BKP_DUccMode(BKP_DUcc_upto_80MHz);
+		/* Setup EEPROM access delay to 1: 10*HSE/1 = 80MHz > 75MHz */
+		EEPROM_SetLatency(EEPROM_Latency_3);
+
+		/* Select CPU_C3 clock on the CPU clock MUX */
+		RST_CLK_CPUclkSelection(RST_CLK_CPUclkCPU_C3);
+	}
+	else
+	{
+		/* Работаем от внутреннего источника тактирования -
+		 * HSI 8 МГц без умножения частоты                */
+
+		/* Enable CPU_PLL */
+		RST_CLK_CPU_PLLcmd(DISABLE);
+
+		/* Setup internal DUcc voltage regulator work mode based on clock frequency */
+		BKP_DUccMode(BKP_DUcc_upto_10MHz);
+		/* Setup EEPROM access delay to 0: HSI = 8MHz < 25MHz */
+		EEPROM_SetLatency(EEPROM_Latency_0);
+
+		/* Select HSI clock on the CPU clock MUX */
+		RST_CLK_CPUclkSelection(RST_CLK_CPUclkHSI);
+	}
+
+	SystemCoreClockUpdate();
 }
 

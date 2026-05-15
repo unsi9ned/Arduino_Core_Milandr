@@ -144,11 +144,11 @@ tArduinoPinAlias;
 #endif
 
 #ifndef SERIAL1_RX_BUFFER_SIZE
-#define SERIAL1_RX_BUFFER_SIZE      64
+#define SERIAL1_RX_BUFFER_SIZE      128
 #endif
 
 #ifndef SERIAL1_TX_BUFFER_SIZE
-#define SERIAL1_TX_BUFFER_SIZE      64
+#define SERIAL1_TX_BUFFER_SIZE      128
 #endif
 
 /* UART2 */
@@ -161,11 +161,11 @@ tArduinoPinAlias;
 #endif
 
 #ifndef SERIAL2_RX_BUFFER_SIZE
-#define SERIAL2_RX_BUFFER_SIZE      64
+#define SERIAL2_RX_BUFFER_SIZE      128
 #endif
 
 #ifndef SERIAL2_TX_BUFFER_SIZE
-#define SERIAL2_TX_BUFFER_SIZE      64
+#define SERIAL2_TX_BUFFER_SIZE      128
 #endif
 
 //------------------------------------------------------------------------------

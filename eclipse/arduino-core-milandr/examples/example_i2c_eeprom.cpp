@@ -61,9 +61,9 @@ void example_i2c_eeprom_init()
 	Wire.write((uint8_t) (testAddr & 0xFF));
 	Wire.endTransmission();
 
-	Wire.requestFrom((uint8_t) EEPROM_ADDR, (uint8_t) sizeof(testData));
-
 	int i = 0;
+
+	Wire.requestFrom((uint8_t) EEPROM_ADDR, (uint8_t) sizeof(testData));
 
 	if(!Wire.available())
 	{
@@ -93,17 +93,19 @@ void example_i2c_eeprom_init()
 			}
 			else
 			{
-//				Serial.write('\'');
-//				Serial.write(readBack[i]);
-//				Serial.write('\'');
-//				Serial.write(',');
-//				Serial.write(' ');
-
+#if 1
+				Serial.write('\'');
+				Serial.write(readBack[i]);
+				Serial.write('\'');
+				Serial.write(',');
+				Serial.write(' ');
+#else
 				Serial.print('\'');
 				Serial.print((char)readBack[i]);
 				Serial.print('\'');
 				Serial.print(',');
 				Serial.print(' ');
+#endif
 			}
 		}
 
