@@ -15,7 +15,8 @@ typedef enum
 	UART_ECHO,
 	UART_LOW_LEVEL_ECHO,
 	SPI_EEPROM,
-	I2C_EEPROM
+	I2C_EEPROM,
+	LED_BRIGHTNESS,
 }
 tTestId;
 
@@ -33,6 +34,8 @@ extern void example_spi_eeprom_init();
 extern void example_spi_eeprom_process();
 extern void example_i2c_eeprom_init();
 extern void example_i2c_eeprom_process();
+extern void example_brightness_init();
+extern void example_brightness_process();
 
 
 tTest testVariant[] =
@@ -44,9 +47,10 @@ tTest testVariant[] =
 	[UART_LOW_LEVEL_ECHO] = {.setup = example_uart_ll_echo_init, .loop = example_uart_ll_echo_process},
 	[SPI_EEPROM] = {.setup = example_spi_eeprom_init, .loop = example_spi_eeprom_process},
 	[I2C_EEPROM] = {.setup = example_i2c_eeprom_init, .loop = example_i2c_eeprom_process},
+	[LED_BRIGHTNESS] = {.setup = example_brightness_init, .loop = example_brightness_process},
 };
 
-static tTestId currentTest = I2C_EEPROM;
+static tTestId currentTest = LED_BRIGHTNESS;
 
 //------------------------------------------------------------------------------
 // Инициализация

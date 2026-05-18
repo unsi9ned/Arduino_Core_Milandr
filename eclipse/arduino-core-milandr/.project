@@ -216,6 +216,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_spi.h</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/milandr_timer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_timer.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_timer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_timer.h</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/milandr_uart.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.c</locationURI>

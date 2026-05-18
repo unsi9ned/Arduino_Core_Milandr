@@ -51,6 +51,7 @@ void milandr_gpio_preinit(void) __attribute__((weak));
 void milandr_uart_preinit(void) __attribute__((weak));
 void milandr_ssp_preinit(void) __attribute__((weak));
 void milandr_i2c_preinit(void) __attribute__((weak));
+void milandr_timer_preinit(void) __attribute__((weak));
 
 __attribute__((weak)) void milandr_gpio_preinit(void)
 {
@@ -72,12 +73,18 @@ __attribute__((weak)) void milandr_i2c_preinit(void)
 
 }
 
+__attribute__((weak)) void milandr_timer_preinit(void)
+{
+
+}
+
 void milandr_hal_init(void)
 {
 	milandr_gpio_preinit();
 	milandr_uart_preinit();
 	milandr_ssp_preinit();
 	milandr_i2c_preinit();
+	milandr_timer_preinit();
 }
 
 //------------------------------------------------------------------------------

@@ -21,47 +21,40 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _MILANDR_HAL_H_
-#define _MILANDR_HAL_H_
+#ifndef _MILANDR_TIMER_H_
+#define _MILANDR_TIMER_H_
 
 #include <stdint.h>
-#include <stdbool.h>
-
+#include <stddef.h>
 #include "periph_definition.h"
-#include "milandr_gpio.h"
-#include "milandr_uart.h"
-#include "milandr_spi.h"
-#include "milandr_i2c.h"
-#include "milandr_timer.h"
+
+//------------------------------------------------------------------------------
+// Канал таймера
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct
+	{
+		uint8_t timer   :3;
+		uint8_t mux     :1;
+		uint8_t channel :4;
+	};
+
+	uint8_t raw;
+}
+tTimerOut;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
-// Глобальные переменные, которые должны быть заданы в variant.h
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
-extern void milandr_hal_init(void);
-extern void milandr_enter_critical(void);
-extern void milandr_exit_critical(void);
-extern void milandr_systick_config(void);
-extern uint32_t milandr_current_millis(void);
-extern uint32_t milandr_current_micros(void);
-extern void milandr_delay_microseconds(uint32_t us);
-extern void milandr_delay(uint32_t ms);
-extern uint8_t milandr_find_pin(tPeriphVariant periph,
-                                tPeriphLineVariant line,
-                                uint8_t periphN,
-                                const tMilandrPin ** set,
-                                const tMilandrPin ** sorted,
-                                int8_t variantNum);
+extern tTimerOut milandr_pmw_init(uint8_t pin);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //_MILANDR_HAL_H_
+#endif  //_MILANDR_TIMER_H_

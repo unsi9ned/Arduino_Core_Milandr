@@ -51,7 +51,7 @@
 extern const tMilandrPin   pinTable[][PIN_MUX_LINES_NUM][1];
 
 //------------------------------------------------------------------------------
-// Таблица пинов UART по умолчанию
+// Таблица пинов I2C по умолчанию
 //------------------------------------------------------------------------------
 #define TWI_SCL_LINE      (I2C_SCL_LINE - I2C_SCL_LINE)
 #define TWI_SDA_LINE      (I2C_SDA_LINE - I2C_SCL_LINE)

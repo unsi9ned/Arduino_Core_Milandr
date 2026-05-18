@@ -1,4 +1,5 @@
 #include "api/Common.h"
+#include "milandr/milandr_hal.h"
 
 /**
  * Read the analog value from a pin.
@@ -70,7 +71,10 @@ void analogReference(int mode) {}
  * @param pinNumber The Arduino pin number to output.
  * @param value The duty cycle for the PWM signal, from 0 to 255.
  */
-void analogWrite(pin_size_t pinNumber, int value) {}
+void analogWrite(pin_size_t pinNumber, int value)
+{
+	milandr_pmw_init(pinNumber);
+}
 
 /**
  * Configure the PWM or DAC resolution.
