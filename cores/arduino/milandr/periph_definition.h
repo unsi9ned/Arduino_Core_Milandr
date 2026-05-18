@@ -181,6 +181,14 @@ tAdcVariant;
 
 typedef enum
 {
+	COMP_1,
+	COMP_COUNT,
+	COMP_UNKNOWN
+}
+tComparatorVariant;
+
+typedef enum
+{
 	PERIPH_PORT,
 	PERIPH_CAN,
 	PERIPH_USB,

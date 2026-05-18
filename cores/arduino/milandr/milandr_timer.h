@@ -52,6 +52,8 @@ extern "C" {
 // Экспортируемые функции
 //------------------------------------------------------------------------------
 extern tTimerOut milandr_pmw_init(uint8_t pin);
+extern void milandr_pwm_set_value(uint8_t pin, int value);
+extern void milandr_pwm_set_resolution(uint8_t resolution);
 
 #ifdef __cplusplus
 }

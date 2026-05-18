@@ -74,6 +74,7 @@ void analogReference(int mode) {}
 void analogWrite(pin_size_t pinNumber, int value)
 {
 	milandr_pmw_init(pinNumber);
+	milandr_pwm_set_value(pinNumber, value);
 }
 
 /**
@@ -87,4 +88,7 @@ void analogWrite(pin_size_t pinNumber, int value)
  * @param resolution The number of bits for the PWM/DAC resolution,
  *                   from 1 to 32.
  */
-void analogWriteResolution(int resolution) {}
+void analogWriteResolution(int resolution)
+{
+	milandr_pwm_set_resolution((uint8_t)resolution);
+}

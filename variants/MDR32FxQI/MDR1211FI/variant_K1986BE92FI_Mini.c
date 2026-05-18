@@ -180,6 +180,15 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_ANALOG] = {{.pinName = PB_7, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 
+	[D21] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PB_8, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PB_8, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PB_8, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_COMP, .periphN = COMP_1, .periphLine = COMP_OUT_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PB_8, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH4_N_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PB_8, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+	},
+
 	//...
 
 	[D24] =
