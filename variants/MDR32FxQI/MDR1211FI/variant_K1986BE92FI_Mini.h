@@ -55,6 +55,10 @@
 #define USE_SWD_PINS   0
 #endif
 
+#ifndef PIN_NC
+#define PIN_NC         0xFF
+#endif
+
 //------------------------------------------------------------------------------
 // Arduino digital pins alias
 //------------------------------------------------------------------------------
@@ -231,5 +235,25 @@ tArduinoPinAlias;
 //------------------------------------------------------------------------------
 
 #define PIN_DAC2_OUT                PE0
+
+//------------------------------------------------------------------------------
+// ADC Inputs
+//------------------------------------------------------------------------------
+
+#define AIN0                        PD7
+#define AIN1                        PD4
+#define AIN2                        PD2
+#define AIN3                        PD3
+#define AIN4                        PD5
+#define AIN5                        PD6
+
+#if USE_SWD_PINS
+
+#define AIN6                        PD0
+#define AIN7                        PD1
+
+#endif
+
+#define AIN_TEMP                    PIN_NC
 
 #endif //_VARIANT_K1986BE92FI_MINI

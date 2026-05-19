@@ -4,7 +4,6 @@ extern void analogWriteResolution(int resolution);
 
 void example_brightness_init()
 {
-	pinMode(LED_BUILTIN, OUTPUT);
 	analogWriteResolution(12);
 }
 
