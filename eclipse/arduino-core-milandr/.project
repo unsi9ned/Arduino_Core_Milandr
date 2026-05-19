@@ -176,6 +176,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/milandr_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_adc.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_adc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_adc.h</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/milandr_common.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_common.c</locationURI>

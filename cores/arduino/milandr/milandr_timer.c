@@ -54,13 +54,11 @@ extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 #define TIMER_CH4N_LINE   (TMR_CH4_N_LINE - TMR_CH1_LINE)
 
 #define TIMER_GET_CH(n)   ((n < TMR_CH1_LINE) ? PERIPH_UNKNOWN_LINE : (n - TMR_CH1_LINE))
-#define TIMER_CH_CNT      ((TMR_CH4_N_LINE - TMR_CH1_LINE + 1) & 0xF)
-#define TIMER_GET_N(n)    (n & 0x7)
 
 #define TIMER_NULL            0x7
 #define TIMER_CH_NULL         0xF
 #define NULL_CHANNEL          0xFF
-#define TIMER_PORT_MUX(mux)  ((mux) ? PIN_MUX_OVERRID : PIN_MUX_ALTER)
+#define TIMER_PORT_MUX(mux)   ((mux) ? PIN_MUX_OVERRID : PIN_MUX_ALTER)
 
 //------------------------------------------------------------------------------
 // Канал таймера

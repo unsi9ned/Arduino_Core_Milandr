@@ -43,6 +43,7 @@ extern void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state);
 extern void milandr_gpio_cfg_input(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_input_pu(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_input_pd(uint8_t arduinoPin);
+extern void milandr_gpio_cfg_input_analog(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_analog(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_pp(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_od(uint8_t arduinoPin);

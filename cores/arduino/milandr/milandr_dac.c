@@ -26,7 +26,6 @@
 #include "variant.h"
 #include "MDR32FxQI_config.h"
 #include "MDR32FxQI_rst_clk.h"
-#include "MDR32FxQI_config.h"
 
 //------------------------------------------------------------------------------
 // Константы
@@ -50,19 +49,19 @@ extern const tMilandrPin   pinTable[][PIN_MUX_LINES_NUM][1];
 
 
 #ifndef DAC1_REF
-#define DAC1_REF          PIN_NC
+#define DAC1_REF             PIN_NC
 #endif
 
 #ifndef DAC1_OUT
-#define DAC1_OUT          PIN_NC
+#define DAC1_OUT             PIN_NC
 #endif
 
 #ifndef DAC2_REF
-#define DAC2_REF          PIN_NC
+#define DAC2_REF             PIN_NC
 #endif
 
 #ifndef DAC2_OUT
-#define DAC2_OUT          PIN_NC
+#define DAC2_OUT             PIN_NC
 #endif
 
 //------------------------------------------------------------------------------
