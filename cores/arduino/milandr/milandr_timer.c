@@ -66,17 +66,7 @@ extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 // Карта используемых каналов и таймеров
 //------------------------------------------------------------------------------
 static tTimerOut channelMap[DMAX];
-static uint32_t  usedChannelMask;
 static uint32_t  initChannelMask;
-
-#define IS_CHAN_USED(tmr, ch) \
-        (usedChannelMask & ((1UL << (ch & 0x7)) << (tmr * 8)))
-
-#define IS_TIMER_USED(tmr) \
-        (usedChannelMask & (0xFF << (tmr * 8)))
-
-#define SET_CHAN_USED(tmr, ch) \
-        usedChannelMask |= ((1UL << (ch & 0x7)) << (tmr * 8))
 
 #define IS_CHAN_INIT(tmr, ch) \
         (initChannelMask & ((1UL << (ch & 0x7)) << (tmr * 8)))
@@ -141,56 +131,20 @@ void milandr_timer_preinit(void)
 	for(int i = 0; i < DMAX; i++)
 	{
 		channelMap[i].raw = NULL_CHANNEL;
-	}
 
-	usedChannelMask = 0;
-	initChannelMask = 0;
-}
-
-//------------------------------------------------------------------------------
-// Связать пин с конкретным таймером и каналом
-//------------------------------------------------------------------------------
-static bool occupy_channel(uint8_t pin)
-{
-	if(channelMap[pin].raw == NULL_CHANNEL)
-	{
-		const tMilandrPin * pins[2] =
+		for(int m = PIN_MUX_ALTER; m <= PIN_MUX_OVERRID; m++)
 		{
-			&pinTable[pin][PIN_MUX_ALTER][0],
-			&pinTable[pin][PIN_MUX_OVERRID][0],
-		};
-
-		//
-		// На одном пине могут быть такие вариации:
-		//   - один таймер, разные каналы (TMR1_CH1, TMR1_CH3)
-		//   - разные таймеры, одинаковы каналы (TMR2_CH4, TMR3_CH4)
-		//   - разные таймеры, разные каналы (TMR1_CH1, TMR2_CH2)
-		//   - один таймер, один канал (TMR_CH1)
-		//   - отсутствие каналов таймера
-
-		for(int i = 0; i < 2; i++)
-		{
-			if(pins[i]->periph == PERIPH_TIMER)
+			if(pinTable[i][m][0].periph == PERIPH_PWM)
 			{
-				uint8_t n = TIMER_GET_N(pins[i]->periphN);
-				uint8_t c = TIMER_GET_CH(pins[i]->periphLine);
-				uint8_t mux = (pins[i]->pinFunc == PIN_MUX_OVERRID) ? 1 : 0;
-
-				if(!IS_CHAN_USED(n, c))
-				{
-					channelMap[pin].timer = n;
-					channelMap[pin].channel = c;
-					channelMap[pin].mux = mux;
-					SET_CHAN_USED(n, c);
-					return true;
-				}
+				channelMap[i].timer = pinTable[i][m][0].periphN;
+				channelMap[i].channel = TIMER_GET_CH(pinTable[i][m][0].periphLine);
+				channelMap[i].mux = (m == PIN_MUX_OVERRID) ? 1 : 0;
+				break;
 			}
 		}
-
-		return false;
 	}
 
-	return true;
+	initChannelMask = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -202,12 +156,11 @@ static bool init_pwm_out(uint8_t pin)
 
 	tTimerOut out = channelMap[pin];
 
-	if(IS_CHAN_USED(out.timer, out.channel) &&
-       IS_CHAN_INIT(out.timer, out.channel))
+	if(IS_CHAN_INIT(out.timer, out.channel))
 	{
 		return true;
 	}
-	else if(IS_CHAN_USED(out.timer, out.channel))
+	else
 	{
 		//
 		// Производим настройку GPIO
@@ -254,15 +207,17 @@ static bool init_pwm_out(uint8_t pin)
 			sTIM_ChnInit.TIMER_CH_Number = out.channel % 4;
 			TIMER_ChnInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_ChnInit);
 
-			// Duty Cycle = 50 %
-			TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, out.channel % 4, TIMER_PERIOD >> 1);
+			// Duty Cycle = 0 %
+			TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, out.channel % 4, 0);
 
-			/* Initializes the TIMER1 Channel 1,1N,2,2N,3 Output */
+			/* Initializes the TIMER1 Channel Output */
 			TIMER_ChnOutStructInit(&sTIM_ChnOutInit);
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Polarity = TIMER_CHOPolarity_NonInverted;
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Source   = TIMER_CH_OutSrc_REF;
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Mode     = TIMER_CH_OutMode_Output;
-			sTIM_ChnOutInit.TIMER_CH_NegOut_Polarity = TIMER_CHOPolarity_NonInverted;
+			sTIM_ChnOutInit.TIMER_CH_NegOut_Polarity = (out.channel < 4) ?
+													   TIMER_CHOPolarity_NonInverted :
+													   TIMER_CHOPolarity_Inverted;
 			sTIM_ChnOutInit.TIMER_CH_NegOut_Source   = TIMER_CH_OutSrc_REF;
 			sTIM_ChnOutInit.TIMER_CH_NegOut_Mode     = TIMER_CH_OutMode_Output;
 			sTIM_ChnOutInit.TIMER_CH_Number          = out.channel % 4;
@@ -287,10 +242,7 @@ static bool init_pwm_out(uint8_t pin)
 //------------------------------------------------------------------------------
 tTimerOut milandr_pmw_init(uint8_t pin)
 {
-	tTimerOut tmrChannel = { .raw = NULL_CHANNEL };
-
-	if(pin > DMAX || !occupy_channel(pin) || !init_pwm_out(pin)) return tmrChannel;
-
+	init_pwm_out(pin % DMAX);
 	return channelMap[pin];
 }
 

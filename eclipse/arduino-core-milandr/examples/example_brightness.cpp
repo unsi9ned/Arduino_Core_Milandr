@@ -4,8 +4,6 @@ extern void analogWriteResolution(int resolution);
 
 void example_brightness_init()
 {
-	pinMode(D21, OUTPUT);
-	milandr_gpio_sel_override_func(D21);
 	pinMode(LED_BUILTIN, OUTPUT);
 	analogWriteResolution(12);
 }
