@@ -63,6 +63,22 @@ extern const tMilandrPin pinTable[][PIN_MUX_LINES_NUM][1];
 #define TIMER_PORT_MUX(mux)  ((mux) ? PIN_MUX_OVERRID : PIN_MUX_ALTER)
 
 //------------------------------------------------------------------------------
+// Канал таймера
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct
+	{
+		uint8_t timer   :3;
+		uint8_t mux     :1;
+		uint8_t channel :4;
+	};
+
+	uint8_t raw;
+}
+tTimerOut;
+
+//------------------------------------------------------------------------------
 // Карта используемых каналов и таймеров
 //------------------------------------------------------------------------------
 static tTimerOut channelMap[DMAX];
@@ -240,7 +256,7 @@ static bool init_pwm_out(uint8_t pin)
 //------------------------------------------------------------------------------
 // Инициализация таймера в режиме ШИМ
 //------------------------------------------------------------------------------
-tTimerOut milandr_pmw_init(uint8_t pin)
+static tTimerOut milandr_pmw_init(uint8_t pin)
 {
 	init_pwm_out(pin % DMAX);
 	return channelMap[pin];
@@ -274,13 +290,18 @@ static uint16_t scale_resolution(int value)
 //------------------------------------------------------------------------------
 // Установка коэффициента заполнения ШИМ
 //------------------------------------------------------------------------------
-void milandr_pwm_set_value(uint8_t pin, int value)
+bool milandr_pwm_set_value(uint8_t pin, int value)
 {
-	tTimerOut out = channelMap[pin % DMAX];
+	// Инициализация происходит только один раз
+	// Все последующие вызовы функции возвращают true
+	tTimerOut out = milandr_pmw_init(pin);
 
 	if(IS_CHAN_INIT(out.timer, out.channel))
 	{
 		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
 		TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, out.channel % 4, scale_resolution(value));
+		return true;
 	}
+
+	return false;
 }

@@ -41,8 +41,8 @@
    +------------------------------------------------------------------------+
    |                                                                        |
   ┌-----┐                                                                   |+-- G
-  | USB |                                                                   |+-- D1--49--P40--AN7
-  └-----┘                                                                   |+-- D0--48--P39--AN6
+  | USB |                                                                   |+-- D1--P40--AN7
+  └-----┘                                                                   |+-- D0--P39--AN6
    |                                                                        |+-- 3V
    +------------------------------------------------------------------------+
      |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -101,6 +101,15 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_ANALOG] = {{.pinName = PE_2, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_COMP, .periphN = 0, .periphLine = COMP_IN1_LINE}},
 	},
 
+	//...
+	[D3] =
+	{
+		[PIN_MUX_GPIO] = {{.pinName = PE_0, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_MAIN] = {{.pinName = PE_0, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PE_0, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH1_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PE_0, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_CAN, .periphN = CAN_1, .periphLine = CAN_RXD_LINE}},
+		[PIN_MUX_ANALOG] = {{.pinName = PE_0, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_DAC, .periphN = DAC_2, .periphLine = DAC_OUT_LINE}},
+	},
 	//...
 	[D6] =
 	{

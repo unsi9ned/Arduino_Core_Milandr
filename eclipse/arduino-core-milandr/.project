@@ -181,6 +181,16 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_common.c</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/milandr_dac.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_dac.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/milandr/milandr_dac.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_dac.h</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/milandr_gpio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_gpio.c</locationURI>

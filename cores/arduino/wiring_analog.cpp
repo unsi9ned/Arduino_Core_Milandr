@@ -73,8 +73,10 @@ void analogReference(int mode) {}
  */
 void analogWrite(pin_size_t pinNumber, int value)
 {
-	milandr_pmw_init(pinNumber);
-	milandr_pwm_set_value(pinNumber, value);
+	if(!milandr_pwm_set_value(pinNumber, value))
+	{
+		milandr_dac_set_value(pinNumber, value);
+	}
 }
 
 /**
@@ -91,4 +93,5 @@ void analogWrite(pin_size_t pinNumber, int value)
 void analogWriteResolution(int resolution)
 {
 	milandr_pwm_set_resolution((uint8_t)resolution);
+	milandr_dac_set_resolution((uint8_t)resolution);
 }

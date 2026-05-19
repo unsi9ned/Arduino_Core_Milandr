@@ -28,22 +28,6 @@
 #include <stddef.h>
 #include "periph_definition.h"
 
-//------------------------------------------------------------------------------
-// Канал таймера
-//------------------------------------------------------------------------------
-typedef union
-{
-	struct
-	{
-		uint8_t timer   :3;
-		uint8_t mux     :1;
-		uint8_t channel :4;
-	};
-
-	uint8_t raw;
-}
-tTimerOut;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,8 +35,7 @@ extern "C" {
 //------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
-extern tTimerOut milandr_pmw_init(uint8_t pin);
-extern void milandr_pwm_set_value(uint8_t pin, int value);
+extern bool milandr_pwm_set_value(uint8_t pin, int value);
 extern void milandr_pwm_set_resolution(uint8_t resolution);
 
 #ifdef __cplusplus

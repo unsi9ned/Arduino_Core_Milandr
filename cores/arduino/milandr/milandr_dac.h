@@ -21,42 +21,25 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _MILANDR_GPIO_H_
-#define _MILANDR_GPIO_H_
+#ifndef _MILANDR_DAC_H_
+#define _MILANDR_DAC_H_
 
 #include <stdint.h>
-#include <stdbool.h>
+#include <stddef.h>
+#include "periph_definition.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
-// Глобальные макроcы и дефайны
-//------------------------------------------------------------------------------
-#define PIN_NC                  ((uint8_t)0xFF)
-
-//------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
-extern void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state);
-extern void milandr_gpio_cfg_input(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pu(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_input_pd(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_analog(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_pp(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_od(uint8_t arduinoPin);
-extern void milandr_gpio_cfg_output_od_pu(uint8_t arduinoPin);
-extern void milandr_gpio_write(uint8_t arduinoPin, uint8_t level);
-extern uint8_t milandr_gpio_read(uint8_t arduinoPin);
-extern void milandr_gpio_sel_port_func(uint8_t arduinoPin);
-extern void milandr_gpio_sel_alter_func(uint8_t arduinoPin);
-extern void milandr_gpio_sel_override_func(uint8_t arduinoPin);
-extern uint8_t milandr_gpio_count(void);
-
+extern void milandr_dac_set_resolution(uint8_t resolution);
+extern void milandr_dac_set_value(uint8_t pin, int value);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //_MILANDR_GPIO_H_
+#endif  //_MILANDR_DAC_H_

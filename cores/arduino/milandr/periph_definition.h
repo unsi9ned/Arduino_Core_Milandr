@@ -181,6 +181,15 @@ tAdcVariant;
 
 typedef enum
 {
+	DAC_1,
+	DAC_2,
+	DAC_COUNT,
+	DAC_UNKNOWN
+}
+tDacVariant;
+
+typedef enum
+{
 	COMP_1,
 	COMP_COUNT,
 	COMP_UNKNOWN

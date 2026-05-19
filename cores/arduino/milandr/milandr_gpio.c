@@ -157,6 +157,23 @@ void milandr_gpio_cfg_input_pd(uint8_t arduinoPin)
 }
 
 //------------------------------------------------------------------------------
+// Конфигурации пина как аналоговый выход
+//------------------------------------------------------------------------------
+void milandr_gpio_cfg_output_analog(uint8_t arduinoPin)
+{
+	if(arduinoPin > DMAX) return;
+
+	volatile MDR_PORT_TypeDef * port = NULL;
+	tMilandrPin mdrPin;
+	milandr_gpio_cfg_common(arduinoPin, &port, &mdrPin);
+	uint16_t pinMask = (1 << mdrPin.pin);
+
+	port->ANALOG &= ~((uint32_t)PORT_MODE_DIGITAL << mdrPin.pin);
+	port->OE |= pinMask;
+	port->PD &= ~(((uint32_t)PORT_PD_OPEN << mdrPin.pin) << PORT_PD_Pos);
+}
+
+//------------------------------------------------------------------------------
 // Конфигурации пина как выход
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_output_pp(uint8_t arduinoPin)

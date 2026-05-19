@@ -33,6 +33,7 @@
 #include "milandr_spi.h"
 #include "milandr_i2c.h"
 #include "milandr_timer.h"
+#include "milandr_dac.h"
 
 #ifdef __cplusplus
 extern "C" {
