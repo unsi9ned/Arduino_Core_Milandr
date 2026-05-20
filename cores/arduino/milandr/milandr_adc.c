@@ -43,27 +43,14 @@ extern const tMilandrPin   pinTable[][PIN_MUX_LINES_NUM][1];
 //------------------------------------------------------------------------------
 // Описание пинов
 //------------------------------------------------------------------------------
-#define AIN1_LINE     (ADC_CH1_LINE - ADC_CH1_LINE)
-#define AIN2_LINE     (ADC_CH2_LINE - ADC_CH1_LINE)
-#define AIN3_LINE     (ADC_CH3_LINE - ADC_CH1_LINE)
-#define AIN4_LINE     (ADC_CH4_LINE - ADC_CH1_LINE)
-#define AIN5_LINE     (ADC_CH5_LINE - ADC_CH1_LINE)
-#define AIN6_LINE     (ADC_CH6_LINE - ADC_CH1_LINE)
-#define AIN7_LINE     (ADC_CH7_LINE - ADC_CH1_LINE)
-#define AIN8_LINE     (ADC_CH8_LINE - ADC_CH1_LINE)
-#define AIN9_LINE     (ADC_CH9_LINE - ADC_CH1_LINE)
-#define AIN10_LINE    (ADC_CH10_LINE - ADC_CH1_LINE)
-#define AIN11_LINE    (ADC_CH11_LINE - ADC_CH1_LINE)
-#define AIN12_LINE    (ADC_CH12_LINE - ADC_CH1_LINE)
-#define AIN13_LINE    (ADC_CH13_LINE - ADC_CH1_LINE)
-#define AIN14_LINE    (ADC_CH14_LINE - ADC_CH1_LINE)
-#define AIN15_LINE    (ADC_CH15_LINE - ADC_CH1_LINE)
-
-#define ADC_GET_CH(n) ((n < ADC_CH1_LINE) ? PERIPH_UNKNOWN_LINE : (n - ADC_CH1_LINE))
+#define ADC_GET_CH(n) (((n) < ADC_CH0_LINE) ? PERIPH_UNKNOWN_LINE : ((n) - ADC_CH0_LINE))
 
 #define ADC_NULL              0x3
 #define ADC_CH_NULL           0x3F
 #define NULL_CHANNEL          0xFF
+
+#define TEMP_SENSOR_PIN       DMAX
+#define TEMP_SENSOR_CHAN      ADC_CH31_LINE
 
 //------------------------------------------------------------------------------
 // Канал АЦП
@@ -83,7 +70,7 @@ tAdcInput;
 //------------------------------------------------------------------------------
 // Карта используемых каналов и таймеров
 //------------------------------------------------------------------------------
-static tAdcInput channelMap[DMAX];
+static tAdcInput channelMap[DMAX + 1];
 static uint32_t  initChannelMask[ADC_COUNT];
 
 #define IS_CHAN_INIT(adc, ch) \
@@ -94,6 +81,9 @@ static uint32_t  initChannelMask[ADC_COUNT];
 
 #define SET_CHAN_INIT(adc, ch) \
         initChannelMask[adc % ADC_COUNT] |= (1UL << (ch & 0x1F))
+
+#define RST_CHAN_INIT(adc, ch) \
+        initChannelMask[adc % ADC_COUNT] &= ~(1UL << (ch & 0x1F))
 
 //------------------------------------------------------------------------------
 // Дескриптор периферии
@@ -164,6 +154,9 @@ void milandr_adc_preinit(void)
 			channelMap[i].raw = NULL_CHANNEL;
 	}
 
+	channelMap[TEMP_SENSOR_PIN].adc = ADC_1;
+	channelMap[TEMP_SENSOR_PIN].channel = ADC_GET_CH(TEMP_SENSOR_CHAN);
+
 	for(int i = 0; i < ADC_COUNT; i++)
 	{
 		initChannelMask[i] = 0;
@@ -186,13 +179,16 @@ static bool init_adc_input(uint8_t pin)
 	else
 	{
 		//
-		// Производим настройку GPIO
+		// Производим настройку GPIO. Канал AIN_TEMP является виртуальным
 		//
-		milandr_gpio_clock_enable(pin, true);
-		milandr_gpio_cfg_input_analog(pin);
+		if(pin < TEMP_SENSOR_PIN)
+		{
+			milandr_gpio_clock_enable(pin, true);
+			milandr_gpio_cfg_input_analog(pin);
+		}
 
 		//
-		// Производим настройку Timer
+		// Производим настройку ADC
 		//
 		if(!IS_ADC_INIT(input.adc))
 		{
@@ -212,12 +208,27 @@ static bool init_adc_input(uint8_t pin)
 			sADC.ADC_IntVRefTrimming      = 1;
 			ADC_Init(&sADC);
 
+			ADCx_StructInit(&sADCx);
+			sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
+			sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;
+			sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
+			sADCx.ADC_ChannelNumber    = ADC_CH_TEMP_SENSOR;
+			sADCx.ADC_Channels         = 0;
+			sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;
+			sADCx.ADC_LowLevel         = 0;
+			sADCx.ADC_HighLevel        = 0;
+			sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
+			sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
+			sADCx.ADC_Prescaler        = ADC_CLK_div_2048;
+			sADCx.ADC_DelayGo          = 0xF;
+			ADC1_Init(&sADCx);
+
 			/* ADC2 Configuration */
 			ADCx_StructInit(&sADCx);
 			sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
-			sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_CYCLIC_CONV;
+			sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;
 			sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
-			sADCx.ADC_ChannelNumber    = ADC_CH_ADC7;
+			sADCx.ADC_ChannelNumber    = ADC_CH_TEMP_SENSOR;
 			sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;
 			sADCx.ADC_LowLevel         = 0;
 			sADCx.ADC_HighLevel        = 0;
@@ -227,13 +238,100 @@ static bool init_adc_input(uint8_t pin)
 			sADCx.ADC_DelayGo          = 3;
 			ADC2_Init(&sADCx);
 
+			/* ADC1 enable */
+			ADC1_Cmd(ENABLE);
+
 			/* ADC2 enable */
 			ADC2_Cmd(ENABLE);
+
+			/* Канал 31 используется датчиков темепературы */
+			SET_CHAN_INIT(ADC_1, ADC_GET_CH(TEMP_SENSOR_CHAN));
+			SET_CHAN_INIT(ADC_2, ADC_GET_CH(TEMP_SENSOR_CHAN));
 		}
 
-		SET_CHAN_INIT(input.adc, input.channel);
+		SET_CHAN_INIT(ADC_1, input.channel);
+		SET_CHAN_INIT(ADC_2, input.channel);
 		return true;
 	}
 
 	return false;
+}
+
+//------------------------------------------------------------------------------
+// Деинициализация входа АЦП
+//------------------------------------------------------------------------------
+void milandr_adc_deinit(uint8_t pin)
+{
+	tAdcInput in = channelMap[pin % DMAX];
+	if(in.raw == NULL_CHANNEL || !IS_CHAN_INIT(in.adc, in.channel)) return;
+
+	// Перевод пина в режим входа
+	milandr_gpio_cfg_input(pin);
+
+	// Сброс флага инициализации канала
+	RST_CHAN_INIT(ADC_1, in.channel);
+	RST_CHAN_INIT(ADC_2, in.channel);
+}
+
+//------------------------------------------------------------------------------
+// Изменить разрядность ЦАП (виртуальную)
+//------------------------------------------------------------------------------
+void milandr_adc_set_resolution(uint8_t resolution)
+{
+	if(resolution > ADC_MAX_RESOLUTION)
+		resolution = ADC_MAX_RESOLUTION;
+	else if(resolution < ADC_DEFAULT_RESOLUTION)
+		resolution = ADC_DEFAULT_RESOLUTION;
+
+	adcResolution = resolution;
+}
+
+//------------------------------------------------------------------------------
+// Масштабирование значения duty cycle в соответствии с 12-битным разрешением
+//------------------------------------------------------------------------------
+static uint16_t scale_resolution(uint16_t value)
+{
+	return (value >> (ADC_MAX_RESOLUTION - adcResolution));
+}
+
+//------------------------------------------------------------------------------
+// Оцифровка напряжения на входе
+//------------------------------------------------------------------------------
+uint16_t milandr_adc_read_value(uint8_t pin)
+{
+	if(!init_adc_input(pin % (DMAX + 1)))
+	{
+		return 0;
+	}
+	else
+	{
+		uint16_t result = 0;
+		ADCx_Channel_Number ch = ADC_GET_CH(TEMP_SENSOR_CHAN);
+
+		if(pin < TEMP_SENSOR_PIN)
+		{
+			const tMilandrPin * ain = &pinTable[pin % DMAX][PIN_MUX_ANALOG][0];
+			ch = ADC_GET_CH(ain->periphLine & 0x1F);
+
+			ADC2_SetChannel(ch);
+			ADC2_Start();
+
+			// Ждем окончания преобразований
+			while(MDR_ADC->ADC2_CFG & ADC2_CFG_REG_GO);
+
+			result = scale_resolution((uint16_t)(ADC2_GetResult() & 0xFFF));
+		}
+		else
+		{
+			ADC1_SetChannel(ch);
+			ADC1_Start();
+
+			// Ждем окончания преобразований
+			while(MDR_ADC->ADC1_CFG & ADC1_CFG_REG_GO);
+
+			result = scale_resolution((uint16_t)(ADC1_GetResult() & 0xFFF));
+		}
+
+		return result;
+	}
 }

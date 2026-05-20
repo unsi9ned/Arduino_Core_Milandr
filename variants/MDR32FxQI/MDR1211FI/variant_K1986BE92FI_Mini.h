@@ -250,6 +250,6 @@ tArduinoPinAlias;
 
 #endif
 
-#define AIN_TEMP                    PIN_NC
+#define AIN_TEMP                    DMAX
 
 #endif //_VARIANT_K1986BE92FI_MINI

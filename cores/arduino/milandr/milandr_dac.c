@@ -136,7 +136,7 @@ static tDacVariant dac_init(uint8_t pin)
 {
 	const tMilandrPin * out = &pinTable[pin % DMAX][PIN_MUX_ANALOG][0];
 
-	if(pin > DMAX || out->periph != PERIPH_DAC || out->periphLine != DAC_OUT_LINE)
+	if(pin >= DMAX || out->periph != PERIPH_DAC || out->periphLine != DAC_OUT_LINE)
 	{
 		return DAC_UNKNOWN;
 	}

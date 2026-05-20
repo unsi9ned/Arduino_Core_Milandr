@@ -356,8 +356,8 @@ tUartVariant milandr_uart_init(uint8_t  rxPin,
                                uint8_t  stopBits,
                                tMilandrParity  parity)
 {
-	if(rxPin > milandr_gpio_count() ||
-	   txPin > milandr_gpio_count() ||
+	if(rxPin >= milandr_gpio_count() ||
+	   txPin >= milandr_gpio_count() ||
 	   rxPin == txPin)
 	{
 		return UART_UNKNOWN;

@@ -290,8 +290,8 @@ uint8_t milandr_i2c_pin(tI2cVariant i2c, tPeriphLineVariant line)
 //------------------------------------------------------------------------------
 tI2cVariant milandr_i2c_init(uint8_t sdaPin, uint8_t sclPin, uint8_t ownAddress)
 {
-	if(sdaPin > milandr_gpio_count() ||
-	   sclPin > milandr_gpio_count() ||
+	if(sdaPin >= milandr_gpio_count() ||
+	   sclPin >= milandr_gpio_count() ||
 	   sdaPin == sclPin)
 	{
 		return I2C_UNKNOWN;

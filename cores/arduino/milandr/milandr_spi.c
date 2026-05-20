@@ -196,9 +196,9 @@ tSspVariant milandr_spi_master_init(uint8_t  mosiPin,
                                     tMilandrBitOrder bitOrder,
                                     tMilandrSspMode mode)
 {
-	if(mosiPin > milandr_gpio_count() ||
-	   misoPin > milandr_gpio_count() ||
-	   clkPin > milandr_gpio_count())
+	if(mosiPin >= milandr_gpio_count() ||
+	   misoPin >= milandr_gpio_count() ||
+	   clkPin >= milandr_gpio_count())
 	{
 		return UART_UNKNOWN;
 	}

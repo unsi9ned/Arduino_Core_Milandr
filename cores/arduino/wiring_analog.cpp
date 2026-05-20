@@ -21,8 +21,9 @@
  * @return A 10-bit value, where the max value 1023 represents the operating
  *         voltage (normally 5V or 3.3V).
  */
-int analogRead(pin_size_t pinNumber) {
-    return 0;
+int analogRead(pin_size_t pinNumber)
+{
+	return milandr_adc_read_value(pinNumber);
 }
 
 /**
@@ -35,7 +36,10 @@ int analogRead(pin_size_t pinNumber) {
  *
  * @param resolution The number of bits for the ADC resolution, from 1 to 32.
  */
-void analogReadResolution(int resolution) {}
+void analogReadResolution(int resolution)
+{
+	milandr_adc_set_resolution(resolution);
+}
 
 /**
  * Configure the ADC voltage reference.
@@ -47,7 +51,10 @@ void analogReadResolution(int resolution) {}
  *
  * @param mode The ADC reference voltage mode to set.
  */
-void analogReference(int mode) {}
+void analogReference(int mode)
+{
+	// В данной версии ядра используется только AUCC
+}
 
 /**
  * Output a PWM signal to a pin.

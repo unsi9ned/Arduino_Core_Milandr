@@ -70,7 +70,7 @@ void milandr_gpio_preinit()
 //------------------------------------------------------------------------------
 void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 
@@ -85,7 +85,7 @@ void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state)
 //------------------------------------------------------------------------------
 static void milandr_gpio_cfg_common(uint8_t arduinoPin, volatile MDR_PORT_TypeDef ** portN, tMilandrPin * mdrPin)
 {
-	if(!mdrPin || arduinoPin > DMAX) return;
+	if(!mdrPin || arduinoPin >= DMAX) return;
 
 	*mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef *port = MDR_PORT[mdrPin->port & 0xFul];
@@ -110,7 +110,7 @@ static void milandr_gpio_cfg_common(uint8_t arduinoPin, volatile MDR_PORT_TypeDe
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_input(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -127,7 +127,7 @@ void milandr_gpio_cfg_input(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_input_pu(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -144,7 +144,7 @@ void milandr_gpio_cfg_input_pu(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_input_pd(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -161,7 +161,7 @@ void milandr_gpio_cfg_input_pd(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_input_analog(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -179,7 +179,7 @@ void milandr_gpio_cfg_input_analog(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_output_analog(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -196,7 +196,7 @@ void milandr_gpio_cfg_output_analog(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_output_pp(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -212,7 +212,7 @@ void milandr_gpio_cfg_output_pp(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_output_od(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -230,7 +230,7 @@ void milandr_gpio_cfg_output_od(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_cfg_output_od_pu(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	volatile MDR_PORT_TypeDef * port = NULL;
 	tMilandrPin mdrPin;
@@ -248,7 +248,7 @@ void milandr_gpio_cfg_output_od_pu(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_write(uint8_t arduinoPin, uint8_t level)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
@@ -265,7 +265,7 @@ void milandr_gpio_write(uint8_t arduinoPin, uint8_t level)
 //------------------------------------------------------------------------------
 uint8_t milandr_gpio_read(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return 0;
+	if(arduinoPin >= DMAX) return 0;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
@@ -277,7 +277,7 @@ uint8_t milandr_gpio_read(uint8_t arduinoPin)
 //------------------------------------------------------------------------------
 void milandr_gpio_sel_port_func(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
@@ -288,7 +288,7 @@ void milandr_gpio_sel_port_func(uint8_t arduinoPin)
 
 void milandr_gpio_sel_alter_func(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];
@@ -300,7 +300,7 @@ void milandr_gpio_sel_alter_func(uint8_t arduinoPin)
 
 void milandr_gpio_sel_override_func(uint8_t arduinoPin)
 {
-	if(arduinoPin > DMAX) return;
+	if(arduinoPin >= DMAX) return;
 
 	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
 	volatile MDR_PORT_TypeDef * port = MDR_PORT[mdrPin.port];

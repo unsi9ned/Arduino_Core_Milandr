@@ -35,6 +35,9 @@ extern "C" {
 //------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
+extern void milandr_adc_deinit(uint8_t pin);
+extern void milandr_adc_set_resolution(uint8_t resolution);
+extern uint16_t milandr_adc_read_value(uint8_t pin);
 
 #ifdef __cplusplus
 }
