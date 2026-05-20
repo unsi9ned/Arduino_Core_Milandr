@@ -17,7 +17,8 @@ typedef enum
 	SPI_EEPROM,
 	I2C_EEPROM,
 	LED_BRIGHTNESS,
-	TEMPERATURE_SENSOR
+	TEMPERATURE_SENSOR,
+	EXT_INT
 }
 tTestId;
 
@@ -39,6 +40,8 @@ extern void example_brightness_init();
 extern void example_brightness_process();
 extern void example_temperature_init();
 extern void example_temperature_process();
+extern void example_exti_init();
+extern void example_exti_process();
 
 
 tTest testVariant[] =
@@ -52,9 +55,10 @@ tTest testVariant[] =
 	[I2C_EEPROM] = {.setup = example_i2c_eeprom_init, .loop = example_i2c_eeprom_process},
 	[LED_BRIGHTNESS] = {.setup = example_brightness_init, .loop = example_brightness_process},
 	[TEMPERATURE_SENSOR] = {.setup = example_temperature_init, .loop = example_temperature_process},
+	[EXT_INT] = {.setup = example_exti_init, .loop = example_exti_process},
 };
 
-static tTestId currentTest = TEMPERATURE_SENSOR;
+static tTestId currentTest = EXT_INT;
 
 //------------------------------------------------------------------------------
 // Инициализация
