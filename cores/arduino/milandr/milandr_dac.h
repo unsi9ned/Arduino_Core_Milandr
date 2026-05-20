@@ -35,6 +35,7 @@ extern "C" {
 //------------------------------------------------------------------------------
 // Экспортируемые функции
 //------------------------------------------------------------------------------
+extern void milandr_dac_deinit(uint8_t pin);
 extern void milandr_dac_set_resolution(uint8_t resolution);
 extern void milandr_dac_set_value(uint8_t pin, int value);
 

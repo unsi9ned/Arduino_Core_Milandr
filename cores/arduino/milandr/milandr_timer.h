@@ -37,6 +37,7 @@ extern "C" {
 //------------------------------------------------------------------------------
 extern bool milandr_pwm_set_value(uint8_t pin, int value);
 extern void milandr_pwm_set_resolution(uint8_t resolution);
+extern void milandr_pwm_deinit(uint8_t pin);
 
 #ifdef __cplusplus
 }

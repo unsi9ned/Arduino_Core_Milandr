@@ -91,6 +91,9 @@ static uint32_t  initChannelMask;
 #define SET_CHAN_INIT(tmr, ch) \
 		initChannelMask |= ((1UL << (ch & 0x7)) << (tmr * 8))
 
+#define RST_CHAN_INIT(tmr, ch) \
+		initChannelMask &= ~((1UL << (ch & 0x7)) << (tmr * 8))
+
 //------------------------------------------------------------------------------
 // Дескриптор периферии
 //------------------------------------------------------------------------------
@@ -198,7 +201,7 @@ static bool init_pwm_out(uint8_t pin)
 		{
 			MDR_RST_CLK->PER_CLOCK |= tmrTable[out.timer].clkMask;
 
-			/* Reset all TIMER1 settings */
+			/* Reset all TIMER settings */
 			TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
 
 			/* Initializes the TIMERx Counter                               */
@@ -249,6 +252,31 @@ static bool init_pwm_out(uint8_t pin)
 	}
 
 	return false;
+}
+
+//------------------------------------------------------------------------------
+// Деинициализация выхода таймера
+//------------------------------------------------------------------------------
+void milandr_pwm_deinit(uint8_t pin)
+{
+	tTimerOut out = channelMap[pin % DMAX];
+	if(out.raw == NULL_CHANNEL || !IS_CHAN_INIT(out.timer, out.channel)) return;
+
+	// Перевод пина в режим входа
+	milandr_gpio_cfg_input(pin);
+
+	// Сброс флага инициализации канала
+	RST_CHAN_INIT(out.timer, out.channel);
+
+	// Если таймер не использует больше ни на каком из каналов, то деинициализируем
+	if(!IS_TIMER_INIT(out.timer))
+	{
+		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
+
+		TIMER_Cmd((MDR_TIMER_TypeDef*)TIMERx, DISABLE);
+		TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
+		MDR_RST_CLK->PER_CLOCK &= ~tmrTable[out.timer].clkMask;
+	}
 }
 
 //------------------------------------------------------------------------------

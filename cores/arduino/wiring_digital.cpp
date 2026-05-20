@@ -41,6 +41,8 @@ void pinMode(pin_size_t pinNumber, PinMode pinMode)
 	if(pinNumber >= milandr_gpio_count()) return;
 
 	milandr_gpio_clock_enable(pinNumber, true);
+	milandr_pwm_deinit(pinNumber);
+	milandr_dac_deinit(pinNumber);
 
 	switch(pinMode)
 	{

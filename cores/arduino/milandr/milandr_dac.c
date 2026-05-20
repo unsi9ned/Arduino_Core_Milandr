@@ -171,6 +171,26 @@ static tDacVariant dac_init(uint8_t pin)
 }
 
 //------------------------------------------------------------------------------
+// Деинициализация выхода ЦАП
+//------------------------------------------------------------------------------
+void milandr_dac_deinit(uint8_t pin)
+{
+	const tMilandrPin * out = &pinTable[pin % DMAX][PIN_MUX_ANALOG][0];
+
+	if(pin < DMAX && out->periph == PERIPH_DAC && out->periphLine == DAC_OUT_LINE)
+	{
+		tDacVariant dacN = out->periphN % DAC_COUNT;
+
+		if(dacTable[dacN].isInit)
+		{
+			milandr_gpio_cfg_input(pin);
+			dacTable[dacN].regs->CFG &= ~(1UL << dacTable[dacN].enableBitPos);
+			dacTable[dacN].isInit = false;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
 // Изменить разрядность ЦАП (виртуальную)
 //------------------------------------------------------------------------------
 void milandr_dac_set_resolution(uint8_t resolution)
