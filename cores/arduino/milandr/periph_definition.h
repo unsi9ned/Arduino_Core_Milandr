@@ -199,6 +199,7 @@ typedef enum
 	/* Псевдо-периферия. Фактически PERIPH_TIMER. Указывая данный тип периферии
 	 * мы сообщаем ядру, что данный выход таймера использутся для генерации ШИМ */
 	PERIPH_PWM,
+	PERIPH_TONE,
 
 	PERIPH_VARIANTS_NUM,
 	PERIPH_UNKNOWN = 0x1F

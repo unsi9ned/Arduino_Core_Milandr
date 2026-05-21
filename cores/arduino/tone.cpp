@@ -1,8 +1,5 @@
 #include "api/Common.h"
-
-// Only a single tone can be played at a time, so this can be used to keep
-// track of the current pin playing the tone.
-static int current_tone_pin = -1;
+#include "milandr/milandr_hal.h"
 
 /**
  * Generate a square wave on the specified pin & frequency at a 50% duty cycle.
@@ -25,20 +22,9 @@ static int current_tone_pin = -1;
  *                 noTone() is called.
  *                 Optional argument with a default value of zero.
  */
-void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) {
-    //if (!isPinPwm(_pin)) return;
-
-    if (current_tone_pin != -1 && current_tone_pin != _pin) return;
-
-    // Implement: Set the PWM frequency for the given pin at 50% duty cycle
-
-    current_tone_pin = _pin;
-
-    if (duration) {
-        // Implement: If a duration value is provided the tone should stop
-        // playing after that time without blocking this function.
-        // Remember to set current_tone_pin to -1 when the tone stops.
-    }
+void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
+{
+	milandr_tone_generate(_pin, (uint16_t)frequency);
 }
 
 /**
@@ -49,10 +35,7 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) {
  *
  * @param _pin The pin to stop playing the tone.
  */
-void noTone(uint8_t _pin) {
-    if (_pin != current_tone_pin) return;
-
-    // Implement: Stop the PWM output on the given pin
-
-    current_tone_pin = -1;
+void noTone(uint8_t _pin)
+{
+	milandr_tone_deinit(_pin);
 }

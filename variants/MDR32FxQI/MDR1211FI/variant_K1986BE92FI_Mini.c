@@ -30,9 +30,9 @@
 #include "milandr/periph_definition.h"
 
 /*---------------------K1986BE92FI_Mini pins number-----------------------------
-
-          PWM8                       PWM7  PWM6  PWM5              PWM4
-           |                          |     |     |                 |
+                                         ♫     ♫
+          PWM8                       PWM7| PWM6| PWM5              PWM4
+           |                          |  |  |  |  |                 |
            | P37      P35   P33   P31 | P29 | P27 | P25   P23   P21 |
           P38 | P36    | P34 | P32 | P30 | P28 | P26 | P24 | P22 | P20
            |  |  |     |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -49,11 +49,11 @@
     VB  R E3 E2 E1 E0 D7 D4 D2 D3 D5 D6 C2 C1 C0 B0 B1 B2 B3 B4 B5 B6 3V3 G
            |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
           P0 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 | P12 | P14 | P16 | P18 |
-              |        |  |  |  |  |  |  | P11   P13   P15   P17 | P19
-              |       AN0 | AN2 | AN4 |  |              |        |
-              |          AN1   AN3   AN5 |              |        |
-             PWM0                       PWM1           PWM2     PWM3
-
+           |  |        |  |  |  |  |  |  | P11   P13   P15   P17 | P19
+           |  |       AN0 | AN2 | AN4 |  |              |        |
+           |  |          AN1   AN3   AN5 |              |        |
+           | PWM0                       PWM1           PWM2     PWM3
+           ♫
 ------------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 	{
 		[PIN_MUX_GPIO] = {{.pinName = PE_3, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PE_3, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
-		[PIN_MUX_ALTER] = {{.pinName = PE_3, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH3_N_LINE}},
+		[PIN_MUX_ALTER] = {{.pinName = PE_3, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_TONE, .periphN = TIMER_2, .periphLine = TMR_CH3_N_LINE}},
 		[PIN_MUX_OVERRID] = {{.pinName = PE_3, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_3, .periphLine = TMR_CH1_N_LINE}},
 		[PIN_MUX_ANALOG] = {{.pinName = PE_3, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_COMP, .periphN = 0, .periphLine = COMP_IN2_LINE}},
 	},
@@ -331,7 +331,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_GPIO] = {{.pinName = PA_4, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PA_4, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_ALTER] = {{.pinName = PA_4, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_1, .periphLine = TMR_CH2_N_LINE}},
-		[PIN_MUX_OVERRID] = {{.pinName = PA_4, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH2_N_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PA_4, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TONE, .periphN = TIMER_2, .periphLine = TMR_CH2_N_LINE}},
 		[PIN_MUX_ANALOG] = {{.pinName = PA_4, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 
@@ -349,7 +349,7 @@ const tMilandrPin pinTable[DMAX][PIN_MUX_LINES_NUM][1] =
 		[PIN_MUX_GPIO] = {{.pinName = PA_2, .pinFunc = PIN_MUX_GPIO, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_MAIN] = {{.pinName = PA_2, .pinFunc = PIN_MUX_MAIN, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 		[PIN_MUX_ALTER] = {{.pinName = PA_2, .pinFunc = PIN_MUX_ALTER, .periph = PERIPH_TIMER, .periphN = TIMER_1, .periphLine = TMR_CH1_N_LINE}},
-		[PIN_MUX_OVERRID] = {{.pinName = PA_2, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TIMER, .periphN = TIMER_2, .periphLine = TMR_CH1_N_LINE}},
+		[PIN_MUX_OVERRID] = {{.pinName = PA_2, .pinFunc = PIN_MUX_OVERRID, .periph = PERIPH_TONE, .periphN = TIMER_2, .periphLine = TMR_CH1_N_LINE}},
 		[PIN_MUX_ANALOG] = {{.pinName = PA_2, .pinFunc = PIN_MUX_ANALOG, .periph = PERIPH_PORT, .periphN = 0, .periphLine = DIO_LINE}},
 	},
 

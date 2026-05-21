@@ -26,6 +26,7 @@
 #include "MDR32FxQI_config.h"
 #include "MDR32FxQI_rst_clk.h"
 #include "MDR32FxQI_timer.h"
+#include <math.h>
 
 //------------------------------------------------------------------------------
 // Константы
@@ -34,6 +35,7 @@
 #define TIMER_MAX_RESOLUTION         12
 #define TIMER_PWD_FREQ_HZ            19531
 #define TIMER_PERIOD                 4096
+#define TIMER_MAX_FREQ_HZ            65535
 
 //------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
@@ -79,20 +81,34 @@ tTimerOut;
 //------------------------------------------------------------------------------
 // Карта используемых каналов и таймеров
 //------------------------------------------------------------------------------
-static tTimerOut channelMap[DMAX];
-static uint32_t  initChannelMask;
+static tTimerOut pwmChannelMap[DMAX];
+static tTimerOut toneChannelMap[DMAX];
+static uint32_t  initPwmChannelMask;
+static uint32_t  initToneChannelMask;
 
-#define IS_CHAN_INIT(tmr, ch) \
-        (initChannelMask & ((1UL << (ch & 0x7)) << (tmr * 8)))
+#define IS_PWM_CHAN_INIT(tmr, ch) \
+        (initPwmChannelMask & ((1UL << (ch & 0x7)) << (tmr * 8)))
 
-#define IS_TIMER_INIT(tmr) \
-        (initChannelMask & (0xFF << (tmr * 8)))
+#define SET_PWM_CHAN_INIT(tmr, ch) \
+		initPwmChannelMask |= ((1UL << (ch & 0x7)) << (tmr * 8))
 
-#define SET_CHAN_INIT(tmr, ch) \
-		initChannelMask |= ((1UL << (ch & 0x7)) << (tmr * 8))
+#define RST_PWM_CHAN_INIT(tmr, ch) \
+		initPwmChannelMask &= ~((1UL << (ch & 0x7)) << (tmr * 8))
 
-#define RST_CHAN_INIT(tmr, ch) \
-		initChannelMask &= ~((1UL << (ch & 0x7)) << (tmr * 8))
+#define IS_TONE_CHAN_INIT(tmr, ch) \
+        (initToneChannelMask & ((1UL << (ch & 0x7)) << (tmr * 8)))
+
+#define SET_TONE_CHAN_INIT(tmr, ch) \
+		initToneChannelMask |= ((1UL << (ch & 0x7)) << (tmr * 8))
+
+#define RST_TONE_CHAN_INIT(tmr, ch) \
+		initToneChannelMask &= ~((1UL << (ch & 0x7)) << (tmr * 8))
+
+#define IS_PWM_TIMER_INIT(tmr) \
+        (initPwmChannelMask & (0xFF << (tmr * 8)))
+
+#define IS_TONE_TIMER_INIT(tmr) \
+        (initToneChannelMask & (0xFF << (tmr * 8)))
 
 //------------------------------------------------------------------------------
 // Дескриптор периферии
@@ -147,21 +163,29 @@ void milandr_timer_preinit(void)
 {
 	for(int i = 0; i < DMAX; i++)
 	{
-		channelMap[i].raw = NULL_CHANNEL;
+		pwmChannelMap[i].raw = NULL_CHANNEL;
+		toneChannelMap[i].raw = NULL_CHANNEL;
 
 		for(int m = PIN_MUX_ALTER; m <= PIN_MUX_OVERRID; m++)
 		{
 			if(pinTable[i][m][0].periph == PERIPH_PWM)
 			{
-				channelMap[i].timer = pinTable[i][m][0].periphN;
-				channelMap[i].channel = TIMER_GET_CH(pinTable[i][m][0].periphLine);
-				channelMap[i].mux = (m == PIN_MUX_OVERRID) ? 1 : 0;
-				break;
+				pwmChannelMap[i].timer = pinTable[i][m][0].periphN;
+				pwmChannelMap[i].channel = TIMER_GET_CH(pinTable[i][m][0].periphLine);
+				pwmChannelMap[i].mux = (m == PIN_MUX_OVERRID) ? 1 : 0;
+			}
+
+			if(pinTable[i][m][0].periph == PERIPH_TONE)
+			{
+				toneChannelMap[i].timer = pinTable[i][m][0].periphN;
+				toneChannelMap[i].channel = TIMER_GET_CH(pinTable[i][m][0].periphLine);
+				toneChannelMap[i].mux = (m == PIN_MUX_OVERRID) ? 1 : 0;
 			}
 		}
 	}
 
-	initChannelMask = 0;
+	initPwmChannelMask = 0;
+	initToneChannelMask = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -169,20 +193,200 @@ void milandr_timer_preinit(void)
 //------------------------------------------------------------------------------
 static bool init_pwm_out(uint8_t pin)
 {
-	if(channelMap[pin].raw == NULL_CHANNEL) return false;
+	tTimerOut pwmOut = pwmChannelMap[pin];
 
-	tTimerOut out = channelMap[pin];
+	if(pwmOut.raw == NULL_CHANNEL) return false;
 
-	if(IS_CHAN_INIT(out.timer, out.channel))
+	// Таймер и канал настроены
+	if(IS_PWM_CHAN_INIT(pwmOut.timer, pwmOut.channel))
 	{
 		return true;
 	}
+	// Останавливаем генерацию ШИМ на всех каналах, использующих таймер,
+	// предназначенный для PWM
+	else if(IS_TONE_TIMER_INIT(pwmOut.timer))
+	{
+		for(uint8_t pin = 0; pin < DMAX; pin++)
+		{
+			tTimerOut out = toneChannelMap[pin];
+
+			if(out.timer == pwmOut.timer) milandr_tone_deinit(pin);
+		}
+	}
+
+	//
+	// Производим настройку GPIO
+	//
+	uint8_t portFunc = TIMER_PORT_MUX(pwmOut.mux);
+
+	milandr_gpio_clock_enable(pin, true);
+	milandr_gpio_cfg_output_pp(pin);
+
+	if(portFunc == PIN_MUX_ALTER)
+		milandr_gpio_sel_alter_func(pin);
 	else
+		milandr_gpio_sel_override_func(pin);
+
+	//
+	// Производим настройку Timer
+	//
+	volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[pwmOut.timer].regs;
+
+	if(!IS_PWM_TIMER_INIT(pwmOut.timer))
+	{
+		MDR_RST_CLK->PER_CLOCK |= tmrTable[pwmOut.timer].clkMask;
+
+		/* Reset all TIMER settings */
+		TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
+
+		/* Initializes the TIMERx Counter                               */
+		/* Входная частота 80МГц, полный период счета 4096 (12 бит)     */
+		sTIM_CntInit.TIMER_Prescaler        = 0x0;
+		sTIM_CntInit.TIMER_Period           = TIMER_PERIOD - 1;
+		sTIM_CntInit.TIMER_CounterMode      = TIMER_CntMode_ClkFixedDir;
+		sTIM_CntInit.TIMER_CounterDirection = TIMER_CntDir_Up;
+		sTIM_CntInit.TIMER_EventSource      = TIMER_EvSrc_TIM_CLK;
+		sTIM_CntInit.TIMER_FilterSampling   = TIMER_FDTS_TIMER_CLK_div_1;
+		sTIM_CntInit.TIMER_ARR_UpdateMode   = TIMER_ARR_Update_Immediately;
+		sTIM_CntInit.TIMER_ETR_FilterConf   = TIMER_Filter_1FF_at_TIMER_CLK;
+		sTIM_CntInit.TIMER_ETR_Prescaler    = TIMER_ETR_Prescaler_None;
+		sTIM_CntInit.TIMER_ETR_Polarity     = TIMER_ETRPolarity_NonInverted;
+		sTIM_CntInit.TIMER_BRK_Polarity     = TIMER_BRKPolarity_NonInverted;
+		TIMER_CntInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_CntInit);
+
+		sTIM_ChnInit.TIMER_CH_Mode = TIMER_CH_MODE_PWM;
+		sTIM_ChnInit.TIMER_CH_REF_Format = TIMER_CH_REF_Format6;
+		sTIM_ChnInit.TIMER_CH_Number = pwmOut.channel % 4;
+		TIMER_ChnInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_ChnInit);
+
+		// Duty Cycle = 0 %
+		TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, pwmOut.channel % 4, 0);
+
+		/* Initializes the TIMER1 Channel Output */
+		TIMER_ChnOutStructInit(&sTIM_ChnOutInit);
+		sTIM_ChnOutInit.TIMER_CH_DirOut_Polarity = TIMER_CHOPolarity_NonInverted;
+		sTIM_ChnOutInit.TIMER_CH_DirOut_Source   = TIMER_CH_OutSrc_REF;
+		sTIM_ChnOutInit.TIMER_CH_DirOut_Mode     = TIMER_CH_OutMode_Output;
+		sTIM_ChnOutInit.TIMER_CH_NegOut_Polarity = (pwmOut.channel < 4) ?
+												   TIMER_CHOPolarity_NonInverted :
+												   TIMER_CHOPolarity_Inverted;
+		sTIM_ChnOutInit.TIMER_CH_NegOut_Source   = TIMER_CH_OutSrc_REF;
+		sTIM_ChnOutInit.TIMER_CH_NegOut_Mode     = TIMER_CH_OutMode_Output;
+		sTIM_ChnOutInit.TIMER_CH_Number          = pwmOut.channel % 4;
+		TIMER_ChnOutInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_ChnOutInit);
+
+		/* Enable TIMER1 clock */
+		TIMER_BRGInit((MDR_TIMER_TypeDef*)TIMERx, TIMER_HCLKdiv1);
+
+		/* Enable TIMER1 */
+		TIMER_Cmd((MDR_TIMER_TypeDef*)TIMERx, ENABLE);
+	}
+
+	SET_PWM_CHAN_INIT(pwmOut.timer, pwmOut.channel);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+// Деинициализация выхода таймера
+//------------------------------------------------------------------------------
+void milandr_pwm_deinit(uint8_t pin)
+{
+	tTimerOut out = pwmChannelMap[pin % DMAX];
+	if(out.raw == NULL_CHANNEL || !IS_PWM_CHAN_INIT(out.timer, out.channel)) return;
+
+	// Перевод пина в режим входа
+	milandr_gpio_cfg_input(pin);
+
+	// Сброс флага инициализации канала
+	RST_PWM_CHAN_INIT(out.timer, out.channel);
+
+	// Если таймер не использует больше ни на каком из каналов, то деинициализируем
+	if(!IS_PWM_TIMER_INIT(out.timer) && !IS_TONE_TIMER_INIT(out.timer))
+	{
+		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
+
+		TIMER_Cmd((MDR_TIMER_TypeDef*)TIMERx, DISABLE);
+		TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
+		MDR_RST_CLK->PER_CLOCK &= ~tmrTable[out.timer].clkMask;
+	}
+}
+
+//------------------------------------------------------------------------------
+// Вычисляем значение предделителя и периода счета
+//------------------------------------------------------------------------------
+static void calc_timer_prescaler(uint16_t freqHz, uint16_t * presc, uint16_t * period)
+{
+	if(freqHz == 0)
+	{
+		*presc = 0xFFFF;
+		*period = 0xFFFF;
+		return;
+	}
+
+	uint32_t outFreq32 = 0;
+	float outFreq = 0;
+	RST_CLK_FreqTypeDef RST_CLK_Clocks;
+	RST_CLK_GetClocksFreq(&RST_CLK_Clocks);
+
+	outFreq32 = RST_CLK_Clocks.CPU_CLK_Frequency / freqHz;
+
+	if(outFreq32 >= 65536)
+		*presc = (uint16_t)(outFreq32 >> 16);
+	else
+		*presc = 0;
+
+	outFreq = (float)RST_CLK_Clocks.CPU_CLK_Frequency / (*presc + 1);
+	outFreq /= freqHz;
+	*period = (uint16_t)ceilf(outFreq);
+}
+
+//------------------------------------------------------------------------------
+// Инициализация выхода таймера для работы в режиме Tone
+//------------------------------------------------------------------------------
+static bool init_tone_out(uint8_t pin, uint16_t freqHz)
+{
+	tTimerOut toneOut = toneChannelMap[pin];
+
+	if(!freqHz || toneOut.raw == NULL_CHANNEL) return false;
+
+	// Таймер занят генерацией Tone
+	if(IS_TONE_CHAN_INIT(toneOut.timer, toneOut.channel))
+	{
+		/* Меняем настройки предделителя и периода счета, т.к.
+		 * пользователь мог задать другую частоту генерации */
+		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[toneOut.timer].regs;
+
+		/* Вычисляем значение предделителя и периода счета */
+		uint16_t presc = 0;
+		uint16_t period = 2;
+		calc_timer_prescaler(freqHz, &presc, &period);
+
+		TIMER_SetCntPrescaler((MDR_TIMER_TypeDef*)TIMERx, presc);
+		TIMER_SetCntAutoreload((MDR_TIMER_TypeDef*)TIMERx, period);
+
+		// Duty Cycle = 50 %
+		TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, toneOut.channel % 4, period >> 1);
+
+		return true;
+	}
+	// Останавливаем генерацию ШИМ на всех каналах, использующих таймер,
+	// предназначенный для Tone
+	else if(IS_PWM_TIMER_INIT(toneOut.timer))
+	{
+		for(uint8_t pin = 0; pin < DMAX; pin++)
+		{
+			tTimerOut out = pwmChannelMap[pin];
+
+			if(out.timer == toneOut.timer) milandr_pwm_deinit(pin);
+		}
+	}
+	// Таймер не задействован на другом канале
+	else if(!IS_TONE_TIMER_INIT(toneOut.timer))
 	{
 		//
 		// Производим настройку GPIO
 		//
-		uint8_t portFunc = TIMER_PORT_MUX(out.mux);
+		uint8_t portFunc = TIMER_PORT_MUX(toneOut.mux);
 
 		milandr_gpio_clock_enable(pin, true);
 		milandr_gpio_cfg_output_pp(pin);
@@ -195,19 +399,23 @@ static bool init_pwm_out(uint8_t pin)
 		//
 		// Производим настройку Timer
 		//
-		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
+		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[toneOut.timer].regs;
 
-		if(!IS_TIMER_INIT(out.timer))
+		if(!IS_TONE_TIMER_INIT(toneOut.timer))
 		{
-			MDR_RST_CLK->PER_CLOCK |= tmrTable[out.timer].clkMask;
+			MDR_RST_CLK->PER_CLOCK |= tmrTable[toneOut.timer].clkMask;
 
 			/* Reset all TIMER settings */
 			TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
 
+			/* Вычисляем значение предделителя и периода счета */
+			uint16_t presc = 0;
+			uint16_t period = 2;
+			calc_timer_prescaler(freqHz, &presc, &period);
+
 			/* Initializes the TIMERx Counter                               */
-			/* Входная частота 80МГц, полный период счета 4096 (12 бит)     */
-			sTIM_CntInit.TIMER_Prescaler        = 0x0;
-			sTIM_CntInit.TIMER_Period           = TIMER_PERIOD - 1;
+			sTIM_CntInit.TIMER_Prescaler        = presc;
+			sTIM_CntInit.TIMER_Period           = period;
 			sTIM_CntInit.TIMER_CounterMode      = TIMER_CntMode_ClkFixedDir;
 			sTIM_CntInit.TIMER_CounterDirection = TIMER_CntDir_Up;
 			sTIM_CntInit.TIMER_EventSource      = TIMER_EvSrc_TIM_CLK;
@@ -221,23 +429,23 @@ static bool init_pwm_out(uint8_t pin)
 
 			sTIM_ChnInit.TIMER_CH_Mode = TIMER_CH_MODE_PWM;
 			sTIM_ChnInit.TIMER_CH_REF_Format = TIMER_CH_REF_Format6;
-			sTIM_ChnInit.TIMER_CH_Number = out.channel % 4;
+			sTIM_ChnInit.TIMER_CH_Number = toneOut.channel % 4;
 			TIMER_ChnInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_ChnInit);
 
-			// Duty Cycle = 0 %
-			TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, out.channel % 4, 0);
+			// Duty Cycle = 50 %
+			TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, toneOut.channel % 4, period >> 1);
 
 			/* Initializes the TIMER1 Channel Output */
 			TIMER_ChnOutStructInit(&sTIM_ChnOutInit);
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Polarity = TIMER_CHOPolarity_NonInverted;
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Source   = TIMER_CH_OutSrc_REF;
 			sTIM_ChnOutInit.TIMER_CH_DirOut_Mode     = TIMER_CH_OutMode_Output;
-			sTIM_ChnOutInit.TIMER_CH_NegOut_Polarity = (out.channel < 4) ?
+			sTIM_ChnOutInit.TIMER_CH_NegOut_Polarity = (toneOut.channel < 4) ?
 													   TIMER_CHOPolarity_NonInverted :
 													   TIMER_CHOPolarity_Inverted;
 			sTIM_ChnOutInit.TIMER_CH_NegOut_Source   = TIMER_CH_OutSrc_REF;
 			sTIM_ChnOutInit.TIMER_CH_NegOut_Mode     = TIMER_CH_OutMode_Output;
-			sTIM_ChnOutInit.TIMER_CH_Number          = out.channel % 4;
+			sTIM_ChnOutInit.TIMER_CH_Number          = toneOut.channel % 4;
 			TIMER_ChnOutInit((MDR_TIMER_TypeDef*)TIMERx, &sTIM_ChnOutInit);
 
 			/* Enable TIMER1 clock */
@@ -247,7 +455,7 @@ static bool init_pwm_out(uint8_t pin)
 			TIMER_Cmd((MDR_TIMER_TypeDef*)TIMERx, ENABLE);
 		}
 
-		SET_CHAN_INIT(out.timer, out.channel);
+		SET_TONE_CHAN_INIT(toneOut.timer, toneOut.channel);
 		return true;
 	}
 
@@ -257,25 +465,25 @@ static bool init_pwm_out(uint8_t pin)
 //------------------------------------------------------------------------------
 // Деинициализация выхода таймера
 //------------------------------------------------------------------------------
-void milandr_pwm_deinit(uint8_t pin)
+void milandr_tone_deinit(uint8_t pin)
 {
-	tTimerOut out = channelMap[pin % DMAX];
-	if(out.raw == NULL_CHANNEL || !IS_CHAN_INIT(out.timer, out.channel)) return;
+	tTimerOut toneOut = toneChannelMap[pin % DMAX];
+	if(toneOut.raw == NULL_CHANNEL || !IS_TONE_CHAN_INIT(toneOut.timer, toneOut.channel)) return;
 
 	// Перевод пина в режим входа
 	milandr_gpio_cfg_input(pin);
 
 	// Сброс флага инициализации канала
-	RST_CHAN_INIT(out.timer, out.channel);
+	RST_TONE_CHAN_INIT(toneOut.timer, toneOut.channel);
 
 	// Если таймер не использует больше ни на каком из каналов, то деинициализируем
-	if(!IS_TIMER_INIT(out.timer))
+	if(!IS_TONE_TIMER_INIT(toneOut.timer) && !IS_PWM_TIMER_INIT(toneOut.timer))
 	{
-		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
+		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[toneOut.timer].regs;
 
 		TIMER_Cmd((MDR_TIMER_TypeDef*)TIMERx, DISABLE);
 		TIMER_DeInit((MDR_TIMER_TypeDef*)TIMERx);
-		MDR_RST_CLK->PER_CLOCK &= ~tmrTable[out.timer].clkMask;
+		MDR_RST_CLK->PER_CLOCK &= ~tmrTable[toneOut.timer].clkMask;
 	}
 }
 
@@ -285,7 +493,16 @@ void milandr_pwm_deinit(uint8_t pin)
 static tTimerOut milandr_pmw_init(uint8_t pin)
 {
 	init_pwm_out(pin % DMAX);
-	return channelMap[pin];
+	return pwmChannelMap[pin];
+}
+
+//------------------------------------------------------------------------------
+// Инициализация таймера в режиме Tone
+//------------------------------------------------------------------------------
+static tTimerOut milandr_tone_init(uint8_t pin, uint16_t freqHz)
+{
+	init_tone_out(pin % DMAX, freqHz);
+	return toneChannelMap[pin];
 }
 
 //------------------------------------------------------------------------------
@@ -322,10 +539,27 @@ bool milandr_pwm_set_value(uint8_t pin, int value)
 	// Все последующие вызовы функции возвращают true
 	tTimerOut out = milandr_pmw_init(pin);
 
-	if(IS_CHAN_INIT(out.timer, out.channel))
+	if(IS_PWM_CHAN_INIT(out.timer, out.channel))
 	{
 		volatile MDR_TIMER_TypeDef * TIMERx = tmrTable[out.timer].regs;
 		TIMER_SetChnCompare((MDR_TIMER_TypeDef*)TIMERx, out.channel % 4, scale_resolution(value));
+		return true;
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+// Генерировать меандр на выходе Tone
+//------------------------------------------------------------------------------
+bool milandr_tone_generate(uint8_t pin, uint16_t freqHz)
+{
+	// Инициализация происходит только один раз
+	// Все последующие вызовы функции возвращают true
+	tTimerOut toneOut = milandr_tone_init(pin, freqHz);
+
+	if(IS_TONE_CHAN_INIT(toneOut.timer, toneOut.channel))
+	{
 		return true;
 	}
 

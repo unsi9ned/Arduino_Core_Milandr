@@ -18,7 +18,8 @@ typedef enum
 	I2C_EEPROM,
 	LED_BRIGHTNESS,
 	TEMPERATURE_SENSOR,
-	EXT_INT
+	EXT_INT,
+	TONE,
 }
 tTestId;
 
@@ -42,6 +43,8 @@ extern void example_temperature_init();
 extern void example_temperature_process();
 extern void example_exti_init();
 extern void example_exti_process();
+extern void example_tone_init();
+extern void example_tone_process();
 
 
 tTest testVariant[] =
@@ -56,9 +59,10 @@ tTest testVariant[] =
 	[LED_BRIGHTNESS] = {.setup = example_brightness_init, .loop = example_brightness_process},
 	[TEMPERATURE_SENSOR] = {.setup = example_temperature_init, .loop = example_temperature_process},
 	[EXT_INT] = {.setup = example_exti_init, .loop = example_exti_process},
+	[TONE] = {.setup = example_tone_init, .loop = example_tone_process},
 };
 
-static tTestId currentTest = EXT_INT;
+static tTestId currentTest = TONE;
 
 //------------------------------------------------------------------------------
 // Инициализация

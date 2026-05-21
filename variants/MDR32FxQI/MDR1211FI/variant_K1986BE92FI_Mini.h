@@ -25,9 +25,9 @@
 #define _VARIANT_K1986BE92FI_MINI
 
 /*---------------------K1986BE92FI_Mini pins number-----------------------------
-
-          PWM8                       PWM7  PWM6  PWM5              PWM4
-           |                          |     |     |                 |
+                                         ♫     ♫
+          PWM8                       PWM7| PWM6| PWM5              PWM4
+           |                          |  |  |  |  |                 |
            | P37      P35   P33   P31 | P29 | P27 | P25   P23   P21 |
           P38 | P36    | P34 | P32 | P30 | P28 | P26 | P24 | P22 | P20
            |  |  |     |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -44,11 +44,11 @@
     VB  R E3 E2 E1 E0 D7 D4 D2 D3 D5 D6 C2 C1 C0 B0 B1 B2 B3 B4 B5 B6 3V3 G
            |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
           P0 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 | P12 | P14 | P16 | P18 |
-              |        |  |  |  |  |  |  | P11   P13   P15   P17 | P19
-              |       AN0 | AN2 | AN4 |  |              |        |
-              |          AN1   AN3   AN5 |              |        |
-             PWM0                       PWM1           PWM2     PWM3
-
+           |  |        |  |  |  |  |  |  | P11   P13   P15   P17 | P19
+           |  |       AN0 | AN2 | AN4 |  |              |        |
+           |  |          AN1   AN3   AN5 |              |        |
+           | PWM0                       PWM1           PWM2     PWM3
+           ♫
 ------------------------------------------------------------------------------*/
 
 #ifndef USE_SWD_PINS
@@ -251,5 +251,13 @@ tArduinoPinAlias;
 #endif
 
 #define AIN_TEMP                    DMAX
+
+//------------------------------------------------------------------------------
+// Tone Outputs
+//------------------------------------------------------------------------------
+
+#define TONE0                       PE3
+#define TONE1                       PA4
+#define TONE2                       PA2
 
 #endif //_VARIANT_K1986BE92FI_MINI

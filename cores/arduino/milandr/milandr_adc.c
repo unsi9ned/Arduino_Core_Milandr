@@ -73,16 +73,16 @@ tAdcInput;
 static tAdcInput channelMap[DMAX + 1];
 static uint32_t  initChannelMask[ADC_COUNT];
 
-#define IS_CHAN_INIT(adc, ch) \
+#define IS_PWM_CHAN_INIT(adc, ch) \
         (initChannelMask[adc % ADC_COUNT] & (1UL << (ch & 0x1F)))
 
 #define IS_ADC_INIT(adc) \
         (initChannelMask[adc % ADC_COUNT] & 0xFFFFFFFFul)
 
-#define SET_CHAN_INIT(adc, ch) \
+#define SET_PWM_CHAN_INIT(adc, ch) \
         initChannelMask[adc % ADC_COUNT] |= (1UL << (ch & 0x1F))
 
-#define RST_CHAN_INIT(adc, ch) \
+#define RST_PWM_CHAN_INIT(adc, ch) \
         initChannelMask[adc % ADC_COUNT] &= ~(1UL << (ch & 0x1F))
 
 //------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ static bool init_adc_input(uint8_t pin)
 
 	tAdcInput input = channelMap[pin];
 
-	if(IS_CHAN_INIT(input.adc, input.channel))
+	if(IS_PWM_CHAN_INIT(input.adc, input.channel))
 	{
 		return true;
 	}
@@ -245,12 +245,12 @@ static bool init_adc_input(uint8_t pin)
 			ADC2_Cmd(ENABLE);
 
 			/* Канал 31 используется датчиков темепературы */
-			SET_CHAN_INIT(ADC_1, ADC_GET_CH(TEMP_SENSOR_CHAN));
-			SET_CHAN_INIT(ADC_2, ADC_GET_CH(TEMP_SENSOR_CHAN));
+			SET_PWM_CHAN_INIT(ADC_1, ADC_GET_CH(TEMP_SENSOR_CHAN));
+			SET_PWM_CHAN_INIT(ADC_2, ADC_GET_CH(TEMP_SENSOR_CHAN));
 		}
 
-		SET_CHAN_INIT(ADC_1, input.channel);
-		SET_CHAN_INIT(ADC_2, input.channel);
+		SET_PWM_CHAN_INIT(ADC_1, input.channel);
+		SET_PWM_CHAN_INIT(ADC_2, input.channel);
 		return true;
 	}
 
@@ -263,14 +263,14 @@ static bool init_adc_input(uint8_t pin)
 void milandr_adc_deinit(uint8_t pin)
 {
 	tAdcInput in = channelMap[pin % DMAX];
-	if(in.raw == NULL_CHANNEL || !IS_CHAN_INIT(in.adc, in.channel)) return;
+	if(in.raw == NULL_CHANNEL || !IS_PWM_CHAN_INIT(in.adc, in.channel)) return;
 
 	// Перевод пина в режим входа
 	milandr_gpio_cfg_input(pin);
 
 	// Сброс флага инициализации канала
-	RST_CHAN_INIT(ADC_1, in.channel);
-	RST_CHAN_INIT(ADC_2, in.channel);
+	RST_PWM_CHAN_INIT(ADC_1, in.channel);
+	RST_PWM_CHAN_INIT(ADC_2, in.channel);
 }
 
 //------------------------------------------------------------------------------

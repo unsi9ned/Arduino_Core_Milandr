@@ -42,6 +42,7 @@ void pinMode(pin_size_t pinNumber, PinMode pinMode)
 
 	milandr_gpio_clock_enable(pinNumber, true);
 	milandr_pwm_deinit(pinNumber);
+	milandr_tone_deinit(pinNumber);
 	milandr_dac_deinit(pinNumber);
 	milandr_adc_deinit(pinNumber);
 
