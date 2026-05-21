@@ -55,6 +55,7 @@ extern void milandr_gpio_cfg_input(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_input_pu(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_input_pd(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_input_analog(uint8_t arduinoPin);
+extern bool milandr_gpio_is_digital_input(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_analog(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_pp(uint8_t arduinoPin);
 extern void milandr_gpio_cfg_output_od(uint8_t arduinoPin);
@@ -70,6 +71,7 @@ extern void milandr_gpio_interrup_enable(uint8_t pin,
                                          voidCallbackPtrParam cbFunc,
                                          void * param);
 extern void milandr_gpio_interrup_disable(uint8_t pin);
+extern void milandr_gpio_polling();
 
 
 #ifdef __cplusplus

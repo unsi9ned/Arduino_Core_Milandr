@@ -122,12 +122,7 @@ void milandr_gpio_interrup_enable(uint8_t pin,
 	extiTable[pin].param = param;
 	pollInterruptsEnabled = true;
 
-	if(!updateTrig && gpio_int_cnt++ == 0)
-	{
-		NVIC_SetPriority(PendSV_IRQn, 7);
-		NVIC_EnableIRQ(PendSV_IRQn);
-	}
-
+	if(!updateTrig) gpio_int_cnt++;
 	gpio_int_cnt %= (DMAX + 1);
 }
 
@@ -150,7 +145,6 @@ void milandr_gpio_interrup_disable(uint8_t pin)
 		if(--gpio_int_cnt == 0)
 		{
 			pollInterruptsEnabled = false;
-			NVIC_DisableIRQ(PendSV_IRQn);
 		}
 	}
 }
@@ -158,7 +152,7 @@ void milandr_gpio_interrup_disable(uint8_t pin)
 //------------------------------------------------------------------------------
 // Имитация контролера внешних прерываний
 //------------------------------------------------------------------------------
-static void gpio_polling()
+void milandr_gpio_polling()
 {
 	//
 	// Сначала регистрируем изменение состояний на всех входах
@@ -213,14 +207,6 @@ static void gpio_polling()
 }
 
 //------------------------------------------------------------------------------
-// Обработчик низкоприоритетных прерываний
-//------------------------------------------------------------------------------
-void PendSV_Handler(void)
-{
-	gpio_polling();
-}
-
-//------------------------------------------------------------------------------
 // Включить тактирование порта
 //------------------------------------------------------------------------------
 void milandr_gpio_clock_enable(uint8_t arduinoPin, bool state)
@@ -258,6 +244,30 @@ static void milandr_gpio_cfg_common(uint8_t arduinoPin, volatile MDR_PORT_TypeDe
 
 	//Filter Disabled
 	port->GFEN &= ~((uint32_t)PORT_GFEN_ON << mdrPin->pin);
+}
+
+//------------------------------------------------------------------------------
+// Проверяет настроен ли пин как цифровой вход и включено ли тактирование порта
+// это нужно для функции attachInterrupt, когда пользователь не задает явно
+// pinMode(arduinoPin, INPUT);
+//------------------------------------------------------------------------------
+bool milandr_gpio_is_digital_input(uint8_t arduinoPin)
+{
+	if(arduinoPin >= DMAX) return false;
+
+	const tMilandrPin mdrPin = pinTable[arduinoPin][PIN_MUX_GPIO][0];
+	volatile MDR_PORT_TypeDef *port = MDR_PORT[mdrPin.port & 0xFul];
+	uint16_t pinMask = (1 << mdrPin.pin);
+
+	if(!(MDR_RST_CLK->PER_CLOCK & perClockTable[mdrPin.port]) ||
+	   !(port->ANALOG & ((uint32_t)PORT_MODE_DIGITAL << mdrPin.pin)) ||
+	   (port->FUNC & (PORT_FUNC_MODE0_Msk << (mdrPin.pin * 2))) ||
+	   (port->OE & pinMask))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 //------------------------------------------------------------------------------

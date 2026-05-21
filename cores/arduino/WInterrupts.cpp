@@ -46,6 +46,10 @@ void attachInterruptParam(pin_size_t interruptNumber, voidFuncPtrParam callback,
 		break;
 	}
 
+	if(!milandr_gpio_is_digital_input(interruptNumber))
+	{
+		pinMode(interruptNumber, INPUT);
+	}
 	milandr_gpio_interrup_enable(interruptNumber, trig, callback, param);
 }
 

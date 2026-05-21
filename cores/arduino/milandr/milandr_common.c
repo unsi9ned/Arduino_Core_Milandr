@@ -25,7 +25,36 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "periph_definition.h"
+#include "milandr_hal.h"
 #include "MDR32FxQI_config.h"
+
+//------------------------------------------------------------------------------
+// Контекст отложенной задачи
+//------------------------------------------------------------------------------
+typedef struct
+{
+	uint32_t downcntMs;
+	uint8_t  complete;
+
+	union
+	{
+		voidCallbackPtr cbFunc;
+		voidCallbackPtrParam cbFuncParam;
+	};
+
+	void * param;
+}
+tMilandrDelayedTask;
+
+static void dummy_cb_func(void * param){}
+
+static tMilandrDelayedTask delayedTask =
+{
+	.complete = 1,
+	.downcntMs = 0,
+	.cbFuncParam = dummy_cb_func,
+	.param = NULL
+};
 
 //------------------------------------------------------------------------------
 // Переменные
@@ -104,6 +133,44 @@ void milandr_hal_init(void)
 	milandr_timer_preinit();
 	milandr_dac_preinit();
 	milandr_adc_preinit();
+
+	NVIC_SetPriority(PendSV_IRQn, 7);
+	NVIC_EnableIRQ(PendSV_IRQn);
+}
+
+//------------------------------------------------------------------------------
+// Исполнить отложенную задачу
+//------------------------------------------------------------------------------
+void milandr_set_delayed_task(voidCallbackPtrParam task,
+                              void * param,
+                              uint32_t durationMs)
+{
+	milandr_cancel_delayed_task();
+
+	if(durationMs && task)
+	{
+		delayedTask.downcntMs = durationMs;
+		delayedTask.cbFuncParam = task;
+		delayedTask.param = param;
+		delayedTask.complete = 0;
+
+	}
+	else if(task)
+	{
+		task(param);
+	}
+}
+
+//------------------------------------------------------------------------------
+// Отменить отложенную задачу
+//------------------------------------------------------------------------------
+void milandr_cancel_delayed_task()
+{
+	delayedTask.complete = 1;
+	delayedTask.downcntMs = 0;
+	delayedTask.cbFuncParam = dummy_cb_func;
+	delayedTask.param = NULL;
+
 }
 
 //------------------------------------------------------------------------------
@@ -194,6 +261,36 @@ void SysTick_Handler(void)
 	if(pollInterruptsEnabled)
 	{
 		SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+	}
+
+	if(!delayedTask.complete)
+	{
+		if(delayedTask.downcntMs > 0)
+		{
+			delayedTask.downcntMs--;
+		}
+		else
+		{
+			delayedTask.downcntMs = 0;
+			SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+// Обработчик низкоприоритетных прерываний
+//------------------------------------------------------------------------------
+void PendSV_Handler(void)
+{
+	if(pollInterruptsEnabled)
+	{
+		milandr_gpio_polling();
+	}
+
+	if(!delayedTask.complete && !delayedTask.downcntMs)
+	{
+		delayedTask.complete = 1;
+		delayedTask.cbFuncParam(delayedTask.param);
 	}
 }
 

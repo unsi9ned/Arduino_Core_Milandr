@@ -1,6 +1,12 @@
 #include "api/Common.h"
 #include "milandr/milandr_hal.h"
 
+static void abortTone(void * pin)
+{
+	uint8_t arduinoPin = (uint32_t)pin % milandr_gpio_count();
+	noTone(arduinoPin);
+}
+
 /**
  * Generate a square wave on the specified pin & frequency at a 50% duty cycle.
  *
@@ -24,7 +30,10 @@
  */
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
-	milandr_tone_generate(_pin, (uint16_t)frequency);
+	if(milandr_tone_generate(_pin, (uint16_t)frequency) && duration)
+	{
+		milandr_set_delayed_task(abortTone, (void*)(uint32_t)_pin, duration);
+	}
 }
 
 /**
@@ -37,5 +46,6 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
  */
 void noTone(uint8_t _pin)
 {
+	milandr_cancel_delayed_task();
 	milandr_tone_deinit(_pin);
 }

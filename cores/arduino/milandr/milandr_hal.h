@@ -62,6 +62,12 @@ extern uint8_t milandr_find_pin(tPeriphVariant periph,
                                 const tMilandrPin ** sorted,
                                 int8_t variantNum);
 
+extern void milandr_set_delayed_task(voidCallbackPtrParam task,
+                                     void * param,
+                                     uint32_t durationMs);
+
+extern void milandr_cancel_delayed_task();
+
 #ifdef __cplusplus
 }
 #endif
