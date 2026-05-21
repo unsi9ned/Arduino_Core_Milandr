@@ -23,10 +23,15 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include "periph_definition.h"
 #include "MDR32FxQI_config.h"
 
+//------------------------------------------------------------------------------
+// Переменные
+//------------------------------------------------------------------------------
 static volatile uint32_t mdr_ticks;
+bool pollInterruptsEnabled = false;
 
 //------------------------------------------------------------------------------
 // Функции синхронизации
@@ -185,6 +190,11 @@ void SysTick_Handler(void)
 {
 	mdr_ticks++;
 	osSystickHandler();
+
+	if(pollInterruptsEnabled)
+	{
+		SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+	}
 }
 
 /*!

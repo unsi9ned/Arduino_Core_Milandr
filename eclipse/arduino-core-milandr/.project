@@ -91,6 +91,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/Uart.h</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/WInterrupts.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/WInterrupts.cpp</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/api</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

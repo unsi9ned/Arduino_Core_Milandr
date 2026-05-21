@@ -27,6 +27,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef enum
+{
+	EXTI_TRIG_RISING,
+	EXTI_TRIG_FALLING,
+	EXTI_TRIG_BOTH
+}
+tMilandrExtiTrig;
+
+typedef void (*voidCallbackPtr)(void);
+typedef void (*voidCallbackPtrParam)(void*);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,6 +65,11 @@ extern void milandr_gpio_sel_port_func(uint8_t arduinoPin);
 extern void milandr_gpio_sel_alter_func(uint8_t arduinoPin);
 extern void milandr_gpio_sel_override_func(uint8_t arduinoPin);
 extern uint8_t milandr_gpio_count(void);
+extern void milandr_gpio_interrup_enable(uint8_t pin,
+                                         tMilandrExtiTrig trig,
+                                         voidCallbackPtrParam cbFunc,
+                                         void * param);
+extern void milandr_gpio_interrup_disable(uint8_t pin);
 
 
 #ifdef __cplusplus

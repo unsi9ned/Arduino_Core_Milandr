@@ -30,6 +30,28 @@
 #include "MDR32FxQI_port.h"
 #include "MDR32FxQI_rst_clk.h"
 
+typedef struct
+{
+	uint8_t enable    :1;
+	uint8_t trigger   :2;
+	uint8_t lastState :1;
+	uint8_t interrupt :1;
+	uint8_t           :3;
+
+	union
+	{
+		voidCallbackPtr      cbFunc;
+		voidCallbackPtrParam cbFuncParam;
+	};
+
+	void * param;
+}
+tPinInterrupt;
+
+extern bool pollInterruptsEnabled;
+static uint8_t gpio_int_cnt = 0;
+static tPinInterrupt extiTable[DMAX];
+
 //------------------------------------------------------------------------------
 // Полная таблица пинов с их функциональным назначением
 //------------------------------------------------------------------------------
@@ -54,6 +76,11 @@ static volatile MDR_PORT_TypeDef * MDR_PORT[MDR_PORT_NUM] =
 };
 
 //------------------------------------------------------------------------------
+// Заглушки
+//------------------------------------------------------------------------------
+static void dummy_handler(){}
+
+//------------------------------------------------------------------------------
 // Предварительная инициализация
 //------------------------------------------------------------------------------
 void milandr_gpio_preinit()
@@ -63,6 +90,134 @@ void milandr_gpio_preinit()
 		perClockTable[i] = RST_CLK_PCLK_PORTA << i;
 	}
 	perClockTable[MDR_PORT_F] = RST_CLK_PCLK_PORTF;
+
+	for(int i = 0; i < DMAX; i++)
+	{
+		extiTable[i].enable = 0;
+		extiTable[i].trigger = EXTI_TRIG_RISING;
+		extiTable[i].lastState = 0;
+		extiTable[i].interrupt = 0;
+		extiTable[i].cbFunc = dummy_handler;
+		extiTable[i].param = NULL;
+	}
+}
+
+//------------------------------------------------------------------------------
+// Назначение обработчика для входа GPIO
+//------------------------------------------------------------------------------
+void milandr_gpio_interrup_enable(uint8_t pin,
+                                  tMilandrExtiTrig trig,
+                                  voidCallbackPtrParam cbFunc,
+                                  void * param)
+{
+	bool updateTrig;
+
+	pin = pin % DMAX;
+	updateTrig = (bool)extiTable[pin].enable;
+	extiTable[pin].enable = 1;
+	extiTable[pin].trigger = trig;
+	extiTable[pin].lastState = milandr_gpio_read(pin);
+	extiTable[pin].interrupt = 0;
+	extiTable[pin].cbFuncParam = cbFunc ? cbFunc : dummy_handler;
+	extiTable[pin].param = param;
+	pollInterruptsEnabled = true;
+
+	if(!updateTrig && gpio_int_cnt++ == 0)
+	{
+		NVIC_SetPriority(PendSV_IRQn, 7);
+		NVIC_EnableIRQ(PendSV_IRQn);
+	}
+
+	gpio_int_cnt %= (DMAX + 1);
+}
+
+//------------------------------------------------------------------------------
+// Удаление обработчика для входа GPIO
+//------------------------------------------------------------------------------
+void milandr_gpio_interrup_disable(uint8_t pin)
+{
+	if(!pollInterruptsEnabled) return;
+
+	pin = pin % DMAX;
+	extiTable[pin].enable = 0;
+	extiTable[pin].lastState = milandr_gpio_read(pin);
+	extiTable[pin].interrupt = 0;
+	extiTable[pin].cbFuncParam = dummy_handler;
+	extiTable[pin].param = NULL;
+
+	if(gpio_int_cnt > 0)
+	{
+		if(--gpio_int_cnt == 0)
+		{
+			pollInterruptsEnabled = false;
+			NVIC_DisableIRQ(PendSV_IRQn);
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+// Имитация контролера внешних прерываний
+//------------------------------------------------------------------------------
+static void gpio_polling()
+{
+	//
+	// Сначала регистрируем изменение состояний на всех входах
+	//
+	for(uint8_t i = 0; i < DMAX; i++)
+	{
+		if(!extiTable[i].enable) continue;
+
+		uint8_t state = milandr_gpio_read(i);
+
+		if(extiTable[i].lastState != state)
+		{
+			switch(extiTable[i].trigger)
+			{
+				case EXTI_TRIG_RISING:
+				{
+					extiTable[i].interrupt = (uint8_t)(extiTable[i].lastState == 0);
+				}
+				break;
+
+				case EXTI_TRIG_FALLING:
+				{
+					extiTable[i].interrupt = (uint8_t)(extiTable[i].lastState == 1);
+				}
+				break;
+
+				default:
+				{
+					extiTable[i].interrupt = 1;
+				}
+				break;
+			}
+		}
+
+		extiTable[i].lastState = state;
+	}
+
+	//
+	// Вызов обработчиков прерываний
+	//
+	for(uint8_t i = 0; i < DMAX; i++)
+	{
+		if(!extiTable[i].enable || !extiTable[i].interrupt) continue;
+
+		if(extiTable[i].param)
+			extiTable[i].cbFuncParam(extiTable[i].param);
+		else
+			extiTable[i].cbFunc();
+
+		extiTable[i].interrupt = 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+// Обработчик низкоприоритетных прерываний
+//------------------------------------------------------------------------------
+void PendSV_Handler(void)
+{
+	gpio_polling();
 }
 
 //------------------------------------------------------------------------------

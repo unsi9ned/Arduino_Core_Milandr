@@ -1,25 +1,46 @@
 #include <Arduino.h>
-#include "MDR32FxQI_config.h"
 
-EXTERN_C_BEGIN
+#define CALLBACK_WITH_PARAM        1
 
-void EXT_INT1_IRQHandler(void)
+#if CALLBACK_WITH_PARAM
+
+void led_toggle(void * pin)
 {
-	NVIC_DisableIRQ(EXT_INT1_IRQn);
-	NVIC_ClearPendingIRQ(EXT_INT1_IRQn);
-	return;
+	uint8_t in = (uint32_t)pin % DMAX;
+
+	if(digitalRead(in))
+		digitalWrite(LED_BUILTIN, LOW);
+	else
+		digitalWrite(LED_BUILTIN, HIGH);
+
+	if(digitalRead(USER_BUTTON))
+		Serial.print("Button is OFF\n");
+	else
+		Serial.print("Button is ON\n");
 }
 
-EXTERN_C_END
+#else
+
+void led_toggle2()
+{
+	if(digitalRead(USER_BUTTON))
+		digitalWrite(LED_BUILTIN, LOW);
+	else
+		digitalWrite(LED_BUILTIN, HIGH);
+}
+
+#endif
 
 void example_exti_init()
 {
 	pinMode(USER_BUTTON, INPUT);
 	pinMode(LED_BUILTIN, OUTPUT);
-	pinMode(PA0, INPUT);
-	milandr_gpio_sel_alter_func(PA0);
-	/* Interrupts Enable */
-	NVIC_EnableIRQ(EXT_INT1_IRQn);
+
+#if CALLBACK_WITH_PARAM
+	attachInterruptParam(USER_BUTTON, led_toggle, CHANGE, (void*)USER_BUTTON);
+#else
+	attachInterrupt(USER_BUTTON, led_toggle2, CHANGE);
+#endif
 
 	Serial.begin(115200UL);
 	Serial.setTimeout(100);
@@ -27,23 +48,6 @@ void example_exti_init()
 
 void example_exti_process()
 {
-	PinStatus status = digitalRead(USER_BUTTON);
-	static PinStatus oldStatus = LOW;
 
-	if(oldStatus != status)
-	{
-		if(status == LOW)
-		{
-			digitalWrite(LED_BUILTIN, HIGH);
-			Serial.print("Button is ON\n");
-		}
-		else
-		{
-			digitalWrite(LED_BUILTIN, LOW);
-			Serial.print("Button is OFF\n");
-		}
-	}
-
-	oldStatus = status;
 }
 
