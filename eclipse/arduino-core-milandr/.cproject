@@ -55,7 +55,6 @@
 									<listOptionValue builtIn="false" value="../../../system/SPL/MDR32FxQI"/>
 									<listOptionValue builtIn="false" value="../../../system/SPL/MDR32FxQI/inc"/>
 									<listOptionValue builtIn="false" value="../../../cores/arduino"/>
-									<listOptionValue builtIn="false" value="../../../cores/arduino/api"/>
 									<listOptionValue builtIn="false" value="../../../variants/MDR32FxQI/MDR1211FI"/>
 									<listOptionValue builtIn="false" value="../../../libraries/SPI"/>
 									<listOptionValue builtIn="false" value="../../../libraries/Wire"/>
@@ -75,7 +74,6 @@
 									<listOptionValue builtIn="false" value="../../../system/SPL/MDR32FxQI"/>
 									<listOptionValue builtIn="false" value="../../../system/SPL/MDR32FxQI/inc"/>
 									<listOptionValue builtIn="false" value="../../../cores/arduino"/>
-									<listOptionValue builtIn="false" value="../../../cores/arduino/api"/>
 									<listOptionValue builtIn="false" value="../../../system/CMSIS/MDR32FxQI/CoreSupport/CM3"/>
 									<listOptionValue builtIn="false" value="../../../libraries/SPI"/>
 									<listOptionValue builtIn="false" value="../../../libraries/Wire"/>
