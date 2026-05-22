@@ -40,10 +40,11 @@ compiler.S.cmd=arm-none-eabi-gcc
 compiler.c.elf.cmd=arm-none-eabi-gcc
 compiler.objcopy.cmd=arm-none-eabi-objcopy
 compiler.objcopy.hex.cmd=arm-none-eabi-objcopy
+compiler.size.cmd=arm-none-eabi-size
 compiler.ar.cmd=arm-none-eabi-ar
 
 # compile Include 
-compiler.milandr.extra_include= "-I{build.core.path}/api"
+compiler.milandr.extra_include= "-I{build.core.path}/milandr"
 
 # compile warning
 compiler.warning_flags=-w
@@ -93,7 +94,7 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.f
 recipe.objcopy.hex.pattern="{compiler.path}{compiler.objcopy.hex.cmd}" -O ihex "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"
 
 # Подсчёт размера
-recipe.size.pattern="{compiler.path}{compiler.objcopy.cmd}" --format=berkeley "{build.path}/{build.project_name}.elf"
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" --format=berkeley "{build.path}/{build.project_name}.elf"
 
 # Архивация
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" {object_file}
