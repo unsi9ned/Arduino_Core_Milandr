@@ -1,7 +1,15 @@
-template_board_one.name=Arduino Core Template Board One
-template_board_one.build.board=TEMPLATE_BOARD_ONE
-template_board_one.build.core=template
+menu.BoardModel = Модель платы
 
-template_board_two.name=Arduino Core Template Board Two
-template_board_two.build.board=TEMPLATE_BOARD_TWO
-template_board_two.build.core=template
+#------------------------------------------------------
+# K1986BE92FI Mini
+milandrMini.name = Milandr K1986BE92FI-Mini
+milandrMini.upload.tool = openocd
+milandrMini.build.mcu = cortex-m3
+milandrMini.build.f_cpu = 80000000L
+milandrMini.build.core = arduino
+milandrMini.build.variant = MDR32FxQI/MDR1211FI
+milandrMini.build.board = MILANDR_MINI
+milandrMini.build.extra_flags = -DUSE_K1986VE92xI -DVARIANT_H=variant_K1986BE92FI_Mini.h -I"{runtime.platform.path}/system/CMSIS/MDR32FxQI/CoreSupport/CM3" -I"{runtime.platform.path}/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc" -I"{runtime.platform.path}/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup" -I"{runtime.platform.path}/system/SPL/MDR32FxQI" -I"{runtime.platform.path}/system/SPL/MDR32FxQI/inc"
+milandrMini.upload.protocol = swd
+
+
