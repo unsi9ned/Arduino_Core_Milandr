@@ -1,0 +1,8 @@
+# programmers.txt
+# Список доступных программаторов
+
+menu.Programmer = Программатор
+
+openocd.name = OpenOCD (CMSIS-DAP)
+openocd.protocol = swd
+openocd.tool = openocd

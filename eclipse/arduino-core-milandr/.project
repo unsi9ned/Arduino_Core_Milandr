@@ -351,6 +351,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/itoa.h</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr/cxx_stubs.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/cxx_stubs.cpp</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/milandr/milandr_adc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_adc.c</locationURI>

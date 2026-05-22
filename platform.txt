@@ -44,7 +44,7 @@ compiler.size.cmd=arm-none-eabi-size
 compiler.ar.cmd=arm-none-eabi-ar
 
 # compile Include 
-compiler.milandr.extra_include= "-I{build.core.path}/milandr"
+compiler.milandr.extra_include= "-I{build.core.path}" "-I{build.core.path}/milandr"
 
 # compile warning
 compiler.warning_flags=-w
@@ -60,7 +60,7 @@ compiler.arm.cortex.flags=-mcpu=cortex-m3 -mthumb
 compiler.c.flags=-c {compiler.warning_flags} -O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -std=gnu11 {compiler.arm.cortex.flags} {compiler.c.extra_flags} {compiler.milandr.extra_include} {build.extra_flags}
 
 # Флаги C++
-compiler.cpp.flags=-c {compiler.warning_flags} -O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -std=gnu++11 {compiler.arm.cortex.flags} {compiler.cpp.extra_flags} {compiler.milandr.extra_include} {build.extra_flags}
+compiler.cpp.flags=-c {compiler.warning_flags} -O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -std=gnu++11 {compiler.arm.cortex.flags} {compiler.cpp.extra_flags} {compiler.milandr.extra_include} {build.extra_flags}
 
 # Флаги ассемблера
 compiler.S.flags=-c -x assembler-with-cpp {compiler.arm.cortex.flags} {compiler.milandr.extra_include}
@@ -98,3 +98,15 @@ recipe.size.pattern="{compiler.path}{compiler.size.cmd}" --format=berkeley "{bui
 
 # Архивация
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" {object_file}
+
+#######################
+# Uploader tools      #
+#######################
+
+##CMSIS-DAP upload
+tools.openocd.cmd=openocd
+#tools.openocd.path={path.to.openocd}
+tools.openocd.path=c:/OpenOCD-20260302-0.12.0/bin
+tools.openocd.upload.params.verbose=-d2
+tools.openocd.upload.params.quiet=-d0
+tools.openocd.upload.pattern="{path}/{cmd}" {upload.params.verbose} -f "interface/cmsis-dap.cfg" -c "transport select swd" -f "target/mdr32f9q2i.cfg" -c "program {{build.path}/{build.project_name}.hex} verify reset exit"
