@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 // Константы
 //------------------------------------------------------------------------------
-#define ADC_DEFAULT_RESOLUTION     8
+#define ADC_DEFAULT_RESOLUTION     10
 #define ADC_MAX_RESOLUTION         12
 #define ADC_MAX_VALUE              4095
 

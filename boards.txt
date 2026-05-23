@@ -3,7 +3,7 @@ menu.BoardModel = Модель платы
 #------------------------------------------------------
 # K1986BE92FI Mini
 milandrMini.name = Milandr K1986BE92FI-Mini
-milandrMini.upload.tool = openocd
+milandrMini.upload.tool = xpack-openocd
 milandrMini.upload.protocol = swd
 milandrMini.build.mcu = cortex-m3
 milandrMini.build.f_cpu = 80000000L

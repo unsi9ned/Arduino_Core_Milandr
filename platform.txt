@@ -17,7 +17,7 @@
 ################
 # General Info #
 ################
-name=Milandr K1986VE9x
+name=Milandr MDR32FxQI
 version=0.1.0
 
 #######################################
@@ -32,8 +32,8 @@ compiler.S.extra_flags=
 ##########################
 # Compiler configuration #
 ##########################
-#compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
-compiler.path=c:/xpack-arm-none-eabi-gcc-14.2.1-1.1/bin/
+#compiler.path={runtime.tools.xpack-arm-none-eabi-gcc.path}/bin/
+compiler.path={runtime.tools.xpack-arm-none-eabi-gcc-14.2.1-1.1.path}/bin/
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.S.cmd=arm-none-eabi-gcc
@@ -57,16 +57,16 @@ compiler.warning_flags.all=-Wall -Wextra
 compiler.arm.cortex.flags=-mcpu=cortex-m3 -mthumb
 
 # Флаги C
-compiler.c.flags=-c {compiler.warning_flags} -O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -std=gnu11 {compiler.arm.cortex.flags} {compiler.c.extra_flags} {compiler.milandr.extra_include} {build.extra_flags}
+compiler.c.flags=-c {compiler.warning_flags} -O0 -g3 -ffunction-sections -fdata-sections -std=gnu11 {compiler.arm.cortex.flags} {compiler.c.extra_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include} {build.extra_flags}
 
 # Флаги C++
-compiler.cpp.flags=-c {compiler.warning_flags} -O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -std=gnu++11 {compiler.arm.cortex.flags} {compiler.cpp.extra_flags} {compiler.milandr.extra_include} {build.extra_flags}
+compiler.cpp.flags=-c {compiler.warning_flags} -O0 -g3 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -std=gnu++11 {compiler.arm.cortex.flags} {compiler.cpp.extra_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include} {build.extra_flags}
 
 # Флаги ассемблера
-compiler.S.flags=-c -x assembler-with-cpp {compiler.arm.cortex.flags} {compiler.milandr.extra_include}
+compiler.S.flags=-c -x assembler-with-cpp {compiler.arm.cortex.flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include}
 
 # Флаги линкера
-compiler.c.elf.flags=-O0 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs {compiler.arm.cortex.flags}
+compiler.c.elf.flags=-O0 -g3 -ffunction-sections -fdata-sections -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs {compiler.arm.cortex.flags}
 
 # Флаги архиватора
 compiler.ar.flags=rcs
@@ -97,16 +97,15 @@ recipe.objcopy.hex.pattern="{compiler.path}{compiler.objcopy.hex.cmd}" -O ihex "
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" --format=berkeley "{build.path}/{build.project_name}.elf"
 
 # Архивация
-recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" {object_file}
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
 
 #######################
 # Uploader tools      #
 #######################
 
 ##CMSIS-DAP upload
-tools.openocd.cmd=openocd
-#tools.openocd.path={path.to.openocd}
-tools.openocd.path=c:/OpenOCD-20260302-0.12.0/bin
-tools.openocd.upload.params.verbose=-d2
-tools.openocd.upload.params.quiet=-d0
-tools.openocd.upload.pattern="{path}/{cmd}" {upload.params.verbose} -f "interface/cmsis-dap.cfg" -c "transport select swd" -f "target/mdr32f9q2i.cfg" -c "program {{build.path}/{build.project_name}.hex} verify reset exit"
+tools.xpack-openocd.cmd=openocd
+tools.xpack-openocd.path={runtime.tools.xpack-openocd.path}/bin
+tools.xpack-openocd.upload.params.verbose=-d2
+tools.xpack-openocd.upload.params.quiet=-d0
+tools.xpack-openocd.upload.pattern="{path}/{cmd}" {upload.params.verbose} -f "interface/cmsis-dap.cfg" -c "transport select swd" -f "target/mdr32f9q2i.cfg" -c "program {{build.path}/{build.project_name}.hex} verify reset exit"

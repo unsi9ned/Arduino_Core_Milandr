@@ -236,17 +236,17 @@ tArduinoPinAlias;
 // ADC Inputs
 //------------------------------------------------------------------------------
 
-#define AIN0                        PD7
-#define AIN1                        PD4
-#define AIN2                        PD2
-#define AIN3                        PD3
-#define AIN4                        PD5
-#define AIN5                        PD6
+#define A0                          PD7
+#define A1                          PD4
+#define A2                          PD2
+#define A3                          PD3
+#define A4                          PD5
+#define A5                          PD6
 
 #if USE_SWD_PINS
 
-#define AIN6                        PD0
-#define AIN7                        PD1
+#define A6                          PD0
+#define A7                          PD1
 
 #endif
 
