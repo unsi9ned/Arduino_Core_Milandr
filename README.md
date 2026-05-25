@@ -33,5 +33,5 @@
 - Функции генерации случайных чисел (`random`)
 
 ## Поддерживаемые платы
-- [Milandr K1986BE92FI-Mini](https://unsi9ned.github.io/Arduino_Core_Milandr/variants/MDR32FxQI/MDR1211FI/) (128KB Flash, 32KB RAM, Cortex-M3 @ 80MHz)
+- [Milandr K1986BE92FI-Mini](https://github.com/unsi9ned/Arduino_Core_Milandr/tree/master/variants/MDR32FxQI/MDR1211FI) (128KB Flash, 32KB RAM, Cortex-M3 @ 80MHz)
 
