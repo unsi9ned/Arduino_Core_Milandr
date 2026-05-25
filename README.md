@@ -1,128 +1,37 @@
-# Arduino Core Template
+# Arduino Core для микроконтроллеров Milandr (MDR32FxFI)
 
-This is a template to create an Arduino Core (an Arduino port for a new board
-or platform).
+[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
+[![GitHub release](https://img.shields.io/github/v/release/unsi9ned/Arduino_Core_Milandr)](https://github.com/unsi9ned/Arduino_Core_Milandr/releases)
 
-This template is currently under development, so the code and documentation
-are not yet complete. Nevertheless, if you are creating a new Arduino Core,
-you can build on top of what is already here as a base, and go from there.
+## Введение
+Этот репозиторий добавляет поддержку микроконтроллеров **MDR32FxFI** в Arduino IDE 1.8.x.
 
+Данное ядро разработано на базе:
+- [Standard Peripherals Library (SPL)](https://support.milandr.ru/products/mikrokontrollery_i_protsessory/32_razryadnye_mikrokontrollery/k1986ve92fi/) - официальный пакет драйверов стандартной периферии от компании Миландр версии v1.3.2
+- [CMSIS](https://www.keil.arm.com/cmsis): Cortex Microcontroller Software Interface Standard (CMSIS) - это независимый от производителя уровень аппаратной абстракции для серии процессоров Cortex®-M, который определяет общие интерфейсы инструментов
+- [GNU Arm Embedded Toolchain](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm): компилятор Arm Embedded GCC, библиотеки и другие инструменты, необходимые для разработки ПО для устройств на ядре Cortex®-M. Пакеты предоставляются благодаря [The xPack 3rd Party Development Tools](https://github.com/xpack-dev-tools/):
+	- [https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack](https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack)
+	- [https://github.com/xpack-dev-tools/openocd-xpack](https://github.com/xpack-dev-tools/openocd-xpack)
 
-## Information used to populate project files
+## Установка
+Данный репозиторий доступен в виде пакета, который можно установить с помощью [Менеджера плат Arduino](https://docs.arduino.cc/learn/starting-guide/cores/)
 
-- Vendor name: `vendorname`
-- Maintainer: `Your Name`
-- Core full name: `Arduino Core Template`
-- Architecture: `template-arch`
-    - This is the processor architecture for the core, e.g. `avr`, `samd`, etc.
-- Board 1 name: `Arduino Core Template Board One`
-- Board 2 name: `Arduino Core Template Board Two`
-- Version: `0.0.1`
-    - All versions should follow
-      [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
-- Website: https://carlosperate.github.io/ArduinoCore-Template
-- Docs: https://carlosperate.github.io/ArduinoCore-Template/docs
+Для установки пакета необходимо выполнить следующие действия:
+1. Откройте **Файл → Настройки** в Arduino IDE.
+2. В поле **Дополнительные ссылки для Менеджера плат** вставьте:
+   `https://unsi9ned.github.io/Arduino_Core_Milandr/package_milandr_index.json`
+3. Перейдите в **Инструменты → Плата → Менеджер плат**.
+4. Найдите **Milandr MDR32FxFI** и нажмите **Установить**.
 
+## Особенности
+- Поддержка цифровых и аналоговых пинов (`pinMode`, `digitalRead`, `digitalWrite`, `analogRead`, `analogWrite`)
+- Аппаратная поддержка интерфейсов: UART (`Serial`), SPI, I2C (`Wire`)
+- Поддержка ШИМ (`PWM`) и ЦАП (`DAC`)
+- Внешние прерывания (`attachInterrupt`, `detachInterrupt`)
+- Функции генерации звука (`tone`/`noTone`)
+- Функции управления временем и задержками (`delay`, `delayMicroseconds`, `millis`, `micros`)
+- Функции генерации случайных чисел (`random`)
 
-## Directory Structure
+## Поддерживаемые платы
+- [Milandr K1986BE92FI-Mini](https://unsi9ned.github.io/Arduino_Core_Milandr/variants/MDR32FxQI/MDR1211FI/) (128KB Flash, 32KB RAM, Cortex-M3 @ 80MHz)
 
-- `.github`: This folder contains a GitHub Action to do code style check using
-  ClangFormat, and a GitHub Action Workflow to run it on each commit.
-- `cores`: This folder contains the Arduino Core C/C++ source code (the files
-  that implement the Arduino API and libraries).
-- `docs`: This folder is not part of the Arduino Core, but it is used to be
-  able host static files online via [GitHub Pages](https://pages.github.com/).
-  This is needed to provide a JSON file URL for the users to add the Arduino
-  IDE, so that the Arduino Core can be installed via the Boards Manager.
-- `custom-tools`: This folder and its contents are **not necessary** for the
-  Arduino Core. They contain a hello world program, compiled to a wide range
-  of platforms to use it as an example showing how to integrate custom tools
-  (like compilers, build tools, or debuggers, etc) with your Arduino core.
-
-
-## Special Files
-
-- `boards.txt`: Defines the Arduino boards for this core. 
-- `platform.txt`: Defines how the Arduino IDE/CLI use the tooling to build
-  and upload with this core.
-- `docs/package_info.json`: This files is not packaged inside the Arduino Core,
-  and it is instead hosted online using GitHub Pages. This file contains the
-  information required by the Arduino IDE/CLI to be able to install the Arduino
-  Core into their environment.
-  The URL to this files is added by the user to the Arduino IDE, so that the
-  Arduino Board Manager can install this Core.
-  More information can be found in the `docs/README.md` file.
-- `programmers.txt`: Contains definitions to use external programmers, for
-  example to flash a bootloader (which is usually only required once) or to
-  flash a compiled Arduino Sketch.
-- `keywords.txt`: WIP.
-
-
-## Installing
-
-### Install for development
-
-For development these are the instructions to install this Arduino Core from
-the GitHub repository:
-
-1. Locate the Arduino `SKETCHBOOK` directory, which depends on your Operating
-  System:
-    - Windows: `%USERPROFILE%\Documents\Arduino`
-    - macOS: `~/Documents/Arduino`
-    - Linux: `~/Arduino`
-2. Clone this repository in the following `SKETCHBOOK` subdirectory:
-    ```
-    git clone https://github.com/carlosperate/ArduinoCore-Template.git <SKETCHBOOK_PATH>/hardware/vendorname/template/
-    ```
-3. The ArduinoCore-API sources have to be added to the Arduino Core. There are
-  two options for this step:
-    1. In a different directory, clone the repo ArduinoCore-API repo and
-      create a symlink to into the `cores/api` directory inside 
-      ArduinoCore-Template project:
-        ```
-        git clone https://github.com/arduino/ArduinoCore-API.git
-        ln -s <ArduinoCore-API_PATH>/api <SKETCHBOOK_PATH>/hardware/vendorname/template/cores/template/api/
-        ```
-    2. Or simply copy the contents of the `api` folder from
-      [ArduinoCore-API](https://github.com/arduino/ArduinoCore-API) into the
-      `<SKETCHBOOK_PATH>/hardware/vendorname/template/cores/template/api/`
-      directory.
-4. Open (or restart) the Arduino IDE
-5. The "Arduino Core Template Boards" option should now appear in the
-  `tools/board` menu.
-
-### Install as a user
-
-As this is just a template, it is not intended to be used directly by users.
-However, for your own release of an Arduino Core (based on this template,
-created from scratch, or from a different Core), these would an example
-of the user instructions:
-
-- Download, install, and start the Arduino IDE
-- Open the IDE preferences or settings
-- In the "Additional boards manager URLs" section add the following URL:
-  `https://carlosperate.github.io/ArduinoCore-Template/docs/package_YourName_ArduinoCoreTemplate_index.json`
-- Open the Board Manager from the `tools/board` menu.
-- Find the "Arduino Core Template" core and click its "Install" button
-- Done! 🎉
-  You can now select the "Arduino Core Template" from the `tools/board` menu.
-
-
-## ArduinoCore-API library
-
-WIP - Include info about the API repo and why it is not included here.
-
-
-## Missing features
-
-The list itself is not yet updated, but will soon contain all items still left
-to implement.
-
-- Variants
-
-## Arduino IDE minimum version
-
-Some of the features used in this template are not available in earlier version
-of the Arduino IDE, so the currently minimum version is:
-
-- 1.6.6

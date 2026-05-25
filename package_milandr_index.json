@@ -14,10 +14,10 @@
 					"architecture": "milandr",
 					"version": "0.1.0",
 					"category": "Contributed",
-					"url": "https://github.com/unsi9ned/SVD-Loader-Ghidra/releases/download/temp/Arduino_Core_Milandr-v0.1.0.zip",
+					"url": "https://github.com/unsi9ned/Arduino_Core_Milandr/releases/download/Arduino_Core_Milandr-v0.0.1/Arduino_Core_Milandr-v0.1.0.zip",
 					"archiveFileName": "Arduino_Core_Milandr-v0.1.0.zip",
-					"checksum": "SHA-256:55d0fdeb9fdf99c273352642986cb897c5c8a9aadd9638c8a269420b09b307b6",
-					"size": "1313669",
+					"checksum": "SHA-256:7e9d3b74f287ffc6c36a8f29872d0b17d204f86fda5dabcdf96a8c33e9c065f5",
+					"size": "1671794",
 					"help": {
 						"online": "https://github.com/unsi9ned/Arduino_Core_Milandr"
 					},

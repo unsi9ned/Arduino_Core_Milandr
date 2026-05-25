@@ -17,7 +17,7 @@
 ################
 # General Info #
 ################
-name=Milandr MDR32FxQI
+name=Milandr MDR32FxFI
 version=0.1.0
 
 #######################################
