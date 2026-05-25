@@ -10,7 +10,7 @@
 			},
 			"platforms": [
 				{
-					"name": "Milandr MDR32FxQI",
+					"name": "Milandr MDR32FxFI",
 					"architecture": "milandr",
 					"version": "0.1.0",
 					"category": "Contributed",
