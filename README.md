@@ -19,7 +19,7 @@
 Для установки пакета необходимо выполнить следующие действия:
 1. Откройте **Файл → Настройки** в Arduino IDE.
 2. В поле **Дополнительные ссылки для Менеджера плат** вставьте:
-   `https://unsi9ned.github.io/Arduino_Core_Milandr/package_milandr_index.json`
+   `https://raw.githubusercontent.com/unsi9ned/Arduino_Core_Milandr/refs/heads/master/package_milandr_index.json`
 3. Перейдите в **Инструменты → Плата → Менеджер плат**.
 4. Найдите **Milandr MDR32FxFI** и нажмите **Установить**.
 
