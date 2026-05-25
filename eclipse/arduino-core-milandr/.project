@@ -26,17 +26,17 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>CMSIS</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>SPL</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>cores</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>libraries</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -46,47 +46,32 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>cores/arduino</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>libraries/SPI</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>libraries/Wire</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/CMSIS</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/SPL</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>variants/MDR32FxQI</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>CMSIS/MDR32FxQI/CoreSupport</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/MDR32FxQI_config.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/MDR32FxQI_config.h</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/inc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -106,6 +91,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/Uart.h</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/WInterrupts.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/WInterrupts.cpp</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/api</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -116,19 +106,24 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/main.cpp</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/milandr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>cores/arduino/random.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/random.cpp</locationURI>
 		</link>
 		<link>
-			<name>cores/arduino/time.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/time.cpp</locationURI>
-		</link>
-		<link>
 			<name>cores/arduino/tone.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/tone.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/variant.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/variant.h</locationURI>
 		</link>
 		<link>
 			<name>cores/arduino/wiring_analog.cpp</name>
@@ -141,287 +136,342 @@
 			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_digital.cpp</locationURI>
 		</link>
 		<link>
+			<name>cores/arduino/wiring_time.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/wiring_time.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/SPI/SPI.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/SPI.cpp</locationURI>
+		</link>
+		<link>
+			<name>libraries/SPI/SPI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/SPI/SPI.h</locationURI>
+		</link>
+		<link>
+			<name>libraries/Wire/Wire.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/Wire/Wire.cpp</locationURI>
+		</link>
+		<link>
+			<name>libraries/Wire/Wire.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/libraries/Wire/Wire.h</locationURI>
+		</link>
+		<link>
+			<name>system/CMSIS/MDR32FxQI</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>variants/MDR32FxQI/MDR1211FI</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/CoreSupport/CM3</name>
+			<name>cores/arduino/api/ArduinoAPI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/ArduinoAPI.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Binary.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Binary.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/CanMsg.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/CanMsg.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/CanMsg.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/CanMsg.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/CanMsgRingbuffer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/CanMsgRingbuffer.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/CanMsgRingbuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/CanMsgRingbuffer.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Client.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Client.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Common.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Common.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Common.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Common.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Compat.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Compat.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/DMAPool.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/DMAPool.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/HardwareCAN.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/HardwareCAN.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/HardwareI2C.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/HardwareI2C.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/HardwareSPI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/HardwareSPI.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/HardwareSerial.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/HardwareSerial.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/IPAddress.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/IPAddress.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/IPAddress.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/IPAddress.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Interrupts.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Interrupts.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/PluggableUSB.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/PluggableUSB.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/PluggableUSB.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/PluggableUSB.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Print.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Print.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Print.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Print.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Printable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Printable.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/RingBuffer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/RingBuffer.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Server.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Server.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Stream.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Stream.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Stream.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Stream.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/String.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/String.cpp</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/String.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/String.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/USBAPI.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/USBAPI.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/Udp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/Udp.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/WCharacter.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/WCharacter.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI</name>
+			<name>cores/arduino/api/deprecated-avr-comp</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_adc.h</name>
+			<name>cores/arduino/api/itoa.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_adc.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/itoa.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_arinc429r.h</name>
+			<name>cores/arduino/milandr/cxx_stubs.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429r.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/cxx_stubs.cpp</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_arinc429t.h</name>
+			<name>cores/arduino/milandr/milandr_adc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429t.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_adc.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_audio.h</name>
+			<name>cores/arduino/milandr/milandr_adc.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_audio.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_adc.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_bkp.h</name>
+			<name>cores/arduino/milandr/milandr_common.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_bkp.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_common.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_can.h</name>
+			<name>cores/arduino/milandr/milandr_dac.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_can.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_dac.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_comp.h</name>
+			<name>cores/arduino/milandr/milandr_dac.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_comp.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_dac.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_dac.h</name>
+			<name>cores/arduino/milandr/milandr_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dac.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_gpio.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_dma.h</name>
+			<name>cores/arduino/milandr/milandr_gpio.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dma.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_gpio.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_dsp.h</name>
+			<name>cores/arduino/milandr/milandr_hal.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dsp.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_hal.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_ebc.h</name>
+			<name>cores/arduino/milandr/milandr_i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_ebc.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_i2c.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_eeprom.h</name>
+			<name>cores/arduino/milandr/milandr_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_eeprom.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_i2c.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_eth.h</name>
+			<name>cores/arduino/milandr/milandr_spi.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_eth.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_spi.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_i2c.h</name>
+			<name>cores/arduino/milandr/milandr_spi.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_i2c.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_spi.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_iwdg.h</name>
+			<name>cores/arduino/milandr/milandr_timer.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_iwdg.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_timer.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_mil_std_1553.h</name>
+			<name>cores/arduino/milandr/milandr_timer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_mil_std_1553.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_timer.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_port.h</name>
+			<name>cores/arduino/milandr/milandr_uart.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_port.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_power.h</name>
+			<name>cores/arduino/milandr/milandr_uart.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_power.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/milandr_uart.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_rst_clk.h</name>
+			<name>cores/arduino/milandr/periph_definition.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_rst_clk.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/periph_definition.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_sdio.h</name>
+			<name>cores/arduino/milandr/pin_names.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_sdio.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/pin_names.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_ssp.h</name>
+			<name>cores/arduino/milandr/syscalls.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_ssp.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/milandr/syscalls.c</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_timer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_timer.h</locationURI>
+			<name>system/CMSIS/MDR32FxQI/CoreSupport</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_uart.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_uart.h</locationURI>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_usb.h</name>
+			<name>system/SPL/MDR32FxQI/MDR32FxQI_config.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_usb.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/MDR32FxQI_config.h</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_utils.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_utils.h</locationURI>
+			<name>system/SPL/MDR32FxQI/inc</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>SPL/MDR32FxQI/inc/MDR32FxQI_wwdg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_wwdg.h</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_adc.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_arinc429r.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429r.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_arinc429t.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429t.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_asm.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_asm.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_audio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_audio.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_bkp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_bkp.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_can.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_can.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_comp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_comp.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dac.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_dma.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dma.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_dsp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dsp.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_ebc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_ebc.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_eeprom.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_eeprom.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_eth.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_eth.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_i2c.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_iwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_iwdg.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_mil_std_1553.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_mil_std_1553.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_port.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_port.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_power.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_power.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_rst_clk.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_rst_clk.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_sdio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_sdio.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_ssp.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_ssp.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_timer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_timer.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_uart.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_usb.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_usb.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_utils.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_utils.c</locationURI>
-		</link>
-		<link>
-			<name>SPL/MDR32FxQI/src/MDR32FxQI_wwdg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_wwdg.c</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api</name>
+			<name>system/SPL/MDR32FxQI/src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -431,299 +481,409 @@
 			<locationURI>PARENT-2-PROJECT_LOC/variants/MDR32FxQI/MDR1211FI/ldscript.ld</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/CoreSupport/CM3/core_cm3.h</name>
+			<name>variants/MDR32FxQI/MDR1211FI/variant_K1986BE92FI_Mini.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/variants/MDR32FxQI/MDR1211FI/variant_K1986BE92FI_Mini.c</locationURI>
+		</link>
+		<link>
+			<name>variants/MDR32FxQI/MDR1211FI/variant_K1986BE92FI_Mini.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/variants/MDR32FxQI/MDR1211FI/variant_K1986BE92FI_Mini.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Client.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Client.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/HardwareSerial.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/HardwareSerial.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/IPAddress.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/IPAddress.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Print.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Print.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Printable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Printable.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Server.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Server.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Stream.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Stream.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/Udp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/Udp.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated/WString.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated/WString.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated-avr-comp/avr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/CMSIS/MDR32FxQI/CoreSupport/CM3</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_adc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_adc.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429r.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429r.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429t.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_arinc429t.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_audio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_audio.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_bkp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_bkp.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_can.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_can.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_comp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_comp.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_dac.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dac.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_dma.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dma.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_dsp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_dsp.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_ebc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_ebc.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_eeprom.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_eeprom.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_eth.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_eth.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_i2c.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_i2c.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_iwdg.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_iwdg.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_mil_std_1553.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_mil_std_1553.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_port.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_port.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_power.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_power.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_rst_clk.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_rst_clk.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_sdio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_sdio.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_ssp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_ssp.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_timer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_timer.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_uart.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_uart.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_usb.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_usb.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_utils.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_utils.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/inc/MDR32FxQI_wwdg.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/inc/MDR32FxQI_wwdg.h</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_adc.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429r.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429r.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429t.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_arinc429t.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_asm.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_asm.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_audio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_audio.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_bkp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_bkp.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_can.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_can.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_comp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_comp.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_dac.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dac.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_dma.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dma.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_dsp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_dsp.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_ebc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_ebc.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_eeprom.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_eeprom.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_eth.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_eth.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_i2c.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_iwdg.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_iwdg.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_mil_std_1553.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_mil_std_1553.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_port.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_power.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_power.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_rst_clk.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_rst_clk.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_sdio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_sdio.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_ssp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_ssp.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_timer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_timer.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_uart.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_usb.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_usb.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_utils.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_utils.c</locationURI>
+		</link>
+		<link>
+			<name>system/SPL/MDR32FxQI/src/MDR32FxQI_wwdg.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/system/SPL/MDR32FxQI/src/MDR32FxQI_wwdg.c</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated-avr-comp/avr/dtostrf.c.impl</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated-avr-comp/avr/dtostrf.c.impl</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated-avr-comp/avr/dtostrf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated-avr-comp/avr/dtostrf.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated-avr-comp/avr/interrupt.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated-avr-comp/avr/interrupt.h</locationURI>
+		</link>
+		<link>
+			<name>cores/arduino/api/deprecated-avr-comp/avr/pgmspace.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/deprecated-avr-comp/avr/pgmspace.h</locationURI>
+		</link>
+		<link>
+			<name>system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cm3.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cm3.h</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmFunc.h</name>
+			<name>system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmFunc.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmFunc.h</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmInstr.h</name>
+			<name>system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmInstr.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/CoreSupport/CM3/core_cmInstr.h</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>cores/arduino/api/api/ArduinoAPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/ArduinoAPI.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Binary.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Binary.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/CanMsg.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/CanMsg.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/CanMsg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/CanMsg.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/CanMsgRingbuffer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/CanMsgRingbuffer.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/CanMsgRingbuffer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/CanMsgRingbuffer.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Client.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Client.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Common.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Common.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Common.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Common.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Compat.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Compat.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/DMAPool.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/DMAPool.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/HardwareCAN.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/HardwareCAN.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/HardwareI2C.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/HardwareI2C.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/HardwareSPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/HardwareSPI.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/HardwareSerial.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/HardwareSerial.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/IPAddress.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/IPAddress.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/IPAddress.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/IPAddress.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Interrupts.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Interrupts.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/PluggableUSB.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/PluggableUSB.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/PluggableUSB.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/PluggableUSB.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Print.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Print.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Print.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Print.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Printable.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Printable.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/RingBuffer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/RingBuffer.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Server.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Server.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Stream.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Stream.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Stream.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Stream.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/String.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/String.cpp</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/String.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/String.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/USBAPI.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/USBAPI.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/Udp.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/Udp.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/WCharacter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/WCharacter.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/itoa.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/itoa.h</locationURI>
-		</link>
-		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc/K1986VE9xI.h</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc/K1986VE9xI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/inc/K1986VE9xI.h</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/gcc</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/gcc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.c</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.c</locationURI>
 		</link>
 		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.h</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/system_K1986VE9xI.h</locationURI>
 		</link>
 		<link>
-			<name>cores/arduino/api/api/deprecated/Client.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Client.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/HardwareSerial.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/HardwareSerial.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/IPAddress.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/IPAddress.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/Print.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Print.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/Printable.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Printable.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/Server.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Server.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/Stream.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Stream.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/Udp.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/Udp.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated/WString.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated/WString.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp/avr</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/gcc/startup_K1986VE9xI.c</name>
+			<name>system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/gcc/startup_K1986VE9xI.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/system/CMSIS/MDR32FxQI/DeviceSupport/K1986VE9xI/startup/gcc/startup_K1986VE9xI.c</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp/avr/dtostrf.c.impl</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated-avr-comp/avr/dtostrf.c.impl</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp/avr/dtostrf.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated-avr-comp/avr/dtostrf.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp/avr/interrupt.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated-avr-comp/avr/interrupt.h</locationURI>
-		</link>
-		<link>
-			<name>cores/arduino/api/api/deprecated-avr-comp/avr/pgmspace.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/cores/arduino/api/api/deprecated-avr-comp/avr/pgmspace.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

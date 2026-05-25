@@ -1,26 +1,42 @@
 #include <Arduino.h>
 
+EXTERN_C_BEGIN
+
+#include "milandr/milandr_hal.h"
+
+EXTERN_C_END
+
 // This function can be overwritten by the variant-specific code
 void initVariant() __attribute__((weak));
-void initVariant() {}
 
 /**
  * Code to initialise the board goes here.
  */
-void init() {}
+EXTERN_C_BEGIN
 
-int main(void) {
-    init();
-    initVariant();
+void init(void)
+{
+	milandr_hal_init();
+	milandr_systick_config();
+}
 
-    setup();
+EXTERN_C_END
 
-    for (;;) {
-        loop();
+int main(void)
+{
+	initVariant();
+	init();
 
-        // User can defined this function in a sketch to run after every loop iteration
-        if (arduino::serialEventRun) arduino::serialEventRun();
-    }
+	setup();
 
-    return 0;
+	for (;;)
+	{
+		loop();
+
+		// User can defined this function in a sketch to run after every loop iteration
+		if(arduino::serialEventRun)
+			arduino::serialEventRun();
+	}
+
+	return 0;
 }

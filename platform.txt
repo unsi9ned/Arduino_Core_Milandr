@@ -17,17 +17,14 @@
 ################
 # General Info #
 ################
-name=Arduino Core Template Boards
-version=0.0.1
+name=Milandr MDR32FxFI
+version=0.1.0
 
 #######################################
 # Extra flags that can be overwritten #
 #######################################
-# Left blnk here as it can be overwritten in boards.txt
 build.extra_flags=
 
-# Left blank here as these can be overwritten in a platform.local.txt file
-# https://arduino.github.io/arduino-cli/latest/platform-specification/#platformlocaltxt
 compiler.c.extra_flags=
 compiler.cpp.extra_flags=
 compiler.S.extra_flags=
@@ -35,30 +32,80 @@ compiler.S.extra_flags=
 ##########################
 # Compiler configuration #
 ##########################
-# These entries configure how to invoke the compiler for each type of file (C++, C, ASM, etc)
-# These values shown here are for the Arm GCC compiler as installed via package_index.json,
-# if you add a different compiler or toolchaing this will need to be updated
-compiler.path={runtime.tools.arm-none-eabi-gcc-7-2017q4.path}/bin/
+#compiler.path={runtime.tools.xpack-arm-none-eabi-gcc.path}/bin/
+compiler.path={runtime.tools.xpack-arm-none-eabi-gcc-14.2.1-1.1.path}/bin/
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.c.elf.cmd=arm-none-eabi-gcc
 compiler.objcopy.cmd=arm-none-eabi-objcopy
+compiler.objcopy.hex.cmd=arm-none-eabi-objcopy
+compiler.size.cmd=arm-none-eabi-size
 compiler.ar.cmd=arm-none-eabi-ar
 
-# The user can set up different compiler warning levels in the Arduino IDE/CLI
-# The values shown here are valid for GCC based compilers
+# compile Include 
+compiler.milandr.extra_include= "-I{build.core.path}" "-I{build.core.path}/milandr"
+
+# compile warning
 compiler.warning_flags=-w
 compiler.warning_flags.none=-w
 compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
-# The following entries specifytThe compiler flags for each kind of file to be compiled
-# The values included here are needed independently of toolchain, but you'll have to
-# add more relevant to the compiler and MCU for your Arduino Core
-compiler.cpp.flags=-c {compiler.warning_flags}
-compiler.c.flags=-c {compiler.warning_flags}
-compiler.S.flags=
-compiler.c.elf.flags=
-compiler.ar.flags=
+# Базовые флаги для Cortex-M3
+compiler.arm.cortex.flags=-mcpu=cortex-m3 -mthumb
+
+# Флаги C
+compiler.c.flags=-c {compiler.warning_flags} -O0 -g3 -ffunction-sections -fdata-sections -std=gnu11 {compiler.arm.cortex.flags} {compiler.c.extra_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include} {build.extra_flags}
+
+# Флаги C++
+compiler.cpp.flags=-c {compiler.warning_flags} -O0 -g3 -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions -std=gnu++11 {compiler.arm.cortex.flags} {compiler.cpp.extra_flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include} {build.extra_flags}
+
+# Флаги ассемблера
+compiler.S.flags=-c -x assembler-with-cpp {compiler.arm.cortex.flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -D__IN_ECLIPSE__=1 {compiler.milandr.extra_include}
+
+# Флаги линкера
+compiler.c.elf.flags=-O0 -g3 -ffunction-sections -fdata-sections -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs {compiler.arm.cortex.flags}
+
+# Флаги архиватора
+compiler.ar.flags=rcs
+
+#######################
+# Build recipes       #
+#######################
+
+# Препроцессор C
+recipe.preproc.includes="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -M -MG {includes} "{source_file}"
+
+# Компиляция C
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -MMD -c "{source_file}" -o "{object_file}"
+
+# Компиляция C++
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -MMD -c "{source_file}" -o "{object_file}"
+
+# Компиляция ассемблера
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} -MMD -c "{source_file}" -o "{object_file}"
+
+# Линковка
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -T "{build.variant.path}/ldscript.ld" -o "{build.path}/{build.project_name}.elf" {object_files} -Wl,--start-group {archive_file_path} -lm -Wl,--end-group
+
+# Создание HEX
+recipe.objcopy.hex.pattern="{compiler.path}{compiler.objcopy.hex.cmd}" -O ihex "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"
+
+# Подсчёт размера
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" --format=berkeley "{build.path}/{build.project_name}.elf"
+
+# Архивация
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
+
+#######################
+# Uploader tools      #
+#######################
+
+##CMSIS-DAP upload
+tools.xpack-openocd.cmd=openocd
+tools.xpack-openocd.path={runtime.tools.xpack-openocd.path}/bin
+tools.xpack-openocd.upload.params.verbose=-d2
+tools.xpack-openocd.upload.params.quiet=-d0
+tools.xpack-openocd.upload.pattern="{path}/{cmd}" {upload.params.verbose} -f "interface/cmsis-dap.cfg" -c "transport select swd" -f "target/mdr32f9q2i.cfg" -c "program {{build.path}/{build.project_name}.hex} verify reset exit"

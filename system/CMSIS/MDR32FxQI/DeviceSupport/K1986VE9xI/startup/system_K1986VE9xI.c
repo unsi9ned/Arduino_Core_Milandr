@@ -32,8 +32,8 @@
     extern uint32_t __Vectors;
     #define __VECTOR_TABLE_ADDRESS &__Vectors
 #elif defined (__GNUC__) /* GNU Compiler (GCC) */
-    extern uint32_t __Vectors;
-    #define __VECTOR_TABLE_ADDRESS &__Vectors
+    extern uint32_t __isr_vector_table;
+    #define __VECTOR_TABLE_ADDRESS &__isr_vector_table
 #endif
 
 #if defined(FACTORY_DATA_SYSTEM_INIT) && (FACTORY_DATA_SYSTEM_INIT == 1)

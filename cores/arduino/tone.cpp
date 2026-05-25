@@ -1,8 +1,34 @@
-#include "api/Common.h"
+/*
+ * Arduino Core for Milandr MCUs
+ * Copyright (c) 2026 Andrey Osipov
+ *
+ * This file is part of Arduino_Core_Milandr.
+ * Project home: https://github.com/unsi9ned/Arduino_Core_Milandr
+ * Author's website: https://hamlab.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-// Only a single tone can be played at a time, so this can be used to keep
-// track of the current pin playing the tone.
-static int current_tone_pin = -1;
+#include "api/Common.h"
+#include "milandr/milandr_hal.h"
+
+static void abortTone(void * pin)
+{
+	uint8_t arduinoPin = (uint32_t)pin % milandr_gpio_count();
+	noTone(arduinoPin);
+}
 
 /**
  * Generate a square wave on the specified pin & frequency at a 50% duty cycle.
@@ -25,20 +51,12 @@ static int current_tone_pin = -1;
  *                 noTone() is called.
  *                 Optional argument with a default value of zero.
  */
-void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) {
-    //if (!isPinPwm(_pin)) return;
-
-    if (current_tone_pin != -1 && current_tone_pin != _pin) return;
-
-    // Implement: Set the PWM frequency for the given pin at 50% duty cycle
-
-    current_tone_pin = _pin;
-
-    if (duration) {
-        // Implement: If a duration value is provided the tone should stop
-        // playing after that time without blocking this function.
-        // Remember to set current_tone_pin to -1 when the tone stops.
-    }
+void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
+{
+	if(milandr_tone_generate(_pin, (uint16_t)frequency) && duration)
+	{
+		milandr_set_delayed_task(abortTone, (void*)(uint32_t)_pin, duration);
+	}
 }
 
 /**
@@ -49,10 +67,8 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) {
  *
  * @param _pin The pin to stop playing the tone.
  */
-void noTone(uint8_t _pin) {
-    if (_pin != current_tone_pin) return;
-
-    // Implement: Stop the PWM output on the given pin
-
-    current_tone_pin = -1;
+void noTone(uint8_t _pin)
+{
+	milandr_cancel_delayed_task();
+	milandr_tone_deinit(_pin);
 }

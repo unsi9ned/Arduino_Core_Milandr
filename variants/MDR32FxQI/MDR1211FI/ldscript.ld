@@ -1,148 +1,152 @@
-OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
-/* Internal Memory Map*/
+/* Entry Point */
+ENTRY(Reset_Handler)
+
+/* Highest address of the user mode stack */
+_estack = ORIGIN(RAM) + LENGTH(RAM);	/* end of "RAM" Ram type memory */
+
+_Min_Heap_Size = 0x200;	/* required amount of heap  */
+_Min_Stack_Size = 0x400;	/* required amount of stack */
+
+/* Memories definition */
 MEMORY
 {
-	rom (rx)  : ORIGIN = 0x08000000, LENGTH = 0x00020000
-	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
+  FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 0x00020000
+  RAM (rwx)   : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
-_eram = 0x20000000 + 0x00008000;
+/* Sections */
 SECTIONS
 {
-	.text :
-	{
-		KEEP(*(.isr_vector))
-		*(.text*)
-		
-		KEEP(*(.init))
-		KEEP(*(.fini))
-		
-		/* .ctors */
-		*crtbegin.o(.ctors)
-		*crtbegin?.o(.ctors)
-		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
-		*(SORT(.ctors.*))
-		*(.ctors)
-		
-		/* .dtors */
-		*crtbegin.o(.dtors)
-		*crtbegin?.o(.dtors)
-		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
-		*(SORT(.dtors.*))
-		*(.dtors)
-		
-		*(.rodata*)
-		
-		KEEP(*(.eh_frame*))
-	} > rom 
-	
-	.ARM.extab : 
-	{
-		*(.ARM.extab* .gnu.linkonce.armextab.*)
-	} > rom 
-	
-	__exidx_start = .;
-	.ARM.exidx :
-	{
-		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > rom 
-	__exidx_end = .;
-	
-	/* _sidata is used in coide startup code */
-	_sidata = .;
+  /* The startup code into "FLASH" Rom type memory */
+  .isr_vector :
+  {
+    . = ALIGN(4);
+    __isr_vector_table = .;
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } >FLASH
 
-	/* Секция для RAM-функций */
-	.ramfunc : 
-	{
-		. = ALIGN(4);
-		__ramfunc_start__ = .;          /* Начало секции в RAM */
-		KEEP(*(.ramfunc))               /* Сами функции */
-		KEEP(*(.ramfunc.*))             /* Подсекции, если есть */
-		. = ALIGN(4);
-		__ramfunc_end__ = .;            /* Конец секции в RAM */
-	} > ram AT> rom                     /* Разместить в RAM, хранить во Flash */
-	
-	/* Указатели для копирования из Flash в RAM */
-	__ramfunc_loadaddr__ = LOADADDR(.ramfunc);               /* Адрес во Flash */
-	__ramfunc_size__ = __ramfunc_end__ - __ramfunc_start__;  /* Размер секции */
-	
-	.data : 
-	{
-		__data_start__ = .;
-		
-		/* _sdata is used in coide startup code */
-		_sdata = __data_start__;
-		
-		*(vtable)
-		*(.data*)
-		
-		. = ALIGN(4);
-		/* preinit data */
-		PROVIDE_HIDDEN (__preinit_array_start = .);
-		KEEP(*(.preinit_array))
-		PROVIDE_HIDDEN (__preinit_array_end = .);
-		
-		. = ALIGN(4);
-		/* init data */
-		PROVIDE_HIDDEN (__init_array_start = .);
-		KEEP(*(SORT(.init_array.*)))
-		KEEP(*(.init_array))
-		PROVIDE_HIDDEN (__init_array_end = .);
-		
-		. = ALIGN(4);
-		/* finit data */
-		PROVIDE_HIDDEN (__fini_array_start = .);
-		KEEP(*(SORT(.fini_array.*)))
-		KEEP(*(.fini_array))
-		PROVIDE_HIDDEN (__fini_array_end = .);
-		
-		KEEP(*(.jcr*))
-		. = ALIGN(4);
-		/* All data end */
-		__data_end__ = .;
-		
-		/* _edata is used in coide startup code */
-		_edata = __data_end__;
-	} > ram AT> rom
-	
-	__etext = LOADADDR(.data) + SIZEOF(.data);
-	
-	.bss :
-	{
-		. = ALIGN(4);
-		__bss_start__ = .;
-		_sbss = __bss_start__;
-		*(.bss*)
-		*(COMMON)
-		. = ALIGN(4);
-		__bss_end__ = .;
-		_ebss = __bss_end__;
-	} > ram 
-		
-	.heap (COPY):
-	{
-		__end__ = .;
-		_end = __end__;
-		end = __end__;
-		*(.heap*)
-		__HeapLimit = .;
-	} > ram 
-	
-	/* .stack_dummy section doesn't contains any symbols. It is only
-	* used for linker to calculate size of stack sections, and assign
-	* values to stack symbols later */
-	.co_stack (NOLOAD):
-	{
-		. = ALIGN(8);
-		*(.co_stack .co_stack.*)
-	} > ram 
-	
-	/* Set stack top to end of ram , and stack limit move down by
-	* size of stack_dummy section */
-	__StackTop = ORIGIN(ram ) + LENGTH(ram );
-	__StackLimit = __StackTop - SIZEOF(.co_stack);
-	PROVIDE(__stack = __StackTop);
-	
-	/* Check if data + heap + stack exceeds ram  limit */
-	ASSERT(__StackLimit >= __HeapLimit, "region ram  overflowed with stack")
-}
+  /* The program code and other data into "FLASH" Rom type memory */
+  .text :
+  {
+    . = ALIGN(4);
+    *(.text)           /* .text sections (code) */
+    *(.text*)          /* .text* sections (code) */
+    *(.glue_7)         /* glue arm to thumb code */
+    *(.glue_7t)        /* glue thumb to arm code */
+    *(.eh_frame)
+
+    KEEP (*(.init))
+    KEEP (*(.fini))
+
+    . = ALIGN(4);
+    _etext = .;        /* define a global symbols at end of code */
+  } >FLASH
+
+  /* Constant data into "FLASH" Rom type memory */
+  .rodata :
+  {
+    . = ALIGN(4);
+    *(.rodata)         /* .rodata sections (constants, strings, etc.) */
+    *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
+    . = ALIGN(4);
+  } >FLASH
+
+  .ARM.extab (READONLY) : {
+    . = ALIGN(4);
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+    . = ALIGN(4);
+  } >FLASH
+
+  .ARM (READONLY) : {
+    . = ALIGN(4);
+    __exidx_start = .;
+    *(.ARM.exidx*)
+    __exidx_end = .;
+    . = ALIGN(4);
+  } >FLASH
+
+  .preinit_array (READONLY) :
+  {
+    . = ALIGN(4);
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    KEEP (*(.preinit_array*))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+    . = ALIGN(4);
+  } >FLASH
+
+  .init_array (READONLY) :
+  {
+    . = ALIGN(4);
+    PROVIDE_HIDDEN (__init_array_start = .);
+    KEEP (*(SORT(.init_array.*)))
+    KEEP (*(.init_array*))
+    PROVIDE_HIDDEN (__init_array_end = .);
+    . = ALIGN(4);
+  } >FLASH
+
+  .fini_array (READONLY) :
+  {
+    . = ALIGN(4);
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    KEEP (*(SORT(.fini_array.*)))
+    KEEP (*(.fini_array*))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+    . = ALIGN(4);
+  } >FLASH
+
+  /* Used by the startup to initialize data */
+  _sidata = LOADADDR(.data);
+
+  /* Initialized data sections into "RAM" Ram type memory */
+  .data :
+  {
+    . = ALIGN(4);
+    _sdata = .;        /* create a global symbol at data start */
+    *(.data)           /* .data sections */
+    *(.data*)          /* .data* sections */
+    *(.RamFunc)        /* .RamFunc sections */
+    *(.RamFunc*)       /* .RamFunc* sections */
+
+    . = ALIGN(4);
+    _edata = .;        /* define a global symbol at data end */
+
+  } >RAM AT> FLASH
+
+  /* Uninitialized data section into "RAM" Ram type memory */
+  . = ALIGN(4);
+  .bss :
+  {
+    /* This is used by the startup in order to initialize the .bss section */
+    _sbss = .;         /* define a global symbol at bss start */
+    __bss_start__ = _sbss;
+    *(.bss)
+    *(.bss*)
+    *(COMMON)
+
+    . = ALIGN(4);
+    _ebss = .;         /* define a global symbol at bss end */
+    __bss_end__ = _ebss;
+  } >RAM
+
+  /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
+  ._user_heap_stack :
+  {
+    . = ALIGN(8);
+    PROVIDE ( end = . );
+    PROVIDE ( _end = . );
+    . = . + _Min_Heap_Size;
+    . = . + _Min_Stack_Size;
+    . = ALIGN(8);
+  } >RAM
+
+  /* Remove information from the compiler libraries */
+  /DISCARD/ :
+  {
+    libc.a ( * )
+    libm.a ( * )
+    libgcc.a ( * )
+  }
+
+  .ARM.attributes 0 : { *(.ARM.attributes) }
+}

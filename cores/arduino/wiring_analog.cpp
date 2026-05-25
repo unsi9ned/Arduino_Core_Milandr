@@ -1,4 +1,28 @@
+/*
+ * Arduino Core for Milandr MCUs
+ * Copyright (c) 2026 Andrey Osipov
+ *
+ * This file is part of Arduino_Core_Milandr.
+ * Project home: https://github.com/unsi9ned/Arduino_Core_Milandr
+ * Author's website: https://hamlab.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #include "api/Common.h"
+#include "milandr/milandr_hal.h"
 
 /**
  * Read the analog value from a pin.
@@ -20,8 +44,9 @@
  * @return A 10-bit value, where the max value 1023 represents the operating
  *         voltage (normally 5V or 3.3V).
  */
-int analogRead(pin_size_t pinNumber) {
-    return 0;
+int analogRead(pin_size_t pinNumber)
+{
+	return milandr_adc_read_value(pinNumber);
 }
 
 /**
@@ -34,7 +59,10 @@ int analogRead(pin_size_t pinNumber) {
  *
  * @param resolution The number of bits for the ADC resolution, from 1 to 32.
  */
-void analogReadResolution(int resolution) {}
+void analogReadResolution(int resolution)
+{
+	milandr_adc_set_resolution(resolution);
+}
 
 /**
  * Configure the ADC voltage reference.
@@ -46,7 +74,10 @@ void analogReadResolution(int resolution) {}
  *
  * @param mode The ADC reference voltage mode to set.
  */
-void analogReference(int mode) {}
+void analogReference(int mode)
+{
+	// В данной версии ядра используется только AUCC
+}
 
 /**
  * Output a PWM signal to a pin.
@@ -70,7 +101,13 @@ void analogReference(int mode) {}
  * @param pinNumber The Arduino pin number to output.
  * @param value The duty cycle for the PWM signal, from 0 to 255.
  */
-void analogWrite(pin_size_t pinNumber, int value) {}
+void analogWrite(pin_size_t pinNumber, int value)
+{
+	if(!milandr_pwm_set_value(pinNumber, value))
+	{
+		milandr_dac_set_value(pinNumber, value);
+	}
+}
 
 /**
  * Configure the PWM or DAC resolution.
@@ -83,4 +120,8 @@ void analogWrite(pin_size_t pinNumber, int value) {}
  * @param resolution The number of bits for the PWM/DAC resolution,
  *                   from 1 to 32.
  */
-void analogWriteResolution(int resolution) {}
+void analogWriteResolution(int resolution)
+{
+	milandr_pwm_set_resolution((uint8_t)resolution);
+	milandr_dac_set_resolution((uint8_t)resolution);
+}
